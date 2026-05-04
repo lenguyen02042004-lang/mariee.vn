@@ -39,7 +39,8 @@ const MOCK_USER = {
   ]
 }
 
-export default function ProfilePage() {
+export default function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params)
   return (
     <main className="min-h-screen bg-background">
       {/* 1. IDENTITY HEADER (The Sanctuary) */}

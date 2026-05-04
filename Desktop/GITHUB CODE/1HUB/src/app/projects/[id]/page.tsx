@@ -10,15 +10,30 @@ import { notFound } from 'next/navigation'
 
 import { SEED_PROJECTS } from '@/lib/mock-data'
 
-export default function ProjectHeritagePage({ params }: { params: { id: string } }) {
-  const project = SEED_PROJECTS[params.id] || Object.values(SEED_PROJECTS)[0]
+export default function ProjectHeritagePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = React.use(params)
+  const project = SEED_PROJECTS[id] || Object.values(SEED_PROJECTS)[0]
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0)
   const [showDispute, setShowDispute] = useState(false)
+  const [showAlgorithm, setShowAlgorithm] = useState(false)
+  const [endorseError, setEndorseError] = useState<string | null>(null)
 
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, 200])
 
-  if (!project && params.id !== 'demo') {
+  // Mock User Level (e.g., L4 - needs L1-3 to endorse)
+  const currentUserLevel = 4
+
+  const handleEndorse = () => {
+    if (currentUserLevel > 3) {
+      setEndorseError("Chỉ những Master cấp cao (L1-L3) mới có quyền bảo chứng di sản này.")
+      setTimeout(() => setEndorseError(null), 3000)
+    } else {
+      // Logic for endorsement
+    }
+  }
+
+  if (!project && id !== 'demo') {
     return notFound()
   }
 
@@ -32,7 +47,7 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
         </Link>
         <div className="flex items-center gap-8">
            <div className="hidden lg:flex items-center gap-6">
-              <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">ID: {params.id.split('-').join('.')}</span>
+              <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">ID: {id.split('-').join('.')}</span>
               <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Status: {project.status}</span>
            </div>
            <button className="premium-button py-2 px-6 text-[10px] uppercase tracking-widest font-mono flex items-center gap-2">
@@ -45,7 +60,7 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
       <section className="relative h-[70vh] flex items-end overflow-hidden">
         <motion.div style={{ y }} className="absolute inset-0 z-0">
           <img 
-            src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80" 
+            src={project.coverImage || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80"} 
             alt={project.title}
             className="w-full h-[140%] object-cover opacity-50"
           />
@@ -85,7 +100,7 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
             <h2 className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.6em] border-b border-white/5 pb-6">
               Strategic Intent
             </h2>
-            <p className="text-3xl md:text-5xl text-zinc-200 font-display leading-tight italic">
+            <p className="text-3xl md:text-5xl text-zinc-200 font-serif leading-tight italic">
               "{project.description}"
             </p>
           </section>
@@ -128,7 +143,13 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
                         className="overflow-hidden"
                       >
                         <div className="px-8 pb-8 text-zinc-400 font-sans leading-relaxed">
-                          {study.content}
+                          {study.title === "Strategic Impact" ? (
+                            <div dangerouslySetInnerHTML={{ 
+                              __html: study.content.replace(/(\d+(?:\.\d+)?(?:\s?\w+)?)/g, '<span class="text-accent font-bold">$1</span>') 
+                            }} />
+                          ) : (
+                            study.content
+                          )}
                         </div>
                       </motion.div>
                     )}
@@ -142,9 +163,15 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
           <section className="pt-20">
             <button 
               onClick={() => setShowDispute(!showDispute)}
-              className="flex items-center gap-2 text-[10px] font-mono text-zinc-600 uppercase tracking-widest hover:text-white transition-colors"
+              className="flex items-center gap-2 text-[10px] font-mono text-zinc-600 uppercase tracking-widest hover:text-white transition-colors group"
             >
-              <Info size={14} /> Information Conflict Transparency
+              <Info size={14} className={showDispute ? 'text-accent' : ''} /> 
+              Information Conflict Transparency
+              {id === 'esg-framework' && !showDispute && (
+                <span className="ml-4 px-2 py-0.5 rounded bg-red-950/30 border border-red-900/30 text-red-500 text-[8px] animate-pulse">
+                  1 Discrepancy Detected
+                </span>
+              )}
             </button>
             <AnimatePresence>
               {showDispute && (
@@ -152,15 +179,37 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="mt-6 p-8 rounded-2xl bg-surface border border-white/5 space-y-4"
+                  className="mt-6 p-8 rounded-2xl bg-zinc-900/50 border border-white/5 space-y-6"
                 >
-                  <h4 className="text-sm font-bold text-white">The Objective Witness Protocol</h4>
-                  <p className="text-xs text-zinc-500 leading-relaxed font-sans">
-                    1Hub acts as an observer, not a judge. Below are any reported discrepancies in project data.
-                  </p>
-                  <div className="p-4 border-l-2 border-accent/20 bg-accent/5 italic text-zinc-400 text-xs">
-                    "No unresolved conflicts reported for this heritage record."
+                  <div className="flex items-center gap-3 text-white">
+                    <ShieldCheck size={18} className="text-accent" />
+                    <h4 className="text-sm font-bold uppercase tracking-widest">The Objective Witness Protocol</h4>
                   </div>
+                  
+                  {id === 'esg-framework' ? (
+                    <div className="space-y-4">
+                      <p className="text-xs text-zinc-500 leading-relaxed font-sans">
+                        System detected a mismatch in "Project Duration" reporting between Founder and Core Member.
+                      </p>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-2">
+                          <p className="text-[8px] font-mono text-zinc-600 uppercase">Founder Claim</p>
+                          <p className="text-xs text-zinc-300">24 Months Execution</p>
+                        </div>
+                        <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-2">
+                          <p className="text-[8px] font-mono text-zinc-600 uppercase">Core Member Claim</p>
+                          <p className="text-xs text-zinc-300">18 Months Execution</p>
+                        </div>
+                      </div>
+                      <Link href="/governance/dispute-audit" className="inline-block text-[9px] font-mono text-accent hover:underline uppercase tracking-widest">
+                        View Parallel Data Comparison →
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="p-4 border-l-2 border-accent/20 bg-accent/5 italic text-zinc-400 text-xs">
+                      "No unresolved conflicts reported for this heritage record."
+                    </div>
+                  )}
                 </motion.div>
               )}
             </AnimatePresence>
@@ -174,7 +223,32 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
           {/* Heritage Points Card */}
           <div className="glass-card p-10 space-y-10 border-accent/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
              <div className="space-y-4">
-                <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em]">Heritage Capital</p>
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em]">Heritage Capital</p>
+                  <div className="relative">
+                    <button 
+                      onMouseEnter={() => setShowAlgorithm(true)}
+                      onMouseLeave={() => setShowAlgorithm(false)}
+                      className="text-zinc-700 hover:text-accent transition-colors"
+                    >
+                      <Info size={14} />
+                    </button>
+                    <AnimatePresence>
+                      {showAlgorithm && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0 }}
+                          className="absolute bottom-full right-0 mb-4 p-4 rounded-xl bg-zinc-950 border border-white/10 w-48 z-50 shadow-2xl"
+                        >
+                          <p className="text-[8px] font-mono text-zinc-500 uppercase tracking-widest mb-2">Algorithm</p>
+                          <p className="text-[10px] font-mono text-accent tracking-tighter">$R = \sum (V \times W \times M)$</p>
+                          <p className="text-[8px] text-zinc-600 mt-2 font-sans italic">Verified by cross-industry synergy weights.</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
                 <div className="flex items-baseline gap-3">
                   <p className="text-7xl font-display font-bold text-white tracking-tighter">{project.impactPoints}</p>
                   <span className="text-[10px] font-mono text-zinc-700 uppercase tracking-widest">Points</span>
@@ -194,9 +268,26 @@ export default function ProjectHeritagePage({ params }: { params: { id: string }
              </div>
 
              <div className="pt-10 border-t border-white/5 space-y-6">
-                <button className="w-full premium-button group relative">
-                  Endorse Heritage
-                </button>
+                <div className="relative group">
+                  <button 
+                    onClick={handleEndorse}
+                    className={`w-full premium-button group relative ${currentUserLevel > 3 ? 'opacity-50 grayscale cursor-not-allowed' : ''}`}
+                  >
+                    Endorse Heritage
+                  </button>
+                  <AnimatePresence>
+                    {endorseError && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute top-full left-0 right-0 mt-4 p-3 rounded bg-red-950/20 border border-red-900/30 text-red-500 text-[10px] font-mono text-center uppercase tracking-widest"
+                      >
+                        {endorseError}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
                 <div className="flex items-center justify-center gap-3 opacity-30">
                    <ShieldCheck size={14} className="text-zinc-500" />
                    <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Continuous Audit active</p>

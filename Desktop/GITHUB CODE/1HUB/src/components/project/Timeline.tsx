@@ -92,8 +92,14 @@ export const ContributionTimeline: React.FC<TimelineProps> = ({ members, duratio
             >
               {/* Member Profile */}
               <div className="flex items-center gap-4 pl-4 md:pl-12">
-                <div className={`w-10 h-10 rounded-full border border-white/5 flex items-center justify-center bg-zinc-900 transition-all duration-500 ${focusedId === member.id ? 'border-accent/40 shadow-[0_0_15px_rgba(212,175,55,0.1)]' : ''}`}>
-                  <User size={16} className={focusedId === member.id ? 'text-accent' : 'text-zinc-600'} />
+                <div className={`w-10 h-10 rounded-full border border-white/5 flex items-center justify-center bg-zinc-900 transition-all duration-500 overflow-hidden ${focusedId === member.id ? 'border-accent/40 shadow-[0_0_15px_rgba(212,175,55,0.1)]' : ''}`}>
+                  {member.name ? (
+                    <span className={`text-[10px] font-mono font-bold transition-colors ${focusedId === member.id ? 'text-accent' : 'text-zinc-600'}`}>
+                      {member.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </span>
+                  ) : (
+                    <User size={16} className={focusedId === member.id ? 'text-accent' : 'text-zinc-600'} />
+                  )}
                 </div>
                 <div className="space-y-0.5">
                   <p className={`text-xs font-bold tracking-tight transition-colors duration-300 ${focusedId === member.id ? 'text-white' : 'text-zinc-400'}`}>

@@ -27,7 +27,8 @@ const MOCK_CASE_STUDY = {
   `
 }
 
-export default function CaseStudyPage({ params }: { params: { id: string, memberId: string } }) {
+export default async function CaseStudyPage({ params }: { params: Promise<{ id: string, memberId: string }> }) {
+  const { id, memberId } = await params
   // Logic: In a real app, we'd fetch data here
   const { authorLevel } = MOCK_CASE_STUDY;
   
@@ -41,7 +42,7 @@ export default function CaseStudyPage({ params }: { params: { id: string, member
     <div className="min-h-screen bg-zinc-950 text-zinc-50 font-sans selection:bg-slate-400/30">
       <nav className="border-b border-zinc-900 bg-zinc-950/50 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-4xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href={`/projects/${params.id}`} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-100 transition-colors">
+          <Link href={`/projects/${id}`} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-100 transition-colors">
             <ArrowLeft size={16} />
             <span className="text-xs font-mono uppercase tracking-widest text-zinc-500">Project Heritage</span>
           </Link>
