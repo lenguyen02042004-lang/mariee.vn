@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { ContributionTimeline } from '@/components/project/Timeline'
 import { MasterBadge } from '@/components/ui/MasterBadge'
-import { ArrowLeft, ExternalLink, ShieldCheck, ChevronDown, Info } from 'lucide-react'
+import { ArrowLeft, ExternalLink, ShieldCheck, ChevronDown, Info, Edit3, UserPlus, X } from 'lucide-react'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -16,13 +16,16 @@ export default function ProjectHeritagePage({ params }: { params: Promise<{ id: 
   const [activeAccordion, setActiveAccordion] = useState<number | null>(0)
   const [showDispute, setShowDispute] = useState(false)
   const [showAlgorithm, setShowAlgorithm] = useState(false)
+  const [showCharter, setShowCharter] = useState(true)
   const [endorseError, setEndorseError] = useState<string | null>(null)
 
   const { scrollY } = useScroll()
   const y = useTransform(scrollY, [0, 500], [0, 200])
 
-  // Mock User Level (e.g., L4 - needs L1-3 to endorse)
+  // Mock Governance Context
   const currentUserLevel = 4
+  const currentRole = 'owner' // 'owner' | 'leader' | 'contributor' | 'guest'
+  const currentUserId = '1' // Dr. Aris Thorne (Owner of many projects)
 
   const handleEndorse = () => {
     if (currentUserLevel > 3) {
@@ -39,14 +42,57 @@ export default function ProjectHeritagePage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-accent/20 overflow-x-hidden">
+      
+      {/* 0. CREATOR'S CHARTER (ONBOARDING) */}
+      <AnimatePresence>
+        {currentRole === 'owner' && showCharter && (
+          <motion.div 
+            initial={{ opacity: 0, y: -100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -100 }}
+            className="fixed top-0 inset-x-0 z-[200] p-6 bg-accent text-black"
+          >
+            <div className="max-w-[1400px] mx-auto flex items-center justify-between px-10">
+               <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck size={24} />
+                    <span className="font-display font-bold uppercase tracking-widest text-lg">The Creator's Charter</span>
+                  </div>
+                  <div className="hidden md:flex items-center gap-6 text-[10px] font-mono font-bold uppercase tracking-widest">
+                    <span className="flex items-center gap-2 opacity-60"><span className="w-4 h-4 rounded-full border border-black flex items-center justify-center">1</span> Initiation</span>
+                    <span className="flex items-center gap-2 opacity-60"><span className="w-4 h-4 rounded-full border border-black flex items-center justify-center">2</span> Validation</span>
+                    <span className="flex items-center gap-2 opacity-100"><span className="w-4 h-4 rounded-full bg-black text-accent flex items-center justify-center">3</span> Cultivation</span>
+                    <span className="flex items-center gap-2 opacity-40"><span className="w-4 h-4 rounded-full border border-black flex items-center justify-center">4</span> Consecration</span>
+                  </div>
+               </div>
+               <div className="flex items-center gap-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest max-w-xs leading-tight hidden lg:block">
+                    As Owner, you are the architect of this heritage. Ensure all contributors have accepted their roles.
+                  </p>
+                  <button 
+                    onClick={() => setShowCharter(false)}
+                    className="p-2 hover:bg-black/10 rounded-full transition-colors"
+                  >
+                    <X size={20} />
+                  </button>
+               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 1. PERSISTENT NAVIGATION */}
-      <nav className="fixed top-0 inset-x-0 h-20 flex items-center justify-between px-10 z-[100] bg-black/20 backdrop-blur-md border-b border-white/5">
+      <nav className={`fixed top-0 inset-x-0 h-20 flex items-center justify-between px-10 z-[100] bg-black/20 backdrop-blur-md border-b border-white/5 transition-transform duration-500 ${showCharter && currentRole === 'owner' ? 'translate-y-[88px]' : ''}`}>
         <Link href="/" className="flex items-center gap-3 text-zinc-500 hover:text-white transition-colors group">
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
           <span className="text-[10px] font-mono uppercase tracking-[0.3em]">The Repository</span>
         </Link>
         <div className="flex items-center gap-8">
            <div className="hidden lg:flex items-center gap-6">
+              <div className="flex items-center gap-2 px-3 py-1 rounded bg-accent/10 border border-accent/20">
+                 <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+                 <span className="text-[9px] font-mono text-accent uppercase tracking-widest">{currentRole}: You</span>
+              </div>
               <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">ID: {id.split('-').join('.')}</span>
               <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Status: {project.status}</span>
            </div>
@@ -64,7 +110,7 @@ export default function ProjectHeritagePage({ params }: { params: Promise<{ id: 
             alt={project.title}
             className="w-full h-[140%] object-cover opacity-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-t from-background via-background/20 to-transparent" />
         </motion.div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-10 pb-24 w-full">
@@ -82,9 +128,16 @@ export default function ProjectHeritagePage({ params }: { params: Promise<{ id: 
                  Heritage Verified
                </div>
             </div>
-            <h1 className="editorial-title text-white max-w-5xl">
-              {project.title}
-            </h1>
+            <div className="flex items-end justify-between gap-12">
+              <h1 className="editorial-title text-white max-w-5xl">
+                {project.title}
+              </h1>
+              {['owner', 'leader'].includes(currentRole) && (
+                <button className="mb-4 p-4 rounded-full bg-white/5 border border-white/10 text-zinc-400 hover:text-white hover:bg-white/10 transition-all group">
+                   <Edit3 size={20} className="group-hover:scale-110 transition-transform" />
+                </button>
+              )}
+            </div>
           </motion.div>
         </div>
       </section>
@@ -113,7 +166,9 @@ export default function ProjectHeritagePage({ params }: { params: Promise<{ id: 
             <ContributionTimeline 
               members={project.members} 
               durationMonths={project.duration} 
-              industry={project.industry.split(' / ')[0] as any}
+              industry={project.industry.split(' / ')[0]}
+              currentUserId={currentUserId}
+              currentRole={currentRole as any}
             />
           </section>
 
@@ -156,6 +211,63 @@ export default function ProjectHeritagePage({ params }: { params: Promise<{ id: 
                   </AnimatePresence>
                 </div>
               ))}
+            </div>
+          </section>
+
+          {/* Expert Insights (High-Signal Comments) */}
+          <section className="space-y-16">
+            <div className="flex items-center justify-between border-b border-white/5 pb-6">
+              <h2 className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.6em]">
+                Expert Insights
+              </h2>
+              <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">
+                Restricted to L1-L5
+              </span>
+            </div>
+            
+            <div className="space-y-8">
+              {/* Add Comment (Restricted) */}
+              <div className="glass-card p-6 border-white/5 bg-white/[0.02] flex gap-6">
+                 <div className="w-12 h-12 rounded-full bg-zinc-800 border border-white/10 flex items-center justify-center text-xs font-bold text-zinc-500">
+                    {currentUserLevel <= 5 ? 'YU' : '??'}
+                 </div>
+                 <div className="flex-1 space-y-4">
+                    {currentUserLevel <= 5 ? (
+                      <>
+                        <textarea 
+                          placeholder="Provide professional context or constructive critique..."
+                          className="w-full bg-transparent border-none text-sm text-zinc-300 placeholder:text-zinc-600 focus:ring-0 resize-none h-20"
+                        />
+                        <div className="flex justify-end">
+                           <button className="text-[10px] font-mono text-accent uppercase tracking-widest hover:underline">Submit Insight →</button>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="h-20 flex items-center text-[10px] font-mono text-zinc-700 uppercase tracking-widest italic">
+                        Access restricted to Expert level members.
+                      </div>
+                    )}
+                 </div>
+              </div>
+
+              {/* Sample Comment */}
+              <div className="space-y-6">
+                <div className="flex gap-6 group">
+                   <div className="w-10 h-10 rounded-full bg-accent/20 border border-accent/20 flex items-center justify-center text-[10px] font-bold text-accent">
+                      LV
+                   </div>
+                   <div className="flex-1 space-y-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-xs font-bold text-zinc-300">Luciano Verdi</span>
+                        <span className="px-2 py-0.5 rounded-sm bg-accent/10 border border-accent/20 text-[8px] font-mono text-accent uppercase tracking-widest">L1 Master</span>
+                        <span className="text-[8px] font-mono text-zinc-700 uppercase">2 days ago</span>
+                      </div>
+                      <p className="text-xs text-zinc-500 leading-relaxed font-sans">
+                        The architectural integration of bio-polymers here is revolutionary. It sets a new precedent for seismic-resistant biophilia. A true masterwork.
+                      </p>
+                   </div>
+                </div>
+              </div>
             </div>
           </section>
 
@@ -256,11 +368,21 @@ export default function ProjectHeritagePage({ params }: { params: Promise<{ id: 
              </div>
 
              <div className="space-y-6 pt-10 border-t border-white/5">
-                <h3 className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em]">Verified Contributors</h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em]">Verified Contributors</h3>
+                  {['owner', 'leader'].includes(currentRole) && (
+                    <button className="p-2 rounded bg-white/5 hover:bg-white/10 text-zinc-500 hover:text-white transition-all">
+                       <UserPlus size={12} />
+                    </button>
+                  )}
+                </div>
                 <div className="space-y-4">
                   {project.members.map(member => (
-                    <div key={member.id} className="flex items-center justify-between">
-                      <span className="text-xs text-zinc-300 font-medium">{member.name}</span>
+                    <div key={member.id} className="flex items-center justify-between group">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-zinc-300 font-medium group-hover:text-white transition-colors">{member.name}</span>
+                        <span className="text-[8px] font-mono text-zinc-600 uppercase tracking-tighter">{member.role}</span>
+                      </div>
                       <MasterBadge level={member.level} className="scale-90" />
                     </div>
                   ))}

@@ -239,7 +239,6 @@ export default function Home() {
       {/* CHAPTER 4: THE MASTERY PROTOCOL */}
       <section className="bg-zinc-900/30 border-y border-white/5 py-48">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-24">
-          {[
             { step: '01', title: 'Verified by Execution', desc: 'Case studies are locked by technical evidence and peer-audited by fellow masters.' },
             { step: '02', title: 'Identified by Reputation', desc: 'Your weight in the network is a dynamic function of verified cross-industry impact.' },
             { step: '03', title: 'Preserved as Heritage', desc: 'We bridge the gap between temporary gigs and permanent professional legacy.' }
@@ -255,6 +254,13 @@ export default function Home() {
               <span className="font-mono text-accent text-sm tracking-widest">{item.step}</span>
               <h3 className="font-display text-2xl text-white uppercase tracking-tight">{item.title}</h3>
               <p className="text-zinc-500 font-sans leading-relaxed">{item.desc}</p>
+              {i === 2 && (
+                <div className="pt-4">
+                  <Link href="/knowledge" className="text-[9px] font-mono text-accent/60 hover:text-accent transition-colors uppercase tracking-[0.2em] flex items-center gap-2 group">
+                    Understand the Protocol <ArrowRight size={12} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
+              )}
             </motion.div>
           ))}
         </div>
@@ -285,7 +291,7 @@ export default function Home() {
               <div className="space-y-8">
                 <span className="text-[10px] font-mono text-zinc-700 uppercase tracking-[0.4em] block border-b border-white/5 pb-2">Philosophy</span>
                 <nav className="flex flex-col gap-4">
-                  {['MANIFESTO', 'MASTERS', 'RULES'].map(item => (
+                  {['MANIFESTO', 'KNOWLEDGE', 'MASTERS', 'RULES'].map(item => (
                     <Link key={item} href={`/${item.toLowerCase()}`} className="text-[10px] font-mono tracking-[0.2em] text-zinc-500 hover:text-white transition-colors">
                       {item}
                     </Link>

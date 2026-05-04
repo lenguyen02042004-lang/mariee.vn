@@ -212,4 +212,43 @@ To align with the "Premium & Elite" positioning, 1Hub enforces a "Luxury Editori
 
 ---
 
-*Verified by Antigravity - The Global Master Specification (Blueprint 1.0)*
+## XIII. SOVEREIGN GOVERNANCE PROTOCOL (THE RULES OF POWER)
+
+To ensure the integrity of the 1HUB ecosystem, all participants must adhere to the **Sovereign Governance Protocol**. This defines the relationship between identity, authorship, and authority.
+
+### 1. Project Hierarchy (Roles & Permissions)
+Roles are assigned based on **Heritage Responsibility**, not just titles:
+*   **Project Owner (Chủ dự án):** The architect of the project "container" on 1HUB.
+    *   **Power:** Invite members, assign initial roles, and validate the primary Timeline.
+    *   **Responsibility:** Ultimate accountability for the overall project manifest.
+*   **Leader / Co-Leader:** Authorized delegates of the Owner.
+    *   **Power:** Edit project descriptions, approve member Case Studies, and moderate Expert Insights.
+*   **Contributor (Thành viên):** The active executors of the work.
+    *   **Power:** Author their own "Intellectual Asset" (Case Study) and claim their specific timeline span.
+    *   **Sovereign Right:** The right to **"Dispute" (Kháng nghị)** if the Owner incorrectly records their contribution period.
+
+### 2. Authorship & Content Lifecycle
+*   **The Manifest (Strategic Intent):** Authored exclusively by the Owner or Leader. This defines the "What" and "Why" of the project.
+*   **The Heritage Pulse (Timeline):** A collaborative record. Once a Master (L1) has endorsed the project, the Timeline becomes **Immutable** (Add-only).
+*   **Intellectual Assets (Case Studies):** Every member is the sovereign author of their own Case Study. 
+    *   **AI Smart Drafting:** AI assists in structuring raw technical data into a high-fidelity narrative but never replaces the expert's voice.
+
+### 3. Interaction & Reputation Engine
+*   **Endorse Heritage (The Vote):**
+    *   **Gatekeeping:** Only members with **Level 1-3** status can "Endorse" (Vote).
+    *   **Visibility:** Endorsements are public and weigh heavily on the project's **Heritage Capital ($R$)**.
+*   **Visibility Tracking:** Views from **Enterprise Accounts** are tracked separately to measure "Market Resonance."
+*   **Expert Insights (Professional Comments):**
+    *   1HUB does not have a "Social Comment Section." 
+    *   It features **Expert Insights**, restricted to members of a certain Level to ensure a high-signal environment.
+
+### 4. The Creator's Charter (How it works)
+When a project is initiated, the following flow is enforced:
+1.  **Initiation:** Owner creates the record and invites the synergy team.
+2.  **Validation:** Members accept roles and verify their individual Timelines.
+3.  **Cultivation:** Each expert authors their Case Study demonstrating their unique professional logic.
+4.  **Consecration:** The Master community audits and Endorses the project to finalize it as a **Global Heritage**.
+
+---
+
+*Verified by Antigravity - The Global Master Specification (Blueprint 1.1)*

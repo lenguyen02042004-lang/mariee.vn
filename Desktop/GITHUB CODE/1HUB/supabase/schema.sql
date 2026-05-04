@@ -33,8 +33,33 @@ create policy "Public profiles are viewable by everyone." on profiles
 create policy "Users can insert their own profile." on profiles
   for insert with check (auth.uid() = id);
 
-create policy "Users can update own profile." on profiles
-  for update using (auth.uid() = id);
+create policy "Users can update own basic info." on profiles
+  for update using (auth.uid() = id)
+  with check (
+    -- Prevent users from manually elevating their level or score
+    (auth.uid() = id)
+  );
+
+-- 4. SECURITY TRIGGERS (PROTECTING THE HIERARCHY)
+create or replace function fn_protect_profile_integrity()
+returns trigger as $$
+begin
+  -- Prevent manual level/reputation updates
+  if (new.current_level <> old.current_level) or (new.reputation_score <> old.reputation_score) then
+    -- Only allow the system (via security definer functions) to change these
+    -- If the current user is not a service role or the update isn't from our sync function
+    if current_setting('role') <> 'service_role' then
+      new.current_level := old.current_level;
+      new.reputation_score := old.reputation_score;
+    end if;
+  end if;
+  return new;
+end;
+$$ language plpgsql;
+
+create trigger tr_protect_hierarchy
+before update on profiles
+for each row execute function fn_protect_profile_integrity();
 
 -- Projects
 create table projects (
@@ -128,8 +153,8 @@ create table votes (
   id uuid default uuid_generate_v4() primary key,
   voter_id uuid references profiles(id) not null,
   case_study_id uuid references case_studies(id) on delete cascade not null,
-  voter_level int not null, -- Captured at time of vote
-  weight int not null,      -- Calculated based on voter_level
+  voter_level int, -- Populated via trigger
+  weight int,      -- Populated via trigger
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   
   unique(voter_id, case_study_id)
@@ -155,6 +180,33 @@ create index idx_votes_voter_id on votes(voter_id);
 
 -- 4. AUTOMATION & TRIGGERS
 
+-- 4. AUTOMATION & TRIGGERS
+
+create or replace function fn_prepare_vote()
+returns trigger as $$
+declare
+  v_level int;
+begin
+  -- Force the voter_id to be the authenticated user
+  new.voter_id := auth.uid();
+  
+  -- Fetch the actual level of the voter
+  select current_level into v_level from profiles where id = new.voter_id;
+  
+  new.voter_level := v_level;
+  -- Calculate weight: L1=10, L2=5, L3=3, L4=2, others=1
+  new.weight := case 
+    when v_level = 1 then 10
+    when v_level = 2 then 5
+    when v_level = 3 then 3
+    when v_level = 4 then 2
+    else 1
+  end;
+  
+  return new;
+end;
+$$ language plpgsql security definer;
+
 create or replace function fn_sync_user_reputation()
 returns trigger as $$
 declare
@@ -166,17 +218,21 @@ begin
   from case_studies 
   where id = new.case_study_id;
 
-  select coalesce(sum(1 * (11 - v.voter_level) * (case when pm.role = 'rescuer' then 2 else 1 end)), 0)
+  -- Re-calculate reputation based on all votes
+  -- Formula: Sum of (voter_weight * role_multiplier)
+  select coalesce(sum(v.weight * (case when pm.role = 'rescuer' then 2 else 1 end)), 0)
   into v_new_score
   from votes v
   join case_studies cs on v.case_study_id = cs.id
   join project_members pm on (cs.project_id = pm.project_id and cs.profile_id = pm.profile_id)
   where cs.profile_id = v_profile_id;
 
+  -- Multidisciplinary Bonus (if user has > 3 projects in different industries)
   if (select count(distinct project_id) from case_studies where profile_id = v_profile_id) > 3 then
     v_new_score := v_new_score * 1.2;
   end if;
 
+  -- Level Assignment
   if v_new_score >= 1000 then v_new_level := 1;
   elsif v_new_score >= 500 then v_new_level := 2;
   elsif v_new_score >= 250 then v_new_level := 3;
@@ -196,6 +252,10 @@ begin
   return new;
 end;
 $$ language plpgsql security definer;
+
+create trigger tr_before_vote
+before insert on votes
+for each row execute function fn_prepare_vote();
 
 create trigger tr_on_vote_cast
 after insert on votes

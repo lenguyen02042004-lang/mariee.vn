@@ -18,19 +18,28 @@ interface MemberContribution {
 interface TimelineProps {
   members: MemberContribution[]
   durationMonths: number
-  industry?: 'Architecture' | 'Art' | 'Tech' | 'Legal'
+  industry?: 'Architecture' | 'Art' | 'Tech' | 'Legal' | string
+  currentUserId?: string
+  currentRole?: 'owner' | 'leader' | 'contributor' | 'guest'
 }
 
-export const ContributionTimeline: React.FC<TimelineProps> = ({ members, durationMonths, industry = 'Tech' }) => {
+export const ContributionTimeline: React.FC<TimelineProps> = ({ 
+  members, 
+  durationMonths, 
+  industry = 'Tech',
+  currentUserId = '1', // Default to first member for demo
+  currentRole = 'contributor'
+}) => {
   const [focusedId, setFocusedId] = useState<string | null>(null)
 
   const getIndustryPhases = (ind: string) => {
-    if (ind.includes('Architecture')) return ['Concept', 'Schematics', 'Design Dev', 'Construction', 'Finish']
-    if (ind.includes('Art')) return ['Inspiration', 'Sketch', 'Execution', 'Refinement', 'Exhibition']
-    if (ind.includes('Finance')) return ['Research', 'Strategy', 'Modeling', 'Execution', 'Audit']
-    if (ind.includes('Science') || ind.includes('Biotech')) return ['Hypothesis', 'Lab Test', 'Peer Review', 'Validation', 'Publication']
-    if (ind.includes('Law') || ind.includes('Legal')) return ['Research', 'Discovery', 'Drafting', 'Filing', 'Resolution']
-    if (ind.includes('Fashion')) return ['Inspiration', 'Sketching', 'Pattern', 'Sample', 'Show']
+    const i = ind.toLowerCase()
+    if (i.includes('architecture')) return ['Concept', 'Schematics', 'Design Dev', 'Construction', 'Finish']
+    if (i.includes('art')) return ['Inspiration', 'Sketch', 'Execution', 'Refinement', 'Exhibition']
+    if (i.includes('finance')) return ['Research', 'Strategy', 'Modeling', 'Execution', 'Audit']
+    if (i.includes('science') || i.includes('biotech')) return ['Hypothesis', 'Lab Test', 'Peer Review', 'Validation', 'Publication']
+    if (i.includes('law') || i.includes('legal')) return ['Research', 'Discovery', 'Drafting', 'Filing', 'Resolution']
+    if (i.includes('fashion')) return ['Inspiration', 'Sketching', 'Pattern', 'Sample', 'Show']
     return ['Ideation', 'MVP', 'Beta', 'Scaling', 'Launch']
   }
 
@@ -112,7 +121,7 @@ export const ContributionTimeline: React.FC<TimelineProps> = ({ members, duratio
               </div>
 
               {/* Progress Track */}
-              <div className="h-2 relative bg-white/[0.02] rounded-full overflow-visible border border-white/5">
+              <div className="h-2 relative bg-white/[0.02] rounded-full overflow-visible border border-white/5 flex items-center">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ 
@@ -120,8 +129,20 @@ export const ContributionTimeline: React.FC<TimelineProps> = ({ members, duratio
                     left: `${(member.startMonth / durationMonths) * 100}%`
                   }}
                   transition={{ duration: 1.5, ease: "circOut" }}
-                  className={`absolute h-full rounded-full ${getRoleColor(member.role)} cursor-help group-hover:h-3 group-hover:-top-[2px] transition-all duration-500`}
+                  className={`absolute h-full rounded-full ${getRoleColor(member.role)} cursor-help group-hover:h-3 transition-all duration-500`}
                 />
+                
+                {/* Dispute Trigger (Contributor Right) */}
+                {currentRole === 'contributor' && member.id === currentUserId && (
+                  <motion.button 
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1, scale: 1.1 }}
+                    animate={{ opacity: focusedId === member.id ? 0.6 : 0 }}
+                    className="absolute -right-12 text-[8px] font-mono text-red-500 uppercase tracking-widest border border-red-500/20 px-2 py-1 rounded hover:bg-red-500 hover:text-white transition-all z-10"
+                  >
+                    Dispute Record
+                  </motion.button>
+                )}
               </div>
 
               {/* Enhanced Tooltip */}
