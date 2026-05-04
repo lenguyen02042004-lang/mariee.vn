@@ -8,16 +8,16 @@ import Link from 'next/link'
 
 const HERO_SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1505673539012-ee7507e84ead?auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1565538810643-95bdb810003b?auto=format&fit=crop&q=80',
     concept: 'Heritage',
     title: 'THE MONUMENT.',
     meaning: 'Architecture & Eternity'
   },
   {
-    image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1518005020250-68594f2146e2?auto=format&fit=crop&q=80',
     concept: 'Synergy',
     title: 'THE CONNECTION.',
-    meaning: 'Multidisciplinary Resonance'
+    meaning: 'Nature & Tech Intersection'
   },
   {
     image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80',
