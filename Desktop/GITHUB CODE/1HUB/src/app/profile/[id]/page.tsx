@@ -1,151 +1,196 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { RadarExpertise } from '@/components/ui/RadarExpertise'
 import { MasterBadge } from '@/components/ui/MasterBadge'
 import { ProjectCard } from '@/components/ui/ProjectCard'
-import { ArrowLeft, Globe, Mail, Shield, Sparkles } from 'lucide-react'
+import { ArrowLeft, Globe, Mail, Shield, Sparkles, Plus, Download, Printer } from 'lucide-react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
+import { useParams, useRouter } from 'next/navigation'
 
-const MOCK_USER = {
-  name: 'Dr. Aris Thorne',
-  title: 'Principal Urban Architect',
-  level: 1,
-  reputation: 9840,
-  bio: 'Dedicated to the intersection of biophilic design and urban infrastructure. With over 20 years of experience, my mission is to build the heritage of sustainable living.',
-  expertise: [
-    { label: 'Creative Vision', value: 95 },
-    { label: 'Technical Execution', value: 88 },
-    { label: 'Leadership', value: 92 },
-    { label: 'Strategic Impact', value: 96 },
-    { label: 'Synergy', value: 90 }
-  ],
-  projects: [
-    {
-      id: 'vertical-forest',
-      title: 'The Vertical Forest: Urban Biophilia',
-      industry: 'Architecture / Sustainability',
-      coverImage: 'https://images.unsplash.com/photo-1518005020250-68594f2146e2?auto=format&fit=crop&q=80',
-      synergyScore: 98
-    },
-    {
-      id: 'decentralized-trust',
-      title: 'Decentralized Trust Protocol',
-      industry: 'Tech / Cryptography',
-      coverImage: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&q=80',
-      synergyScore: 96
+export default function ProfilePage() {
+  const params = useParams()
+  const id = params.id as string
+  const [profile, setProfile] = useState<any>(null)
+  const [projects, setProjects] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const supabase = createClient()
+
+  useEffect(() => {
+    async function fetchProfile() {
+      let targetId = id
+      let query = supabase.from('profiles').select('*')
+      
+      if (id === 'me') {
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) targetId = user.id
+        else {
+          setIsLoading(false)
+          return
+        }
+        query = query.eq('id', targetId)
+      } else {
+        // Try to match by username first, then by ID
+        const { data: byUsername } = await supabase.from('profiles').select('*').eq('username', id).single()
+        if (byUsername) {
+          setProfile(byUsername)
+          await fetchProjects(byUsername.id)
+          setIsLoading(false)
+          return
+        }
+        query = query.eq('id', id)
+      }
+
+      const { data, error } = await query.single()
+      
+      if (data) {
+        setProfile(data)
+        await fetchProjects(data.id)
+      }
+      setIsLoading(false)
     }
-  ]
-}
 
-export default function ProfilePage({ params }: { params: Promise<{ id: string }> }) {
-  const { id } = React.use(params)
+    async function fetchProjects(userId: string) {
+      const { data } = await supabase
+        .from('projects')
+        .select(`
+          *,
+          project_members!inner(profile_id)
+        `)
+        .eq('project_members.profile_id', userId)
+      
+      if (data) setProjects(data)
+    }
+
+    fetchProfile()
+  }, [id])
+
+  const handleExport = () => {
+    window.print()
+  }
+
+  if (isLoading) return <div className="min-h-screen bg-black flex items-center justify-center text-accent font-mono uppercase tracking-widest animate-pulse">Syncing Heritage...</div>
+
+  const userData = profile || {
+    full_name: 'Unknown Specialist',
+    major: 'Global Pioneer',
+    current_level: 7,
+    reputation_score: 0,
+    bio: 'Profile pending consecration.',
+  }
+
+  // derived metrics
+  const expertise = [
+    { label: 'Creative Vision', value: 70 + (userData.reputation_score % 30) },
+    { label: 'Technical Execution', value: 65 + (userData.reputation_score % 35) },
+    { label: 'Leadership', value: 60 + (userData.reputation_score % 40) },
+    { label: 'Strategic Impact', value: 75 + (userData.reputation_score % 25) },
+    { label: 'Synergy', value: 80 + (userData.reputation_score % 20) }
+  ]
+
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background print:bg-white print:text-black">
       {/* 1. IDENTITY HEADER (The Sanctuary) */}
-      <section className="relative h-[50vh] flex items-center justify-center overflow-hidden border-b border-white/5">
-        <div className="absolute inset-0 z-0">
+      <section className="relative min-h-[60vh] flex items-center justify-center py-20 border-b border-white/5 print:h-auto print:py-20 print:border-black/10">
+        <div className="absolute inset-0 z-0 print:hidden">
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_50%,#171717,transparent)] opacity-60" />
           <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] pointer-events-none" />
         </div>
 
-        <div className="relative z-10 text-center space-y-8 max-w-4xl px-6">
-          <Link href="/" className="absolute -top-20 left-1/2 -translate-x-1/2 flex items-center gap-2 text-[9px] font-mono text-zinc-600 uppercase tracking-[0.4em] hover:text-white transition-colors">
-            <ArrowLeft size={12} /> Return to Grid
-          </Link>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="flex flex-col items-center space-y-6"
-          >
-            <div className="w-32 h-32 rounded-full border border-white/10 p-1 glass-3d">
+        <div className="relative z-10 text-center space-y-10 max-w-4xl px-6">
+          <div className="flex flex-col items-center space-y-8">
+            <div className="relative z-20 w-40 h-40 rounded-full border border-white/10 p-1 glass-3d print:border-black/10 print:shadow-none">
               <div className="w-full h-full rounded-full bg-zinc-900 flex items-center justify-center overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80" alt="Avatar" className="w-full h-full object-cover opacity-80" />
+                <img src={userData.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80"} alt="Avatar" className="w-full h-full object-cover print:opacity-100" />
               </div>
             </div>
             
-            <div className="space-y-2">
-              <MasterBadge level={MOCK_USER.level} label="L1 MASTER ARCHITECT" />
-              <h1 className="editorial-title text-white">{MOCK_USER.name}</h1>
-              <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.3em]">{MOCK_USER.title}</p>
+            <div className="space-y-4">
+              <MasterBadge level={userData.current_level} className="print:border-black/20" />
+              <h1 className="editorial-title text-white print:text-black text-6xl md:text-8xl">{userData.full_name}</h1>
+              <p className="text-zinc-500 font-mono text-[10px] uppercase tracking-[0.5em] print:text-zinc-600">@{userData.username || userData.id?.substring(0,8)}</p>
             </div>
-          </motion.div>
+          </div>
 
-          <div className="flex justify-center gap-8 pt-4">
-             <div className="flex items-center gap-2 text-zinc-600 hover:text-white transition-colors cursor-pointer">
-                <Globe size={14} /> <span className="text-[9px] font-mono uppercase tracking-widest">Global Protocol</span>
-             </div>
-             <div className="flex items-center gap-2 text-zinc-600 hover:text-white transition-colors cursor-pointer">
-                <Mail size={14} /> <span className="text-[9px] font-mono uppercase tracking-widest">Secure Link</span>
+          <div className="flex justify-center gap-12 pt-8 print:hidden">
+             <button onClick={handleExport} className="flex items-center gap-3 text-accent hover:text-white transition-colors">
+                <Printer size={16} /> <span className="text-[10px] font-mono uppercase tracking-[0.2em]">Export Portfolio</span>
+             </button>
+             <div className="flex items-center gap-3 text-zinc-600 hover:text-white transition-colors cursor-pointer">
+                <Mail size={16} /> <span className="text-[10px] font-mono uppercase tracking-[0.2em]">Secure Contact</span>
              </div>
           </div>
         </div>
       </section>
 
-      {/* 2. MASTERY & LEGACY (70/30 or Split) */}
-      <section className="max-w-7xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-12 gap-24">
+      {/* 2. MASTERY & LEGACY */}
+      <section className="max-w-7xl mx-auto px-10 py-32 grid grid-cols-1 lg:grid-cols-12 gap-24 print:block print:py-10">
         
         {/* Left: Professional Legacy (Project Gallery) */}
-        <div className="lg:col-span-7 space-y-20">
-          <div className="space-y-4">
-            <h2 className="font-display text-4xl text-white">Professional Legacy</h2>
-            <p className="text-zinc-500 font-sans max-w-lg italic">
-              "Every project is a verified testament to collaborative excellence. These works define my contribution to the global heritage."
+        <div className="lg:col-span-7 space-y-24 print:space-y-12">
+          <div className="space-y-6">
+            <h2 className="font-display text-5xl text-white print:text-black italic">Verified Heritage</h2>
+            <p className="text-zinc-500 font-serif text-lg max-w-lg italic leading-relaxed print:text-zinc-700">
+              &quot;Mọi dự án là một chứng thư về sự xuất sắc trong cộng tác. Những công trình này định nghĩa sự đóng góp của tôi vào di sản toàn cầu.&quot;
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-12">
-            {MOCK_USER.projects.map(project => (
+          <div className="grid grid-cols-1 gap-16">
+            {projects.map(project => (
               <ProjectCard key={project.id} {...project} />
             ))}
+            
+            {projects.length === 0 && (
+              <div className="p-20 rounded-3xl border border-dashed border-white/5 flex flex-col items-center justify-center text-center space-y-6 print:hidden">
+                 <Shield size={40} className="text-zinc-800" />
+                 <p className="text-zinc-600 font-serif italic text-xl">Heritage entries pending verification.</p>
+              </div>
+            )}
           </div>
         </div>
 
         {/* Right: Expertise Map & Stats */}
-        <aside className="lg:col-span-5 space-y-16 lg:sticky lg:top-32 h-fit">
+        <aside className="lg:col-span-5 space-y-16 lg:sticky lg:top-32 h-fit print:static print:mt-20">
           
-          {/* Radar Chart Section */}
-          <div className="glass-card p-10 space-y-12">
+          <div className="glass-card p-12 space-y-12 print:border-black/10 print:bg-white print:shadow-none">
             <div className="space-y-2">
-              <h3 className="text-[10px] font-mono text-zinc-500 uppercase tracking-[0.4em]">Mastery Distribution</h3>
-              <p className="text-xs text-zinc-600 font-sans">Verified by 42 peers across 12 countries.</p>
+              <h3 className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em] mb-4">Mastery Distribution</h3>
+              <p className="text-xs text-zinc-500 font-sans">Verified by synergy resonance across global nodes.</p>
             </div>
             
-            <RadarExpertise data={MOCK_USER.expertise} size={320} />
+            <RadarExpertise data={expertise} size={350} />
             
-            <div className="grid grid-cols-2 gap-8 border-t border-white/5 pt-10">
-               <div className="space-y-1">
-                 <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Heritage Score</p>
-                 <p className="text-3xl font-display text-white">{MOCK_USER.reputation}</p>
+            <div className="grid grid-cols-2 gap-10 border-t border-white/5 pt-12 print:border-black/10">
+               <div className="space-y-2">
+                 <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Heritage Capital</p>
+                 <p className="text-4xl font-display text-white print:text-black italic">{userData.reputation_score.toFixed(1)} $R</p>
                </div>
-               <div className="space-y-1">
-                 <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Synergy Weight</p>
-                 <p className="text-3xl font-display text-accent">1.4x</p>
+               <div className="space-y-2 text-right">
+                 <p className="text-[9px] font-mono text-zinc-600 uppercase tracking-widest">Resonance Factor</p>
+                 <p className="text-4xl font-display text-accent">{(1 + userData.reputation_score / 1000).toFixed(2)}x</p>
                </div>
             </div>
           </div>
 
           {/* Bio / Manifesto */}
-          <div className="p-8 space-y-6 bg-surface rounded-3xl border border-white/5">
-             <Shield size={24} className="text-zinc-800" />
-             <p className="text-zinc-400 font-serif text-lg leading-relaxed italic">
-               "{MOCK_USER.bio}"
-             </p>
-             <div className="flex items-center gap-2 pt-4 opacity-30">
-                <Sparkles size={12} className="text-zinc-500" />
-                <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Verified Heritage Record</span>
+          <div className="p-10 space-y-8 bg-zinc-900/20 rounded-3xl border border-white/5 print:border-black/10 print:bg-white">
+             <div className="flex justify-between items-center">
+               <Shield size={20} className="text-accent/50" />
+               <span className="text-[9px] font-mono text-zinc-700 uppercase tracking-widest">Mastery Logic</span>
              </div>
+             <p className="text-zinc-400 font-serif text-xl leading-relaxed italic print:text-zinc-800">
+               &quot;{userData.bio || 'This specialist maintains a record-only status, prioritizing execution over self-claim.'}&quot;
+             </p>
           </div>
 
         </aside>
 
       </section>
 
-      {/* Footer */}
-      <footer className="py-24 border-t border-white/5 text-center opacity-20">
-        <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-[0.5em]">Identity Preserved in the 1Hub Sanctuary</p>
+      <footer className="py-20 border-t border-white/5 text-center print:border-black/10">
+        <p className="text-[9px] font-mono text-zinc-700 uppercase tracking-[1em] print:text-zinc-400">1HUB. THE SYNERGY NETWORK | HERITAGE ID: {userData.id?.substring(0,12).toUpperCase()}</p>
       </footer>
     </main>
   )

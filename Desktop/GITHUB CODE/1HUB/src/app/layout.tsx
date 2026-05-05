@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { Navbar } from "@/components/layout/Navbar";
+import { BackToTop } from "@/components/layout/BackToTop";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -36,7 +38,9 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full bg-[#0A0A0A] text-[#fafafa] selection:bg-[#475569]/30 selection:text-white font-sans">
+        <Navbar />
         {children}
+        <BackToTop />
       </body>
     </html>
   );

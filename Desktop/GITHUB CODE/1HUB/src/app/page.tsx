@@ -8,19 +8,19 @@ import Link from 'next/link'
 
 const HERO_SLIDES = [
   {
-    image: 'https://images.unsplash.com/photo-1565538810643-95bdb810003b?auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80',
     concept: 'Heritage',
     title: 'THE MONUMENT.',
     meaning: 'Architecture & Eternity'
   },
   {
-    image: 'https://images.unsplash.com/photo-1518005020250-68594f2146e2?auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80',
     concept: 'Synergy',
     title: 'THE CONNECTION.',
-    meaning: 'Nature & Tech Intersection'
+    meaning: 'Global Tech & Network Intersection'
   },
   {
-    image: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80',
     concept: 'Insight',
     title: 'THE MANUSCRIPT.',
     meaning: 'Digital Intellectual Assets'
@@ -177,7 +177,7 @@ export default function Home() {
           transition={{ delay: 0.2 }}
           className="text-4xl md:text-6xl font-display font-bold text-white leading-tight"
         >
-          LinkedIn is Noise. <br/>
+          Conventional Networks are Noise. <br/>
           <span className="text-zinc-600">1HUB. is Heritage.</span>
         </motion.h2>
         <motion.p 
@@ -239,6 +239,7 @@ export default function Home() {
       {/* CHAPTER 4: THE MASTERY PROTOCOL */}
       <section className="bg-zinc-900/30 border-y border-white/5 py-48">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-24">
+          {[
             { step: '01', title: 'Verified by Execution', desc: 'Case studies are locked by technical evidence and peer-audited by fellow masters.' },
             { step: '02', title: 'Identified by Reputation', desc: 'Your weight in the network is a dynamic function of verified cross-industry impact.' },
             { step: '03', title: 'Preserved as Heritage', desc: 'We bridge the gap between temporary gigs and permanent professional legacy.' }

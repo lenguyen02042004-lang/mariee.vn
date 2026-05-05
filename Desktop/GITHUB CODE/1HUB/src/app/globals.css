@@ -21,6 +21,13 @@
   /* Mastery Classes */
   --color-master-gold: #D4AF37;
   --color-expert-silver: #E2E8F0;
+
+  --animate-marquee: marquee 40s linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
 }
 
 @layer base {

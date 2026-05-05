@@ -26,6 +26,8 @@ export interface ProjectHeritage {
   status: 'completed' | 'ongoing';
   members: MemberContribution[];
   caseStudies: CaseStudy[];
+  coverImage?: string;
+  thumbnail_url?: string;
 }
 
 export const SEED_PROJECTS: Record<string, ProjectHeritage> = {

@@ -21,8 +21,13 @@ export const VoteButton: React.FC<VoteButtonProps> = ({ voterLevel, voterWeight,
   const [isHovered, setIsHovered] = useState(false)
 
   const handleVote = async () => {
-    // In a real app, this would call a Server Action
-    setHasVoted(true)
+    try {
+      const { castVote } = await import('@/services/votes')
+      await castVote(caseStudyId)
+      setHasVoted(true)
+    } catch (err: any) {
+      alert(err.message || 'Verification failed.')
+    }
   }
 
   return (

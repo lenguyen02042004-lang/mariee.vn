@@ -1,93 +1,143 @@
 import React from 'react'
-import { ArrowLeft, Quote } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Shield, Target, Zap, Users, Award, Sparkles, Scale, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 
 export default function ManifestoPage() {
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-50 font-sans selection:bg-slate-400/30">
-      <nav className="max-w-3xl mx-auto px-6 h-24 flex items-center">
-        <Link href="/" className="flex items-center gap-2 text-zinc-500 hover:text-zinc-100 transition-colors">
-          <ArrowLeft size={16} />
-          <span className="text-xs font-mono uppercase tracking-widest">Back to Hub</span>
-        </Link>
-      </nav>
+    <div className="min-h-screen bg-[#050505] text-zinc-300 font-sans selection:bg-accent/20 overflow-x-hidden">
+      {/* Background Ambience */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accent/[0.03] rounded-full blur-[140px]" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-zinc-400/[0.02] rounded-full blur-[120px]" />
+      </div>
 
-      <main className="max-w-3xl mx-auto px-6 pb-32 space-y-16">
-        <header className="space-y-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-zinc-800 bg-zinc-900/30">
-            <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-            <span className="text-[10px] font-mono text-zinc-500 uppercase tracking-widest">Founding Manifesto</span>
-          </div>
-          <h1 className="text-5xl md:text-7xl font-display font-bold tracking-tight leading-[0.9]">
-            THE 1HUB <br />
-            <span className="text-zinc-600">MANIFESTO.</span>
-          </h1>
-          <p className="text-xl text-zinc-400 font-medium italic border-l-2 border-slate-500/30 pl-6 py-2">
-            "For those who build the world, not just those who talk about it."
-          </p>
-        </header>
-
-        <section className="prose prose-invert prose-zinc max-w-none space-y-12 text-lg leading-relaxed text-zinc-300">
-          <div className="space-y-6">
-            <p className="first-letter:text-5xl first-letter:font-bold first-letter:text-white first-letter:mr-3 first-letter:float-left">
-              Chúng ta đang sống trong một kỷ nguyên mà sự chuyên nghiệp bị pha loãng bởi những tiếng ồn. Một kỷ nguyên mà những hồ sơ tự xưng tràn ngập trên LinkedIn, và những hình ảnh hào nhoáng nhưng rỗng tuếch đang đánh lừa thị giác trên mạng xã hội.
-            </p>
-            <p>
-              Giá trị thực sự của một chuyên gia đang bị đánh đồng. Công sức của bạn bị đánh cắp bởi những kẻ nhận vơ. Tri thức của bạn bị chôn vùi dưới những dòng "newsfeed" vô tận.
-            </p>
-          </div>
-
-          <div className="glass-card p-8 md:p-12 space-y-8 bg-zinc-900/20">
-            <h3 className="text-2xl font-display font-bold text-white uppercase tracking-tight">Tại 1Hub, chúng tôi tin rằng:</h3>
-            
-            <div className="grid gap-8">
-              <div className="space-y-2">
-                <h4 className="text-slate-400 font-mono text-xs uppercase tracking-widest">01. Heritage over Profiles</h4>
-                <p className="text-sm leading-relaxed text-zinc-400">
-                  Hồ sơ cá nhân chỉ là những dòng chữ. Di sản (Heritage) mới là những gì tồn tại mãi mãi. 1Hub tập trung vào việc lưu trữ quá trình thi công thực tế của bạn.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="text-slate-400 font-mono text-xs uppercase tracking-widest">02. Meritocracy over Popularity</h4>
-                <p className="text-sm leading-relaxed text-zinc-400">
-                  Uy tín không đến từ lượt follower. Nó đến từ sự xác thực chéo (Cross-verification) từ những Bậc thầy (Masters) khác trong cùng lĩnh vực.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <h4 className="text-slate-400 font-mono text-xs uppercase tracking-widest">03. Synergy over Competition</h4>
-                <p className="text-sm leading-relaxed text-zinc-400">
-                  Khi những chuyên gia xuất sắc nhất gặp nhau, họ không cạnh tranh. Họ tạo ra sự cộng hưởng (Synergy) để xây dựng những giải pháp thay đổi cuộc chơi.
-                </p>
-              </div>
+      <div className="relative z-10 max-w-5xl mx-auto px-6 py-32 md:py-48">
+        {/* Header Section */}
+        <header className="space-y-12 text-center mb-32">
+          <div className="flex justify-center">
+            <div className="w-16 h-16 rounded-full border border-accent/20 flex items-center justify-center bg-accent/5">
+              <Shield className="text-accent" size={32} />
             </div>
           </div>
+          <div className="space-y-4">
+             <h2 className="text-[10px] font-mono text-accent uppercase tracking-[0.6em]">The Sovereign Manifesto</h2>
+             <h1 className="editorial-title text-white text-5xl md:text-7xl">1HUB.</h1>
 
-          <div className="space-y-6">
-            <p>
-              1Hub ra đời để chấm dứt sự im lặng của các ngành nghề. Chúng tôi xóa bỏ ranh giới giữa Designer, Developer và Architect. Chúng ta không làm việc đơn độc; chúng ta xây dựng một hệ sinh thái.
-            </p>
-            <p className="font-bold text-white">
-              Chúng tôi không xây dựng một mạng xã hội. Chúng tôi xây dựng một Di sản.
-            </p>
+          </div>
+          <div className="w-px h-24 bg-gradient-to-b from-accent/50 to-transparent mx-auto" />
+        </header>
+
+
+        <section className="space-y-32 mb-48">
+          {/* Definition Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+             <div className="glass-card p-12 space-y-6 bg-zinc-900/10">
+                <h3 className="text-2xl font-display text-white">1. 1HUB. là gì?</h3>
+                <p className="text-zinc-500 leading-relaxed font-serif text-lg">
+                  <span className="text-white font-bold">1HUB.</span> là một <span className="text-accent italic">Hệ sinh thái Di sản Chuyên gia Đa ngành</span>. Nó không phải là một mạng xã hội để "khoe mẽ" (Vanity), mà là một "Thánh đường" (Sanctuary) để lưu trữ và xác thực giá trị thực thi của con người.
+                </p>
+             </div>
+             <div className="glass-card p-12 space-y-6 bg-accent/[0.02] border-accent/10">
+                <h3 className="text-2xl font-display text-white">2. Ứng dụng giúp gì?</h3>
+                <ul className="space-y-4">
+                   {[
+                     { t: 'Xác lập Danh tính Uy tín', d: 'Hồ sơ được bảo chứng bởi Master thay vì tự khai báo.' },
+                     { t: 'Lưu trữ Di sản Trí tuệ', d: 'Ghi lại toàn bộ Logic thực thi và Contribution Timeline.' },
+                     { t: 'Kết nối Cộng hưởng', d: 'Thuật toán kết nối dựa trên Tương thích thực thi.' },
+                     { t: 'Bảo vệ Quyền sở hữu', d: 'Công khai chiến lược, bảo vệ bí mật kỹ thuật.' }
+                   ].map((item, i) => (
+                     <li key={i} className="flex gap-4">
+                        <Sparkles size={14} className="text-accent shrink-0 mt-1" />
+                        <div>
+                           <p className="text-sm font-bold text-white uppercase tracking-wider">{item.t}</p>
+                           <p className="text-xs text-zinc-500">{item.d}</p>
+                        </div>
+                     </li>
+                   ))}
+                </ul>
+             </div>
           </div>
         </section>
 
-        <footer className="pt-20 border-t border-zinc-900 flex flex-col items-center gap-8">
-          <div className="text-center space-y-2">
-             <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-[0.4em]">Signed by</p>
-             <p className="text-xl font-display font-bold text-zinc-400">The Global Master Council</p>
-          </div>
-          <Link href="/onboarding" className="premium-button px-10 py-4">
-            Acknowledge & Join the Elite
-          </Link>
-        </footer>
-      </main>
+        {/* Comparison Table */}
+        <section className="space-y-12 mb-48">
+           <div className="text-center space-y-4">
+              <h2 className="text-3xl font-display text-white italic">The Disruptive Edge</h2>
+              <p className="text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Sự khác biệt so với phần còn lại</p>
+           </div>
 
-      {/* Decorative Quote Mark */}
-      <div className="fixed bottom-10 right-10 opacity-[0.03] pointer-events-none">
-        <Quote size={300} className="text-white" />
+           <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                 <thead>
+                    <tr className="border-b border-white/10">
+                       <th className="py-6 px-4 text-left text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Đặc điểm</th>
+                       <th className="py-6 px-4 text-left text-[10px] font-mono text-zinc-600 uppercase tracking-widest">Nền tảng hiện tại</th>
+                       <th className="py-6 px-4 text-left text-[10px] font-mono text-accent uppercase tracking-widest">1HUB.</th>
+                    </tr>
+                 </thead>
+                 <tbody className="divide-y divide-white/5">
+                    {[
+                      { l: 'Bản chất', old: 'Chợ hồ sơ (Marketplace)', new: 'Hệ sinh thái di sản (Living Heritage)' },
+                      { l: 'Xác thực', old: 'Tự khai báo, thiếu kiểm chứng', new: 'Xác thực chéo bởi Master' },
+                      { l: 'Giá trị', old: 'Hình ảnh hào nhoáng (Decoration)', new: 'Logic thực thi (Verification)' },
+                      { l: 'Cơ chế', old: 'Ưu tiên sự nổi tiếng (Popularity)', new: 'Uy tín thực chứng (Reputation Engine)' }
+                    ].map((row, i) => (
+                      <tr key={i} className="group hover:bg-white/[0.02] transition-colors">
+                         <td className="py-8 px-4 text-sm font-bold text-zinc-400">{row.l}</td>
+                         <td className="py-8 px-4 text-sm text-zinc-600 italic font-serif">{row.old}</td>
+                         <td className="py-8 px-4 text-sm text-white font-medium">{row.new}</td>
+                      </tr>
+                    ))}
+                 </tbody>
+              </table>
+           </div>
+        </section>
+
+        {/* CTO Verdict */}
+        <section className="glass-card p-16 md:p-24 border-accent/20 bg-accent/5 space-y-12 relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-64 h-64 bg-accent/10 rounded-full blur-[100px] pointer-events-none" />
+           <div className="space-y-6 text-center">
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 pt-8">
+              {[
+                { t: 'Giải quyết "nỗi đau" toàn cầu', d: 'Thế giới đang lạm phát thông tin. Nhu cầu xác thực uy tín là cực lớn.' },
+                { t: 'Cơ chế vận hành bền vững', d: 'Thuật toán uy tín $R$ và quản trị "Nhân chứng" đảm bảo tính công bằng.' },
+                { t: 'Tính đa dụng cao', d: 'Thiết kế đa ngành giúp 1Hub không bị giới hạn trong bất kỳ thị trường nào.' }
+              ].map((item, i) => (
+                <div key={i} className="space-y-4">
+                   <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
+                      <Zap size={14} className="text-accent" />
+                   </div>
+                   <h4 className="text-sm font-bold text-white uppercase tracking-wider">{item.t}</h4>
+                   <p className="text-xs text-zinc-500 leading-relaxed">{item.d}</p>
+                </div>
+              ))}
+           </div>
+
+           <div className="pt-12 text-center">
+              <p className="text-lg font-serif italic text-zinc-400">
+                &quot;Chúng ta đang xây dựng một <span className="text-white font-bold">Cỗ máy sản xuất sự tin cậy</span>. Thành công của 1Hub nằm ở <span className="text-accent font-bold">chất lượng di sản</span>.&quot;
+              </p>
+           </div>
+        </section>
+
+        {/* Final CTA */}
+        <footer className="py-40 text-center space-y-12">
+           <div className="space-y-4">
+              <h2 className="text-2xl font-display text-white italic">Bạn đã sẵn sàng bước sang trang tiếp theo?</h2>
+              <p className="text-[10px] font-mono text-zinc-700 uppercase tracking-[0.5em]">TINH CHỈNH LUỒNG SYNERGY MATCHMAKING</p>
+           </div>
+           <div className="flex justify-center gap-6">
+              <Link href="/dashboard" className="premium-button py-4 px-12 text-[10px] uppercase tracking-widest font-mono">
+                 VÀO COMMAND CENTER
+              </Link>
+              <Link href="/knowledge" className="py-4 px-12 text-[10px] border border-white/5 hover:border-accent/20 transition-all uppercase tracking-widest font-mono">
+                 KNOWLEDGE SANCTUARY
+              </Link>
+           </div>
+        </footer>
       </div>
     </div>
   )

@@ -13,6 +13,7 @@ create type project_role as enum ('founder', 'core', 'rescuer', 'contributor');
 -- Profiles
 create table profiles (
   id uuid references auth.users on delete cascade primary key,
+  username text unique,
   email text unique not null,
   full_name text,
   avatar_url text,
@@ -188,7 +189,11 @@ declare
   v_level int;
 begin
   -- Force the voter_id to be the authenticated user
-  new.voter_id := auth.uid();
+  -- Set voter_id from auth.uid() if it exists (interactive use)
+  -- Otherwise keep the provided voter_id (seeding/admin use)
+  if auth.uid() is not null then
+    new.voter_id := auth.uid();
+  end if;
   
   -- Fetch the actual level of the voter
   select current_level into v_level from profiles where id = new.voter_id;
@@ -252,6 +257,30 @@ begin
   return new;
 end;
 $$ language plpgsql security definer;
+
+-- Notifications
+create table notifications (
+  id uuid default uuid_generate_v4() primary key,
+  profile_id uuid references profiles(id) on delete cascade not null,
+  sender_id uuid references profiles(id) on delete cascade not null,
+  type text not null, -- synergy_proposal, heritage_endorsement, etc.
+  title text not null,
+  message text not null,
+  link text,
+  is_read boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table notifications enable row level security;
+
+create policy "Users can view their own notifications." on notifications
+  for select using (auth.uid() = profile_id);
+
+create policy "System/Users can insert notifications." on notifications
+  for insert with check (true);
+
+create policy "Users can update their own notifications (mark as read)." on notifications
+  for update using (auth.uid() = profile_id);
 
 create trigger tr_before_vote
 before insert on votes

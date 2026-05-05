@@ -112,14 +112,31 @@ export default function OnboardingPage() {
                       <select 
                         value={formData.major}
                         onChange={e => setFormData({...formData, major: e.target.value})}
-                        className="w-full bg-white/[0.02] border border-white/10 rounded-2xl px-8 py-5 text-lg text-white outline-none appearance-none cursor-pointer focus:border-white/20 transition-all font-serif"
+                        className="w-full bg-zinc-900 border border-white/10 rounded-2xl px-8 py-5 text-lg text-white outline-none appearance-none cursor-pointer focus:border-white/20 transition-all font-serif"
                       >
-                        <option value="Architecture" className="bg-zinc-900 text-white">Architecture & Urbanism</option>
-                        <option value="Fine Arts" className="bg-zinc-900 text-white">Fine Arts & Curation</option>
-                        <option value="ESG" className="bg-zinc-900 text-white">Sustainability & ESG Strategy</option>
-                        <option value="Finance" className="bg-zinc-900 text-white">Global Finance & Analytics</option>
-                        <option value="Software" className="bg-zinc-900 text-white">Software Engineering & AI</option>
-                        <option value="Legal" className="bg-zinc-900 text-white">Legal Strategy & IP</option>
+                        <option value="Architecture" className="bg-zinc-900">Architecture & Urbanism</option>
+                        <option value="Artificial Intelligence" className="bg-zinc-900">Artificial Intelligence & Deep Tech</option>
+                        <option value="Fintech" className="bg-zinc-900">Fintech & Global Finance</option>
+                        <option value="Fine Arts" className="bg-zinc-900">Fine Arts & Heritage</option>
+                        <option value="Sustainable Energy" className="bg-zinc-900">Sustainable Energy & ESG</option>
+                        <option value="Bioengineering" className="bg-zinc-900">Bioengineering & Healthcare</option>
+                        <option value="Strategic Management" className="bg-zinc-900">Strategic Management</option>
+                        <option value="Legal Tech" className="bg-zinc-900">Legal Tech & Governance</option>
+                        <option value="Aerospace" className="bg-zinc-900">Aerospace Engineering</option>
+                        <option value="Quantum Computing" className="bg-zinc-900">Quantum Computing</option>
+                        <option value="Digital Heritage" className="bg-zinc-900">Digital Heritage & Archiving</option>
+                        <option value="Neuroscience" className="bg-zinc-900">Neuroscience & BCI</option>
+                        <option value="Environmental Science" className="bg-zinc-900">Environmental Science</option>
+                        <option value="Creative Direction" className="bg-zinc-900">Creative Direction & Branding</option>
+                        <option value="Product Engineering" className="bg-zinc-900">Product Engineering</option>
+                        <option value="Behavioral Economics" className="bg-zinc-900">Behavioral Economics</option>
+                        <option value="Logistics" className="bg-zinc-900">Logistics & Supply Chain</option>
+                        <option value="Maritime" className="bg-zinc-900">Maritime Technology</option>
+                        <option value="Media" className="bg-zinc-900">Media & Journalism</option>
+                        <option value="Fashion" className="bg-zinc-900">Fashion & Textile Design</option>
+                        <option value="Interior Design" className="bg-zinc-900">Interior Design</option>
+                        <option value="Cybersecurity" className="bg-zinc-900">Cybersecurity</option>
+                        <option value="Blockchain" className="bg-zinc-900">Blockchain Infrastructure</option>
                       </select>
                       <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-600 group-hover:text-zinc-400 transition-colors">
                         <ArrowRight size={16} className="rotate-90" />

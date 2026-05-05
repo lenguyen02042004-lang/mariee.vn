@@ -30,7 +30,7 @@ const CHAPTERS = [
     items: [
       {
         q: '1HUB là gì và tại sao nó khác biệt?',
-        a: '1HUB không phải là một mạng xã hội nghề nghiệp như LinkedIn. Đây là "Thánh đường Di sản Trí tuệ" (Intellectual Heritage Sanctuary). Thay vì tập trung vào những thông tin tĩnh, tự khai báo, 1HUB tập trung vào các dự án đã được bảo chứng bởi đồng nghiệp, nơi mỗi đóng góp đều được ghi nhận vĩnh viễn và không thể giả mạo.'
+        a: '1HUB không phải là một nền tảng kết nối phổ thông. Đây là "Thánh đường Di sản Trí tuệ" (Intellectual Heritage Sanctuary). Thay vì tập trung vào những thông tin tĩnh, tự khai báo, 1HUB tập trung vào các dự án đã được bảo chứng bởi đồng nghiệp, nơi mỗi đóng góp đều được ghi nhận vĩnh viễn và không thể giả mạo.'
       },
       {
         q: '"Di sản Trí tuệ" (Intellectual Heritage) nghĩa là gì?',
@@ -65,8 +65,8 @@ const CHAPTERS = [
     icon: <Zap className="text-accent" size={32} />,
     items: [
       {
-        q: 'Chỉ số Reputation ($R$) là gì?',
-        a: 'Đây là tài sản lớn nhất của bạn trên 1HUB. Công thức $R = \\sum (V \\times W \\times M)$ tính toán dựa trên: V (Lượt bầu chọn), W (Trọng số cấp bậc của người bầu), và M (Hệ số tác động - ví dụ: vai trò "Rescuer" giải cứu dự án sẽ được nhân đôi điểm).'
+        q: 'Chỉ số Danh tiếng (Heritage Reputation - $R$) là gì?',
+        a: 'Công thức tính toán minh bạch:\n\n$R = ∑ (V × W × M)$\n\nTrong đó:\n• V (Verification): Số lượt bảo chứng (Endorsements) bạn nhận được từ cộng đồng.\n• W (Weight): Trọng số quyền năng. Một lời bảo chứng từ Master (L1-L3) có sức nặng gấp nhiều lần so với các cấp bậc thấp hơn.\n• M (Multiplier): Hệ số tác động thực thi.\n  - Vai trò Core: Hệ số x1.0.\n  - Vai trò Người giải cứu (Rescuer): Hệ số x2.0 (Dành cho những can thiệp chiến lược giúp dự án vượt qua khủng hoảng).'
       },
       {
         q: 'Project Pulse (Timeline) ghi nhận điều gì?',
@@ -166,14 +166,14 @@ export default function KnowledgeBasePage() {
                 <div key={i} className="glass-card group hover:border-accent/30 transition-all duration-500 overflow-hidden relative">
                   <div className="p-10 space-y-6">
                     <div className="flex gap-6">
-                      <span className="text-[10px] font-mono text-accent/40 font-bold uppercase">Q</span>
+                      <span className="text-[10px] font-mono text-accent/40 font-bold uppercase">Hỏi</span>
                       <h4 className="text-xl font-display text-zinc-200 group-hover:text-white transition-colors">
                         {item.q}
                       </h4>
                     </div>
                     <div className="flex gap-6">
-                      <span className="text-[10px] font-mono text-zinc-700 font-bold uppercase">A</span>
-                      <p className="text-zinc-500 font-sans leading-relaxed text-sm md:text-base">
+                      <span className="text-[10px] font-mono text-zinc-700 font-bold uppercase">Đáp</span>
+                      <p className="text-zinc-500 font-sans leading-relaxed text-sm md:text-base whitespace-pre-line">
                         {item.a}
                       </p>
                     </div>
@@ -196,7 +196,7 @@ export default function KnowledgeBasePage() {
               <div className="space-y-4">
                 <h3 className="text-[10px] font-mono text-accent uppercase tracking-[0.5em]">The Reputation Core</h3>
                 <h2 className="text-5xl md:text-7xl font-display font-bold text-white tracking-tighter italic">
-                  $R = \sum (V \times W \times M)$
+                  R = ∑ (V × W × M)
                 </h2>
               </div>
               <div className="max-w-2xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
@@ -250,7 +250,7 @@ export default function KnowledgeBasePage() {
         <section className="py-40 text-center space-y-12">
           <div className="space-y-4">
             <h2 className="text-4xl font-display text-white">Bạn đã sẵn sàng xây dựng Di sản?</h2>
-            <p className="text-zinc-500 font-serif italic">"Đừng chỉ tồn tại trên mạng xã hội, hãy được ghi nhận trong Thánh đường."</p>
+            <p className="text-zinc-500 font-serif italic">"Đừng chỉ tồn tại trên các nền tảng phổ thông, hãy được ghi nhận trong Thánh đường."</p>
           </div>
           <div className="flex justify-center gap-6">
             <Link href="/" className="premium-button py-4 px-10 text-[10px] uppercase tracking-widest font-mono">

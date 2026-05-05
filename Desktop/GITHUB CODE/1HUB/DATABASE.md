@@ -29,6 +29,7 @@ create table profiles (
   bio text,
   major text,
   minor text,
+  username text unique,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -111,7 +112,10 @@ create table case_studies (
   id uuid default uuid_generate_v4() primary key,
   project_id uuid references projects(id) on delete cascade not null,
   profile_id uuid references profiles(id) not null,
-  content text not null check (length(content) >= 300),
+  title text not null,
+  content text not null,
+  blocks jsonb default '[]'::jsonb,
+  industry_context text,
   is_public boolean default false,
   created_at timestamp with time zone default timezone('utc'::text, now()) not null,
   updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
@@ -159,7 +163,68 @@ create policy "Votes are viewable by everyone." on votes
   for select using (true);
 
 create policy "Authenticated users can vote." on votes
-  for insert to authenticated with check (auth.uid() = voter_id);
+  for insert to authenticated with check (
+    auth.uid() = voter_id and
+    exists (
+      select 1 from profiles
+      where id = auth.uid() and current_level <= 3
+    )
+  );
+
+---
+
+### Notifications
+```sql
+create table notifications (
+  id uuid default uuid_generate_v4() primary key,
+  profile_id uuid references profiles(id) on delete cascade not null,
+  sender_id uuid references profiles(id),
+  type text not null, -- 'synergy_proposal', 'vote', 'handshake_accepted'
+  title text not null,
+  message text,
+  link text,
+  is_read boolean default false,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table notifications enable row level security;
+
+create policy "Users can view their own notifications." on notifications
+  for select using (auth.uid() = profile_id);
+
+create policy "System/Users can insert notifications." on notifications
+  for insert with check (true);
+
+create policy "Users can update their own notifications (mark as read)." on notifications
+  for update using (auth.uid() = profile_id);
+```
+
+### Synergy Handshakes
+```sql
+create type handshake_status as enum ('pending', 'accepted', 'declined');
+
+create table synergy_handshakes (
+  id uuid default uuid_generate_v4() primary key,
+  sender_id uuid references profiles(id) not null,
+  receiver_id uuid references profiles(id) not null,
+  message text,
+  status handshake_status default 'pending',
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table synergy_handshakes enable row level security;
+
+create policy "Users can see handshakes they are involved in." on synergy_handshakes
+  for select using (auth.uid() = sender_id or auth.uid() = receiver_id);
+
+create policy "Users can initiate handshakes." on synergy_handshakes
+  for insert to authenticated with check (auth.uid() = sender_id);
+
+create policy "Receivers can respond to handshakes." on synergy_handshakes
+  for update using (auth.uid() = receiver_id);
+```
+
 ```
 
 ---

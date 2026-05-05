@@ -42,9 +42,14 @@ The ecosystem is built on three interconnected data entities:
 *   **The Structural Requirement:**
     *   **Context:** The challenge/problem statement.
     *   **Process ("The How"):** The technical/creative logic behind the solution.
+    *   **Multimedia Blocks:**
+        *   **Logic Blocks:** Flowcharts, code snippets, or mathematical models.
+        *   **Visual Proofs:** High-fidelity images with technical metadata.
     *   **Collaborative Bridge:** How cross-industry synergy was achieved.
     *   **Legacy Assets:** Shared documentation, snippets, or blueprints.
     *   **IP Privacy Layer (Partial Visibility):** Option to disclose the "Strategic Logic" (The How) publicly while restricting access to "Core Technical Assets" (The Secret) to protect proprietary intellectual property.
+    *   **Structural Gatekeeper:** Minimum 300 words required for publication to ensure depth.
+
 
 ---
 
@@ -82,6 +87,10 @@ To ensure prestige, 1Hub utilizes a **7-Level / 3-Class** hierarchy where influe
     *   **Peer-to-Peer:** Connecting equals for balanced collaboration.
     *   **Master-Apprentice:** Connecting L1/L2 with high-potential L6/L7 for mentorship.
 *   **Discovery Logic:** Prioritizes "Execution Compatibility" over popularity metrics.
+*   **Real-time Handshake:**
+    *   A formal proposal mechanism with "Strategic Intent".
+    *   Upon acceptance, a joint **Heritage Project** is automatically initialized in Draft state.
+
 
 ---
 
