@@ -77,7 +77,7 @@ function Home() {
                   <img src={resolveImg(v.cover_image)} alt={v.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 </div>
                 <div className="p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-primary">{v.category.replace("_"," ")}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-primary">{(CAT_LABEL[v.category] ?? v.category).replace("_"," ")}</p>
                   <h3 className="font-display text-2xl mt-1">{v.name}</h3>
                   <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{v.tagline}</p>
                 </div>
