@@ -12,7 +12,20 @@ export const Route = createFileRoute("/_authenticated/vendor")({
   head: () => ({ meta: [{ title: "Vendor — Mariée" }] }),
 });
 
-const cats = ["venue","photo","video","makeup","flowers","catering","planning","music","attire","other"];
+const CATS: { value: string; label: string }[] = [
+  { value: "venue", label: "Trung tâm tiệc cưới" },
+  { value: "photography", label: "Chụp ảnh cưới" },
+  { value: "videography", label: "Quay phim cưới" },
+  { value: "wedding_planner", label: "Wedding planner" },
+  { value: "makeup", label: "Trang điểm cô dâu" },
+  { value: "attire", label: "Trang phục cưới" },
+  { value: "flowers", label: "Hoa cưới" },
+  { value: "catering", label: "Ẩm thực" },
+  { value: "music", label: "Âm nhạc & live band" },
+  { value: "decor", label: "Trang trí" },
+  { value: "invitation", label: "Thiệp cưới" },
+  { value: "other", label: "Dịch vụ khác" },
+];
 
 function VendorPortal() {
   const { user, signOut } = useAuth();
@@ -98,7 +111,7 @@ function VendorPortal() {
           <Field label="Slug" value={form.slug} onChange={v=>setForm({...form,slug:v})} required />
           <label className="text-sm"><span className="text-muted-foreground">Danh mục</span>
             <select value={form.category} onChange={e=>setForm({...form,category:e.target.value})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background">
-              {cats.map(c=><option key={c} value={c}>{c}</option>)}
+              {CATS.map(c=><option key={c.value} value={c.value}>{c.label}</option>)}
             </select>
           </label>
           <Field label="Khoảng giá" value={form.price_range} onChange={v=>setForm({...form,price_range:v})} />
