@@ -24,9 +24,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsIndexRouteImport } from './routes/vendors.index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
-import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedCoupleRouteImport } from './routes/_authenticated/couple'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as AuthenticatedVendorIndexRouteImport } from './routes/_authenticated/vendor.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_authenticated/vendor.testimonials'
 import { Route as AuthenticatedVendorProductsRouteImport } from './routes/_authenticated/vendor.products'
@@ -118,11 +118,6 @@ const CouplesSlugRoute = CouplesSlugRouteImport.update({
   path: '/couples/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedVendorRoute = AuthenticatedVendorRouteImport.update({
-  id: '/vendor',
-  path: '/vendor',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedCoupleRoute = AuthenticatedCoupleRouteImport.update({
   id: '/couple',
   path: '/couple',
@@ -133,6 +128,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedVendorIndexRoute =
+  AuthenticatedVendorIndexRouteImport.update({
+    id: '/vendor/',
+    path: '/vendor/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -140,27 +141,27 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
 } as any)
 const AuthenticatedVendorTestimonialsRoute =
   AuthenticatedVendorTestimonialsRouteImport.update({
-    id: '/testimonials',
-    path: '/testimonials',
-    getParentRoute: () => AuthenticatedVendorRoute,
+    id: '/vendor/testimonials',
+    path: '/vendor/testimonials',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedVendorProductsRoute =
   AuthenticatedVendorProductsRouteImport.update({
-    id: '/products',
-    path: '/products',
-    getParentRoute: () => AuthenticatedVendorRoute,
+    id: '/vendor/products',
+    path: '/vendor/products',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedVendorLeadsRoute =
   AuthenticatedVendorLeadsRouteImport.update({
-    id: '/leads',
-    path: '/leads',
-    getParentRoute: () => AuthenticatedVendorRoute,
+    id: '/vendor/leads',
+    path: '/vendor/leads',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedVendorBillingRoute =
   AuthenticatedVendorBillingRouteImport.update({
-    id: '/billing',
-    path: '/billing',
-    getParentRoute: () => AuthenticatedVendorRoute,
+    id: '/vendor/billing',
+    path: '/vendor/billing',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAdminWishesRoute =
   AuthenticatedAdminWishesRouteImport.update({
@@ -239,7 +240,6 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/couple': typeof AuthenticatedCoupleRoute
-  '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
@@ -257,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/vendor/': typeof AuthenticatedVendorIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
 }
@@ -273,7 +274,6 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/couple': typeof AuthenticatedCoupleRoute
-  '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors': typeof VendorsIndexRoute
@@ -291,6 +291,7 @@ export interface FileRoutesByTo {
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/vendor': typeof AuthenticatedVendorIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
 }
@@ -310,7 +311,6 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/couple': typeof AuthenticatedCoupleRoute
-  '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
@@ -328,6 +328,7 @@ export interface FileRoutesById {
   '/_authenticated/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/_authenticated/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/vendor/': typeof AuthenticatedVendorIndexRoute
   '/_authenticated/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/_authenticated/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
 }
@@ -347,7 +348,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/admin'
     | '/couple'
-    | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
@@ -365,6 +365,7 @@ export interface FileRouteTypes {
     | '/vendor/products'
     | '/vendor/testimonials'
     | '/admin/'
+    | '/vendor/'
     | '/admin/couples/$id'
     | '/admin/couples/new'
   fileRoutesByTo: FileRoutesByTo
@@ -381,7 +382,6 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/couple'
-    | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors'
@@ -399,6 +399,7 @@ export interface FileRouteTypes {
     | '/vendor/products'
     | '/vendor/testimonials'
     | '/admin'
+    | '/vendor'
     | '/admin/couples/$id'
     | '/admin/couples/new'
   id:
@@ -417,7 +418,6 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/_authenticated/admin'
     | '/_authenticated/couple'
-    | '/_authenticated/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
@@ -435,6 +435,7 @@ export interface FileRouteTypes {
     | '/_authenticated/vendor/products'
     | '/_authenticated/vendor/testimonials'
     | '/_authenticated/admin/'
+    | '/_authenticated/vendor/'
     | '/_authenticated/admin/couples/$id'
     | '/_authenticated/admin/couples/new'
   fileRoutesById: FileRoutesById
@@ -564,13 +565,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CouplesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/vendor': {
-      id: '/_authenticated/vendor'
-      path: '/vendor'
-      fullPath: '/vendor'
-      preLoaderRoute: typeof AuthenticatedVendorRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/couple': {
       id: '/_authenticated/couple'
       path: '/couple'
@@ -585,6 +579,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/vendor/': {
+      id: '/_authenticated/vendor/'
+      path: '/vendor'
+      fullPath: '/vendor/'
+      preLoaderRoute: typeof AuthenticatedVendorIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -594,31 +595,31 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/vendor/testimonials': {
       id: '/_authenticated/vendor/testimonials'
-      path: '/testimonials'
+      path: '/vendor/testimonials'
       fullPath: '/vendor/testimonials'
       preLoaderRoute: typeof AuthenticatedVendorTestimonialsRouteImport
-      parentRoute: typeof AuthenticatedVendorRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/vendor/products': {
       id: '/_authenticated/vendor/products'
-      path: '/products'
+      path: '/vendor/products'
       fullPath: '/vendor/products'
       preLoaderRoute: typeof AuthenticatedVendorProductsRouteImport
-      parentRoute: typeof AuthenticatedVendorRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/vendor/leads': {
       id: '/_authenticated/vendor/leads'
-      path: '/leads'
+      path: '/vendor/leads'
       fullPath: '/vendor/leads'
       preLoaderRoute: typeof AuthenticatedVendorLeadsRouteImport
-      parentRoute: typeof AuthenticatedVendorRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/vendor/billing': {
       id: '/_authenticated/vendor/billing'
-      path: '/billing'
+      path: '/vendor/billing'
       fullPath: '/vendor/billing'
       preLoaderRoute: typeof AuthenticatedVendorBillingRouteImport
-      parentRoute: typeof AuthenticatedVendorRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin/wishes': {
       id: '/_authenticated/admin/wishes'
@@ -745,33 +746,24 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
-interface AuthenticatedVendorRouteChildren {
+interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRoute
   AuthenticatedVendorBillingRoute: typeof AuthenticatedVendorBillingRoute
   AuthenticatedVendorLeadsRoute: typeof AuthenticatedVendorLeadsRoute
   AuthenticatedVendorProductsRoute: typeof AuthenticatedVendorProductsRoute
   AuthenticatedVendorTestimonialsRoute: typeof AuthenticatedVendorTestimonialsRoute
-}
-
-const AuthenticatedVendorRouteChildren: AuthenticatedVendorRouteChildren = {
-  AuthenticatedVendorBillingRoute: AuthenticatedVendorBillingRoute,
-  AuthenticatedVendorLeadsRoute: AuthenticatedVendorLeadsRoute,
-  AuthenticatedVendorProductsRoute: AuthenticatedVendorProductsRoute,
-  AuthenticatedVendorTestimonialsRoute: AuthenticatedVendorTestimonialsRoute,
-}
-
-const AuthenticatedVendorRouteWithChildren =
-  AuthenticatedVendorRoute._addFileChildren(AuthenticatedVendorRouteChildren)
-
-interface AuthenticatedRouteChildren {
-  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRoute
-  AuthenticatedVendorRoute: typeof AuthenticatedVendorRouteWithChildren
+  AuthenticatedVendorIndexRoute: typeof AuthenticatedVendorIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedCoupleRoute: AuthenticatedCoupleRoute,
-  AuthenticatedVendorRoute: AuthenticatedVendorRouteWithChildren,
+  AuthenticatedVendorBillingRoute: AuthenticatedVendorBillingRoute,
+  AuthenticatedVendorLeadsRoute: AuthenticatedVendorLeadsRoute,
+  AuthenticatedVendorProductsRoute: AuthenticatedVendorProductsRoute,
+  AuthenticatedVendorTestimonialsRoute: AuthenticatedVendorTestimonialsRoute,
+  AuthenticatedVendorIndexRoute: AuthenticatedVendorIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
