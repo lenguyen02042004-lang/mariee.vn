@@ -54,15 +54,16 @@ function CouplePage() {
   const schedule: Array<{ time?: string; title: string; description?: string }> = Array.isArray((couple as any).schedule) ? (couple as any).schedule : [];
 
   const hasGift = couple.gift_bride_account || couple.gift_groom_account;
+  const weddingFuture = couple.wedding_date ? new Date(couple.wedding_date).getTime() > Date.now() : false;
 
   return (
     <>
       <HeroSlider images={heroImages} brideName={couple.bride_name} groomName={couple.groom_name} date={couple.wedding_date} />
 
-      {couple.wedding_date && (
+      {weddingFuture && (
         <section className="py-16 md:py-20 -mt-16 md:-mt-24 relative z-20">
           <div className="max-w-3xl mx-auto px-6">
-            <Countdown target={couple.wedding_date} />
+            <Countdown target={couple.wedding_date!} />
           </div>
         </section>
       )}
