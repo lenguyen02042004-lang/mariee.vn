@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -91,10 +91,13 @@ function VendorPortal() {
         <button onClick={signOut} className="text-sm text-primary underline">Đăng xuất</button>
       </div>
       <nav className="mt-4 flex flex-wrap gap-3 text-sm">
-        <a href="/vendor/products" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Sản phẩm/Dịch vụ</a>
-        <a href="/vendor/testimonials" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Đánh giá</a>
-        <a href="/vendor/leads" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Yêu cầu tư vấn</a>
-        <a href="/vendor/billing" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Gói thành viên</a>
+        <Link to="/vendor/products" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Sản phẩm/Dịch vụ</Link>
+        <Link to="/vendor/testimonials" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Đánh giá</Link>
+        <Link to="/vendor/leads" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Yêu cầu tư vấn</Link>
+        <Link to="/vendor/billing" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Gói thành viên</Link>
+        {data && (data as any).slug && (
+          <Link to="/vendors/$slug" params={{ slug: (data as any).slug }} target="_blank" className="px-3 py-1.5 rounded border border-primary text-primary hover:bg-primary hover:text-primary-foreground">Xem trang công khai ↗</Link>
+        )}
       </nav>
       {data && !(data as any).is_approved && <p className="mt-4 p-3 bg-secondary/60 rounded text-sm">⏳ Đang chờ admin duyệt.</p>}
       {data && (data as any).is_approved && (
