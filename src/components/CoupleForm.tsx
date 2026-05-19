@@ -149,6 +149,12 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
             <input type="checkbox" checked={!!form.is_published} onChange={e => setForm({ ...form, is_published: e.target.checked })} />
             Xuất bản công khai
           </label>
+          {mode === "admin" && (
+            <label className="text-sm sm:col-span-2">
+              <span className="text-muted-foreground">Chủ trang (user ID — dán UUID của tài khoản cặp đôi để họ tự đăng nhập sửa)</span>
+              <input value={form.owner_id ?? ""} onChange={e => setForm({ ...form, owner_id: e.target.value || null })} placeholder="UUID người dùng" className="mt-1 w-full px-3 py-2 rounded border border-input bg-background font-mono text-xs" />
+            </label>
+          )}
         </div>
       </section>
 
