@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import hero from "@/assets/hero-wedding-2.jpg";
 
 export const Route = createFileRoute("/for-couples")({
   component: ForCouples,
@@ -9,19 +10,76 @@ export const Route = createFileRoute("/for-couples")({
 });
 
 function ForCouples() {
+  const features = [
+    { t: "Hero 3 slide + Video YouTube", d: "Trình bày kỷ niệm theo phong cách điện ảnh, slide tự đổi với hiệu ứng mềm mại." },
+    { t: "RSVP tự động & sổ lưu bút", d: "Khách xác nhận tham dự và gửi lời chúc — bạn xem tất cả trong một bảng quản lý." },
+    { t: "Đếm ngược ngày cưới", d: "Countdown lung linh đến giờ G, tự ẩn khi đám cưới đã diễn ra." },
+    { t: "Hộp mừng cưới", d: "Hiển thị STK cô dâu / chú rể đẹp mắt cho khách ở xa gửi quà." },
+    { t: "Lịch trình chương trình", d: "Mỗi mốc thời gian trong ngày được trình bày như một dòng chảy điện ảnh." },
+    { t: "Thư viện ảnh không giới hạn", d: "Tải lên ảnh cưới đẹp nhất, khách chiêm ngưỡng full-screen." },
+    { t: "Liên kết riêng — chia sẻ dễ", d: "mariee.app/couples/ten-cua-ban — share Facebook, Zalo, in QR thiệp mời." },
+    { t: "SEO chuẩn & og:image", d: "Khi share lên mạng xã hội, hiện ảnh cưới và tên hai bạn." },
+  ];
+  const steps = [
+    { n: "1", t: "Tạo tài khoản miễn phí", d: "Email & mật khẩu hoặc Google trong 30 giây." },
+    { n: "2", t: "Điền thông tin & tải ảnh", d: "Đội ngũ admin Mariée sẽ giúp bạn nếu cần." },
+    { n: "3", t: "Xuất bản & chia sẻ", d: "Trang cưới của bạn sẵn sàng đón khách." },
+  ];
   return (
-    <div className="max-w-5xl mx-auto px-6 py-20">
-      <p className="font-script text-3xl text-primary text-center">for couples</p>
-      <h1 className="font-display text-5xl text-center mt-2">Trang cưới đẹp riêng cho hai bạn</h1>
-      <p className="text-center text-muted-foreground mt-4 max-w-2xl mx-auto">Khách mời truy cập, gửi lời chúc và RSVP chỉ với một liên kết.</p>
-      <div className="grid md:grid-cols-3 gap-6 mt-12">
-        {[
-          { t: "Hero 3 slide + Video", d: "Trình bày kỷ niệm của bạn theo phong cách điện ảnh." },
-          { t: "RSVP miễn phí", d: "Khách xác nhận tham dự — bạn quản lý mọi lời mời." },
-          { t: "Thư viện ảnh", d: "Tải lên không giới hạn ảnh cưới đẹp nhất." },
-        ].map(b => <div key={b.t} className="border border-border/60 rounded-lg p-6 bg-card"><h3 className="font-display text-xl">{b.t}</h3><p className="text-sm text-muted-foreground mt-2">{b.d}</p></div>)}
-      </div>
-      <div className="text-center mt-12"><Link to="/register" className="inline-block px-8 py-3 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm">Tạo trang ngay</Link></div>
-    </div>
+    <>
+      <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
+        <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
+          <p className="font-script text-3xl md:text-5xl text-blush">for couples</p>
+          <h1 className="mt-4 font-display text-5xl md:text-6xl text-balance max-w-3xl">Trang cưới đẹp riêng cho hai bạn</h1>
+          <p className="mt-4 text-white/85 max-w-2xl">Khách mời truy cập, gửi lời chúc và RSVP chỉ với một liên kết — bạn lưu giữ kỷ niệm trọn vẹn.</p>
+          <Link to="/register" className="mt-8 px-8 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm shadow-elegant">Tạo trang ngay</Link>
+        </div>
+      </section>
+
+      <section className="max-w-6xl mx-auto px-6 py-24">
+        <div className="text-center mb-16">
+          <p className="font-script text-3xl text-primary">tính năng</p>
+          <h2 className="font-display text-4xl md:text-5xl mt-2">Mọi thứ bạn cần cho ngày cưới</h2>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {features.map(f => (
+            <div key={f.t} className="border border-border/50 rounded-lg p-6 bg-card hover:shadow-soft transition">
+              <h3 className="font-display text-xl">{f.t}</h3>
+              <p className="text-sm text-muted-foreground mt-2">{f.d}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="bg-secondary/40 py-24">
+        <div className="max-w-5xl mx-auto px-6">
+          <div className="text-center mb-12">
+            <p className="font-script text-3xl text-primary">3 bước</p>
+            <h2 className="font-display text-4xl mt-2">Sẵn sàng trong chiều nay</h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            {steps.map(s => (
+              <div key={s.n} className="text-center">
+                <div className="font-display text-6xl text-primary">{s.n}</div>
+                <h3 className="font-display text-2xl mt-2">{s.t}</h3>
+                <p className="text-sm text-muted-foreground mt-2">{s.d}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-romance py-24 text-center text-white">
+        <p className="font-script text-3xl text-white">ready?</p>
+        <h2 className="font-display text-4xl md:text-5xl mt-2">Bắt đầu câu chuyện của bạn</h2>
+        <p className="mt-3 text-white/85">Miễn phí cho cặp đôi. Không cần thẻ tín dụng.</p>
+        <div className="mt-8 flex gap-3 justify-center">
+          <Link to="/register" className="px-8 py-4 bg-white text-primary rounded-md uppercase tracking-[0.2em] text-sm">Tạo trang miễn phí</Link>
+          <Link to="/couples/$slug" params={{ slug: "minh-anh-quoc-bao" }} className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm">Xem mẫu</Link>
+        </div>
+      </section>
+    </>
   );
 }
