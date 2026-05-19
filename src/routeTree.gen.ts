@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as VendorsRouteImport } from './routes/vendors'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -22,6 +21,7 @@ import { Route as ForCouplesRouteImport } from './routes/for-couples'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as VendorsIndexRouteImport } from './routes/vendors.index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
@@ -44,11 +44,6 @@ import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples.new'
 import { Route as AuthenticatedAdminCouplesIdRouteImport } from './routes/_authenticated/admin.couples.$id'
 
-const VendorsRoute = VendorsRouteImport.update({
-  id: '/vendors',
-  path: '/vendors',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -106,6 +101,11 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VendorsIndexRoute = VendorsIndexRouteImport.update({
+  id: '/vendors/',
+  path: '/vendors/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const VendorsSlugRoute = VendorsSlugRouteImport.update({
@@ -237,12 +237,12 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vendors': typeof VendorsRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
+  '/vendors/': typeof VendorsIndexRoute
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -272,11 +272,11 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vendors': typeof VendorsRouteWithChildren
   '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
+  '/vendors': typeof VendorsIndexRoute
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -308,12 +308,12 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/vendors': typeof VendorsRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/couple': typeof AuthenticatedCoupleRoute
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
+  '/vendors/': typeof VendorsIndexRoute
   '/_authenticated/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -345,12 +345,12 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
-    | '/vendors'
     | '/admin'
     | '/couple'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
+    | '/vendors/'
     | '/admin/couples'
     | '/admin/leads'
     | '/admin/payments'
@@ -380,11 +380,11 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
-    | '/vendors'
     | '/couple'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
+    | '/vendors'
     | '/admin/couples'
     | '/admin/leads'
     | '/admin/payments'
@@ -415,12 +415,12 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
-    | '/vendors'
     | '/_authenticated/admin'
     | '/_authenticated/couple'
     | '/_authenticated/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
+    | '/vendors/'
     | '/_authenticated/admin/couples'
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/payments'
@@ -452,19 +452,12 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
-  VendorsRoute: typeof VendorsRouteWithChildren
   CouplesSlugRoute: typeof CouplesSlugRoute
+  VendorsIndexRoute: typeof VendorsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/vendors': {
-      id: '/vendors'
-      path: '/vendors'
-      fullPath: '/vendors'
-      preLoaderRoute: typeof VendorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -547,6 +540,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vendors/': {
+      id: '/vendors/'
+      path: '/vendors'
+      fullPath: '/vendors/'
+      preLoaderRoute: typeof VendorsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/vendors/$slug': {
@@ -777,17 +777,6 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface VendorsRouteChildren {
-  VendorsSlugRoute: typeof VendorsSlugRoute
-}
-
-const VendorsRouteChildren: VendorsRouteChildren = {
-  VendorsSlugRoute: VendorsSlugRoute,
-}
-
-const VendorsRouteWithChildren =
-  VendorsRoute._addFileChildren(VendorsRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
@@ -801,8 +790,8 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
-  VendorsRoute: VendorsRouteWithChildren,
   CouplesSlugRoute: CouplesSlugRoute,
+  VendorsIndexRoute: VendorsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
