@@ -6,6 +6,8 @@ const nav = [
   { to: "/admin/couples", label: "Cặp đôi" },
   { to: "/admin/vendors", label: "Nhà cung cấp" },
   { to: "/admin/rsvp", label: "RSVP" },
+  { to: "/admin/wishes", label: "Lời chúc" },
+  { to: "/admin/leads", label: "Yêu cầu vendor" },
   { to: "/admin/plans", label: "Gói thành viên" },
   { to: "/admin/payments", label: "Thanh toán" },
   { to: "/admin/users", label: "Người dùng" },
