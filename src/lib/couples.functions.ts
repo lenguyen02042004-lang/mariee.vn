@@ -17,9 +17,13 @@ export const getCoupleBySlug = createServerFn({ method: "GET" })
       .from("couples").select("*").eq("slug", data.slug).eq("is_published", true).maybeSingle();
     if (error) throw new Error(error.message);
     if (!couple) return null;
-    const { data: gallery } = await supabaseAdmin
-      .from("couple_gallery").select("*").eq("couple_id", couple.id).order("sort_order");
-    return { couple, gallery: gallery ?? [] };
+    const [{ data: gallery }, { data: wishes }] = await Promise.all([
+      supabaseAdmin.from("couple_gallery").select("*").eq("couple_id", couple.id).order("sort_order"),
+      supabaseAdmin.from("couple_wishes").select("id,guest_name,message,created_at")
+        .eq("couple_id", couple.id).eq("is_approved", true)
+        .order("created_at", { ascending: false }).limit(50),
+    ]);
+    return { couple, gallery: gallery ?? [], wishes: wishes ?? [] };
   });
 
 export const submitRsvp = createServerFn({ method: "POST" })
@@ -43,6 +47,20 @@ export const submitRsvp = createServerFn({ method: "POST" })
       num_guests: data.num_guests,
       message: data.message || null,
       side: data.side ?? null,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const submitWish = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({
+    couple_id: z.string().uuid(),
+    guest_name: z.string().trim().min(1).max(120),
+    message: z.string().trim().min(1).max(500),
+  }).parse(d))
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin.from("couple_wishes").insert({
+      couple_id: data.couple_id, guest_name: data.guest_name, message: data.message,
     });
     if (error) throw new Error(error.message);
     return { ok: true };

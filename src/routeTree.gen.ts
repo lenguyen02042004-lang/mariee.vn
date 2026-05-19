@@ -25,6 +25,9 @@ import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_authenticated/vendor.testimonials'
+import { Route as AuthenticatedVendorProductsRouteImport } from './routes/_authenticated/vendor.products'
+import { Route as AuthenticatedVendorLeadsRouteImport } from './routes/_authenticated/vendor.leads'
 import { Route as AuthenticatedVendorBillingRouteImport } from './routes/_authenticated/vendor.billing'
 import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin.vendors'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
@@ -115,6 +118,24 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedVendorTestimonialsRoute =
+  AuthenticatedVendorTestimonialsRouteImport.update({
+    id: '/testimonials',
+    path: '/testimonials',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
+const AuthenticatedVendorProductsRoute =
+  AuthenticatedVendorProductsRouteImport.update({
+    id: '/products',
+    path: '/products',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
+const AuthenticatedVendorLeadsRoute =
+  AuthenticatedVendorLeadsRouteImport.update({
+    id: '/leads',
+    path: '/leads',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
 const AuthenticatedVendorBillingRoute =
   AuthenticatedVendorBillingRouteImport.update({
     id: '/billing',
@@ -196,6 +217,9 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
+  '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
+  '/vendor/products': typeof AuthenticatedVendorProductsRoute
+  '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
@@ -222,6 +246,9 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
+  '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
+  '/vendor/products': typeof AuthenticatedVendorProductsRoute
+  '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
@@ -251,6 +278,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/_authenticated/vendor/billing': typeof AuthenticatedVendorBillingRoute
+  '/_authenticated/vendor/leads': typeof AuthenticatedVendorLeadsRoute
+  '/_authenticated/vendor/products': typeof AuthenticatedVendorProductsRoute
+  '/_authenticated/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/_authenticated/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
@@ -280,6 +310,9 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/vendors'
     | '/vendor/billing'
+    | '/vendor/leads'
+    | '/vendor/products'
+    | '/vendor/testimonials'
     | '/admin/'
     | '/admin/couples/$id'
     | '/admin/couples/new'
@@ -306,6 +339,9 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/vendors'
     | '/vendor/billing'
+    | '/vendor/leads'
+    | '/vendor/products'
+    | '/vendor/testimonials'
     | '/admin'
     | '/admin/couples/$id'
     | '/admin/couples/new'
@@ -334,6 +370,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/vendors'
     | '/_authenticated/vendor/billing'
+    | '/_authenticated/vendor/leads'
+    | '/_authenticated/vendor/products'
+    | '/_authenticated/vendor/testimonials'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/couples/$id'
     | '/_authenticated/admin/couples/new'
@@ -468,6 +507,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/vendor/testimonials': {
+      id: '/_authenticated/vendor/testimonials'
+      path: '/testimonials'
+      fullPath: '/vendor/testimonials'
+      preLoaderRoute: typeof AuthenticatedVendorTestimonialsRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
+    '/_authenticated/vendor/products': {
+      id: '/_authenticated/vendor/products'
+      path: '/products'
+      fullPath: '/vendor/products'
+      preLoaderRoute: typeof AuthenticatedVendorProductsRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
+    '/_authenticated/vendor/leads': {
+      id: '/_authenticated/vendor/leads'
+      path: '/leads'
+      fullPath: '/vendor/leads'
+      preLoaderRoute: typeof AuthenticatedVendorLeadsRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
     '/_authenticated/vendor/billing': {
       id: '/_authenticated/vendor/billing'
       path: '/billing'
@@ -584,10 +644,16 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedVendorRouteChildren {
   AuthenticatedVendorBillingRoute: typeof AuthenticatedVendorBillingRoute
+  AuthenticatedVendorLeadsRoute: typeof AuthenticatedVendorLeadsRoute
+  AuthenticatedVendorProductsRoute: typeof AuthenticatedVendorProductsRoute
+  AuthenticatedVendorTestimonialsRoute: typeof AuthenticatedVendorTestimonialsRoute
 }
 
 const AuthenticatedVendorRouteChildren: AuthenticatedVendorRouteChildren = {
   AuthenticatedVendorBillingRoute: AuthenticatedVendorBillingRoute,
+  AuthenticatedVendorLeadsRoute: AuthenticatedVendorLeadsRoute,
+  AuthenticatedVendorProductsRoute: AuthenticatedVendorProductsRoute,
+  AuthenticatedVendorTestimonialsRoute: AuthenticatedVendorTestimonialsRoute,
 }
 
 const AuthenticatedVendorRouteWithChildren =

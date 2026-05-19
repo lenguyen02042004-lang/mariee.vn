@@ -49,11 +49,45 @@ export type Database = {
           },
         ]
       }
+      couple_wishes: {
+        Row: {
+          couple_id: string
+          created_at: string
+          guest_name: string
+          id: string
+          is_approved: boolean
+          message: string
+        }
+        Insert: {
+          couple_id: string
+          created_at?: string
+          guest_name: string
+          id?: string
+          is_approved?: boolean
+          message: string
+        }
+        Update: {
+          couple_id?: string
+          created_at?: string
+          guest_name?: string
+          id?: string
+          is_approved?: boolean
+          message?: string
+        }
+        Relationships: []
+      }
       couples: {
         Row: {
           bride_name: string
+          ceremony_time: string | null
           cover_image: string | null
           created_at: string
+          gift_bride_account: string | null
+          gift_bride_bank: string | null
+          gift_bride_holder: string | null
+          gift_groom_account: string | null
+          gift_groom_bank: string | null
+          gift_groom_holder: string | null
           groom_name: string
           hero_image_1: string | null
           hero_image_2: string | null
@@ -61,6 +95,8 @@ export type Database = {
           id: string
           is_published: boolean
           quote: string | null
+          reception_time: string | null
+          schedule: Json
           slug: string
           story: string | null
           updated_at: string
@@ -71,8 +107,15 @@ export type Database = {
         }
         Insert: {
           bride_name: string
+          ceremony_time?: string | null
           cover_image?: string | null
           created_at?: string
+          gift_bride_account?: string | null
+          gift_bride_bank?: string | null
+          gift_bride_holder?: string | null
+          gift_groom_account?: string | null
+          gift_groom_bank?: string | null
+          gift_groom_holder?: string | null
           groom_name: string
           hero_image_1?: string | null
           hero_image_2?: string | null
@@ -80,6 +123,8 @@ export type Database = {
           id?: string
           is_published?: boolean
           quote?: string | null
+          reception_time?: string | null
+          schedule?: Json
           slug: string
           story?: string | null
           updated_at?: string
@@ -90,8 +135,15 @@ export type Database = {
         }
         Update: {
           bride_name?: string
+          ceremony_time?: string | null
           cover_image?: string | null
           created_at?: string
+          gift_bride_account?: string | null
+          gift_bride_bank?: string | null
+          gift_bride_holder?: string | null
+          gift_groom_account?: string | null
+          gift_groom_bank?: string | null
+          gift_groom_holder?: string | null
           groom_name?: string
           hero_image_1?: string | null
           hero_image_2?: string | null
@@ -99,6 +151,8 @@ export type Database = {
           id?: string
           is_published?: boolean
           quote?: string | null
+          reception_time?: string | null
+          schedule?: Json
           slug?: string
           story?: string | null
           updated_at?: string
@@ -225,6 +279,42 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_leads: {
+        Row: {
+          created_at: string
+          event_date: string | null
+          guest_email: string | null
+          guest_name: string
+          guest_phone: string | null
+          id: string
+          message: string | null
+          status: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_date?: string | null
+          guest_email?: string | null
+          guest_name: string
+          guest_phone?: string | null
+          id?: string
+          message?: string | null
+          status?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          event_date?: string | null
+          guest_email?: string | null
+          guest_name?: string
+          guest_phone?: string | null
+          id?: string
+          message?: string | null
+          status?: string
+          vendor_id?: string
+        }
+        Relationships: []
+      }
       vendor_payments: {
         Row: {
           admin_note: string | null
@@ -327,6 +417,42 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_products: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean
+          price_text: string | null
+          sort_order: number
+          title: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price_text?: string | null
+          sort_order?: number
+          title: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean
+          price_text?: string | null
+          sort_order?: number
+          title?: string
+          vendor_id?: string
+        }
+        Relationships: []
+      }
       vendor_subscriptions: {
         Row: {
           created_at: string
@@ -374,6 +500,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      vendor_testimonials: {
+        Row: {
+          author_name: string
+          created_at: string
+          id: string
+          is_approved: boolean
+          message: string
+          rating: number | null
+          vendor_id: string
+        }
+        Insert: {
+          author_name: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          message: string
+          rating?: number | null
+          vendor_id: string
+        }
+        Update: {
+          author_name?: string
+          created_at?: string
+          id?: string
+          is_approved?: boolean
+          message?: string
+          rating?: number | null
+          vendor_id?: string
+        }
+        Relationships: []
       }
       vendors: {
         Row: {

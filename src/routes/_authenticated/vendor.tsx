@@ -77,6 +77,12 @@ function VendorPortal() {
         </div>
         <button onClick={signOut} className="text-sm text-primary underline">Đăng xuất</button>
       </div>
+      <nav className="mt-4 flex flex-wrap gap-3 text-sm">
+        <a href="/vendor/products" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Sản phẩm/Dịch vụ</a>
+        <a href="/vendor/testimonials" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Đánh giá</a>
+        <a href="/vendor/leads" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Yêu cầu tư vấn</a>
+        <a href="/vendor/billing" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Gói thành viên</a>
+      </nav>
       {data && !(data as any).is_approved && <p className="mt-4 p-3 bg-secondary/60 rounded text-sm">⏳ Đang chờ admin duyệt.</p>}
       {data && (data as any).is_approved && (
         <p className="mt-4 p-3 bg-secondary/60 rounded text-sm">

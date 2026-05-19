@@ -10,6 +10,8 @@ import { toast } from "sonner";
 const fields: { k: string; label: string; type?: string; full?: boolean }[] = [
   { k:"bride_name", label:"Tên cô dâu" }, { k:"groom_name", label:"Tên chú rể" },
   { k:"slug", label:"Slug" }, { k:"wedding_date", label:"Ngày cưới", type:"date" },
+  { k:"ceremony_time", label:"Giờ lễ thành hôn" },
+  { k:"reception_time", label:"Giờ tiệc chiêu đãi" },
   { k:"venue_name", label:"Tên địa điểm", full:true }, { k:"venue_address", label:"Địa chỉ", full:true },
   { k:"quote", label:"Câu trích dẫn", full:true },
   { k:"youtube_url", label:"Link YouTube", full:true },
@@ -27,7 +29,7 @@ export function CoupleForm({ initial, gallery = [] }: { initial: any; gallery?: 
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuth();
-  const [form, setForm] = useState<any>({ is_published: true, ...initial });
+  const [form, setForm] = useState<any>({ is_published: true, ...initial, schedule: Array.isArray(initial?.schedule) ? initial.schedule : [] });
   const [uploading, setUploading] = useState<string | null>(null);
   const upsert = useServerFn(adminUpsertCouple);
   const addG = useServerFn(adminAddGallery);
@@ -111,6 +113,39 @@ export function CoupleForm({ initial, gallery = [] }: { initial: any; gallery?: 
           </div>
         </div>
       )}
+
+      <div>
+        <h3 className="font-display text-xl mb-3">Thông tin chuyển khoản mừng cưới</h3>
+        <div className="grid sm:grid-cols-2 gap-6">
+          <div className="space-y-2 bg-secondary/40 p-4 rounded">
+            <p className="font-script text-2xl text-primary">Cô dâu</p>
+            <input value={form.gift_bride_holder ?? ""} onChange={e=>setForm({...form,gift_bride_holder:e.target.value})} placeholder="Chủ tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <input value={form.gift_bride_bank ?? ""} onChange={e=>setForm({...form,gift_bride_bank:e.target.value})} placeholder="Ngân hàng" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <input value={form.gift_bride_account ?? ""} onChange={e=>setForm({...form,gift_bride_account:e.target.value})} placeholder="Số tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+          </div>
+          <div className="space-y-2 bg-secondary/40 p-4 rounded">
+            <p className="font-script text-2xl text-primary">Chú rể</p>
+            <input value={form.gift_groom_holder ?? ""} onChange={e=>setForm({...form,gift_groom_holder:e.target.value})} placeholder="Chủ tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <input value={form.gift_groom_bank ?? ""} onChange={e=>setForm({...form,gift_groom_bank:e.target.value})} placeholder="Ngân hàng" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <input value={form.gift_groom_account ?? ""} onChange={e=>setForm({...form,gift_groom_account:e.target.value})} placeholder="Số tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h3 className="font-display text-xl mb-3">Chương trình lễ cưới</h3>
+        <div className="space-y-2">
+          {(form.schedule ?? []).map((s:any, i:number) => (
+            <div key={i} className="grid grid-cols-12 gap-2 items-center">
+              <input value={s.time ?? ""} onChange={e=>{ const n=[...form.schedule]; n[i]={...n[i],time:e.target.value}; setForm({...form,schedule:n}); }} placeholder="Giờ" className="col-span-2 px-3 py-2 rounded border border-input bg-background text-sm" />
+              <input value={s.title ?? ""} onChange={e=>{ const n=[...form.schedule]; n[i]={...n[i],title:e.target.value}; setForm({...form,schedule:n}); }} placeholder="Tiêu đề *" className="col-span-4 px-3 py-2 rounded border border-input bg-background text-sm" />
+              <input value={s.description ?? ""} onChange={e=>{ const n=[...form.schedule]; n[i]={...n[i],description:e.target.value}; setForm({...form,schedule:n}); }} placeholder="Mô tả" className="col-span-5 px-3 py-2 rounded border border-input bg-background text-sm" />
+              <button type="button" onClick={()=>setForm({...form, schedule: form.schedule.filter((_:any,j:number)=>j!==i)})} className="col-span-1 text-destructive text-sm">×</button>
+            </div>
+          ))}
+          <button type="button" onClick={()=>setForm({...form, schedule:[...(form.schedule??[]),{ time:"",title:"",description:"" }]})} className="text-sm text-primary underline">+ Thêm mục</button>
+        </div>
+      </div>
 
       <button disabled={save.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">{save.isPending?"Đang lưu…":"Lưu"}</button>
     </form>
