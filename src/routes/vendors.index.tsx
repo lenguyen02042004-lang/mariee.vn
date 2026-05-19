@@ -4,9 +4,17 @@ import { listVendors } from "@/lib/vendors.functions";
 import { resolveImg } from "@/lib/image-map";
 
 const CAT_LABEL: Record<string, string> = {
-  venue: "Trung tâm tiệc cưới", photo: "Chụp ảnh cưới", video: "Quay phim cưới",
-  planning: "Wedding planner", makeup: "Trang điểm cô dâu", attire: "Trang phục cưới",
-  flowers: "Hoa cưới", catering: "Ẩm thực", music: "Âm nhạc & live band",
+  venue: "Trung tâm tiệc cưới",
+  photography: "Chụp ảnh cưới",
+  videography: "Quay phim cưới",
+  wedding_planner: "Wedding planner",
+  makeup: "Trang điểm cô dâu",
+  attire: "Trang phục cưới",
+  flowers: "Hoa cưới",
+  catering: "Ẩm thực",
+  music: "Âm nhạc & live band",
+  decor: "Trang trí",
+  invitation: "Thiệp cưới",
   other: "Dịch vụ khác",
 };
 
