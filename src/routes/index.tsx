@@ -4,6 +4,13 @@ import { listVendors } from "@/lib/vendors.functions";
 import { resolveImg } from "@/lib/image-map";
 import hero from "@/assets/hero-wedding-1.jpg";
 
+const CAT_LABEL: Record<string, string> = {
+  venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
+  wedding_planner: "Wedding planner", makeup: "Trang điểm cô dâu", attire: "Trang phục cưới",
+  flowers: "Hoa cưới", catering: "Ẩm thực", music: "Âm nhạc & live band",
+  decor: "Trang trí", invitation: "Thiệp cưới", other: "Dịch vụ khác",
+};
+
 export const Route = createFileRoute("/")({
   loader: async () => ({
     couples: await listCouples(),
