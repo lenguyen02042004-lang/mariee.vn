@@ -109,9 +109,9 @@ const VendorsIndexRoute = VendorsIndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const VendorsSlugRoute = VendorsSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => VendorsRoute,
+  id: '/vendors/$slug',
+  path: '/vendors/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CouplesSlugRoute = CouplesSlugRouteImport.update({
   id: '/couples/$slug',
@@ -453,6 +453,7 @@ export interface RootRouteChildren {
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   CouplesSlugRoute: typeof CouplesSlugRoute
+  VendorsSlugRoute: typeof VendorsSlugRoute
   VendorsIndexRoute: typeof VendorsIndexRoute
 }
 
@@ -551,10 +552,10 @@ declare module '@tanstack/react-router' {
     }
     '/vendors/$slug': {
       id: '/vendors/$slug'
-      path: '/$slug'
+      path: '/vendors/$slug'
       fullPath: '/vendors/$slug'
       preLoaderRoute: typeof VendorsSlugRouteImport
-      parentRoute: typeof VendorsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/couples/$slug': {
       id: '/couples/$slug'
@@ -791,18 +792,9 @@ const rootRouteChildren: RootRouteChildren = {
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   CouplesSlugRoute: CouplesSlugRoute,
+  VendorsSlugRoute: VendorsSlugRoute,
   VendorsIndexRoute: VendorsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
