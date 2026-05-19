@@ -25,6 +25,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
+import { Route as AuthenticatedCoupleRouteImport } from './routes/_authenticated/couple'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_authenticated/vendor.testimonials'
@@ -120,6 +121,11 @@ const CouplesSlugRoute = CouplesSlugRouteImport.update({
 const AuthenticatedVendorRoute = AuthenticatedVendorRouteImport.update({
   id: '/vendor',
   path: '/vendor',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCoupleRoute = AuthenticatedCoupleRouteImport.update({
+  id: '/couple',
+  path: '/couple',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -233,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vendors': typeof VendorsRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -266,6 +273,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vendors': typeof VendorsRouteWithChildren
+  '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -302,6 +310,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vendors': typeof VendorsRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/couple': typeof AuthenticatedCoupleRoute
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -338,6 +347,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/vendors'
     | '/admin'
+    | '/couple'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
@@ -371,6 +381,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/vendors'
+    | '/couple'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
@@ -406,6 +417,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/vendors'
     | '/_authenticated/admin'
+    | '/_authenticated/couple'
     | '/_authenticated/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
@@ -556,6 +568,13 @@ declare module '@tanstack/react-router' {
       path: '/vendor'
       fullPath: '/vendor'
       preLoaderRoute: typeof AuthenticatedVendorRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/couple': {
+      id: '/_authenticated/couple'
+      path: '/couple'
+      fullPath: '/couple'
+      preLoaderRoute: typeof AuthenticatedCoupleRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin': {
@@ -744,11 +763,13 @@ const AuthenticatedVendorRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRoute
   AuthenticatedVendorRoute: typeof AuthenticatedVendorRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedCoupleRoute: AuthenticatedCoupleRoute,
   AuthenticatedVendorRoute: AuthenticatedVendorRouteWithChildren,
 }
 
@@ -786,3 +807,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
