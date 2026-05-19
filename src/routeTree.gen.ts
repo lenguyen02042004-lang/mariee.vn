@@ -10,8 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VendorsRouteImport } from './routes/vendors'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as ForVendorsRouteImport } from './routes/for-vendors'
+import { Route as ForCouplesRouteImport } from './routes/for-couples'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
@@ -19,8 +25,13 @@ import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as AuthenticatedVendorBillingRouteImport } from './routes/_authenticated/vendor.billing'
 import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin.vendors'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated/admin.settings'
 import { Route as AuthenticatedAdminRsvpRouteImport } from './routes/_authenticated/admin.rsvp'
+import { Route as AuthenticatedAdminPlansRouteImport } from './routes/_authenticated/admin.plans'
+import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authenticated/admin.couples'
 import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples.new'
 import { Route as AuthenticatedAdminCouplesIdRouteImport } from './routes/_authenticated/admin.couples.$id'
@@ -30,14 +41,44 @@ const VendorsRoute = VendorsRouteImport.update({
   path: '/vendors',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForVendorsRoute = ForVendorsRouteImport.update({
+  id: '/for-vendors',
+  path: '/for-vendors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForCouplesRoute = ForCouplesRouteImport.update({
+  id: '/for-couples',
+  path: '/for-couples',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
@@ -74,10 +115,27 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedVendorBillingRoute =
+  AuthenticatedVendorBillingRouteImport.update({
+    id: '/billing',
+    path: '/billing',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
 const AuthenticatedAdminVendorsRoute =
   AuthenticatedAdminVendorsRouteImport.update({
     id: '/vendors',
     path: '/vendors',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminRsvpRoute = AuthenticatedAdminRsvpRouteImport.update({
@@ -85,6 +143,17 @@ const AuthenticatedAdminRsvpRoute = AuthenticatedAdminRsvpRouteImport.update({
   path: '/rsvp',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedAdminPlansRoute = AuthenticatedAdminPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminPaymentsRoute =
+  AuthenticatedAdminPaymentsRouteImport.update({
+    id: '/payments',
+    path: '/payments',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCouplesRoute =
   AuthenticatedAdminCouplesRouteImport.update({
     id: '/couples',
@@ -106,31 +175,53 @@ const AuthenticatedAdminCouplesIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/for-couples': typeof ForCouplesRoute
+  '/for-vendors': typeof ForVendorsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/vendors': typeof VendorsRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/vendor': typeof AuthenticatedVendorRoute
+  '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
+  '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/plans': typeof AuthenticatedAdminPlansRoute
   '/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
+  '/for-couples': typeof ForCouplesRoute
+  '/for-vendors': typeof ForVendorsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/vendors': typeof VendorsRouteWithChildren
-  '/vendor': typeof AuthenticatedVendorRoute
+  '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
+  '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/admin/plans': typeof AuthenticatedAdminPlansRoute
   '/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
@@ -139,16 +230,27 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/about': typeof AboutRoute
+  '/for-couples': typeof ForCouplesRoute
+  '/for-vendors': typeof ForVendorsRoute
+  '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
+  '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/vendors': typeof VendorsRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/vendor': typeof AuthenticatedVendorRoute
+  '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/_authenticated/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
+  '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
+  '/_authenticated/admin/plans': typeof AuthenticatedAdminPlansRoute
   '/_authenticated/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/_authenticated/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/_authenticated/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
@@ -157,31 +259,53 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
+    | '/for-couples'
+    | '/for-vendors'
+    | '/forgot-password'
     | '/login'
+    | '/pricing'
     | '/register'
+    | '/reset-password'
     | '/vendors'
     | '/admin'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/admin/couples'
+    | '/admin/payments'
+    | '/admin/plans'
     | '/admin/rsvp'
+    | '/admin/settings'
+    | '/admin/users'
     | '/admin/vendors'
+    | '/vendor/billing'
     | '/admin/'
     | '/admin/couples/$id'
     | '/admin/couples/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
+    | '/for-couples'
+    | '/for-vendors'
+    | '/forgot-password'
     | '/login'
+    | '/pricing'
     | '/register'
+    | '/reset-password'
     | '/vendors'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/admin/couples'
+    | '/admin/payments'
+    | '/admin/plans'
     | '/admin/rsvp'
+    | '/admin/settings'
+    | '/admin/users'
     | '/admin/vendors'
+    | '/vendor/billing'
     | '/admin'
     | '/admin/couples/$id'
     | '/admin/couples/new'
@@ -189,16 +313,27 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
+    | '/for-couples'
+    | '/for-vendors'
+    | '/forgot-password'
     | '/login'
+    | '/pricing'
     | '/register'
+    | '/reset-password'
     | '/vendors'
     | '/_authenticated/admin'
     | '/_authenticated/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/_authenticated/admin/couples'
+    | '/_authenticated/admin/payments'
+    | '/_authenticated/admin/plans'
     | '/_authenticated/admin/rsvp'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/users'
     | '/_authenticated/admin/vendors'
+    | '/_authenticated/vendor/billing'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/couples/$id'
     | '/_authenticated/admin/couples/new'
@@ -207,8 +342,14 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  ForCouplesRoute: typeof ForCouplesRoute
+  ForVendorsRoute: typeof ForVendorsRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
+  PricingRoute: typeof PricingRoute
   RegisterRoute: typeof RegisterRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   VendorsRoute: typeof VendorsRouteWithChildren
   CouplesSlugRoute: typeof CouplesSlugRoute
 }
@@ -222,6 +363,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -229,11 +377,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-vendors': {
+      id: '/for-vendors'
+      path: '/for-vendors'
+      fullPath: '/for-vendors'
+      preLoaderRoute: typeof ForVendorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/for-couples': {
+      id: '/for-couples'
+      path: '/for-couples'
+      fullPath: '/for-couples'
+      preLoaderRoute: typeof ForCouplesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -285,6 +468,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/vendor/billing': {
+      id: '/_authenticated/vendor/billing'
+      path: '/billing'
+      fullPath: '/vendor/billing'
+      preLoaderRoute: typeof AuthenticatedVendorBillingRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
     '/_authenticated/admin/vendors': {
       id: '/_authenticated/admin/vendors'
       path: '/vendors'
@@ -292,11 +482,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVendorsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/rsvp': {
       id: '/_authenticated/admin/rsvp'
       path: '/rsvp'
       fullPath: '/admin/rsvp'
       preLoaderRoute: typeof AuthenticatedAdminRsvpRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/plans': {
+      id: '/_authenticated/admin/plans'
+      path: '/plans'
+      fullPath: '/admin/plans'
+      preLoaderRoute: typeof AuthenticatedAdminPlansRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/payments': {
+      id: '/_authenticated/admin/payments'
+      path: '/payments'
+      fullPath: '/admin/payments'
+      preLoaderRoute: typeof AuthenticatedAdminPaymentsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/couples': {
@@ -341,14 +559,22 @@ const AuthenticatedAdminCouplesRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCouplesRoute: typeof AuthenticatedAdminCouplesRouteWithChildren
+  AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
+  AuthenticatedAdminPlansRoute: typeof AuthenticatedAdminPlansRoute
   AuthenticatedAdminRsvpRoute: typeof AuthenticatedAdminRsvpRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCouplesRoute: AuthenticatedAdminCouplesRouteWithChildren,
+  AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
+  AuthenticatedAdminPlansRoute: AuthenticatedAdminPlansRoute,
   AuthenticatedAdminRsvpRoute: AuthenticatedAdminRsvpRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -356,14 +582,25 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedVendorRouteChildren {
+  AuthenticatedVendorBillingRoute: typeof AuthenticatedVendorBillingRoute
+}
+
+const AuthenticatedVendorRouteChildren: AuthenticatedVendorRouteChildren = {
+  AuthenticatedVendorBillingRoute: AuthenticatedVendorBillingRoute,
+}
+
+const AuthenticatedVendorRouteWithChildren =
+  AuthenticatedVendorRoute._addFileChildren(AuthenticatedVendorRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedVendorRoute: typeof AuthenticatedVendorRoute
+  AuthenticatedVendorRoute: typeof AuthenticatedVendorRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedVendorRoute: AuthenticatedVendorRoute,
+  AuthenticatedVendorRoute: AuthenticatedVendorRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -384,8 +621,14 @@ const VendorsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  AboutRoute: AboutRoute,
+  ForCouplesRoute: ForCouplesRoute,
+  ForVendorsRoute: ForVendorsRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
+  PricingRoute: PricingRoute,
   RegisterRoute: RegisterRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   VendorsRoute: VendorsRouteWithChildren,
   CouplesSlugRoute: CouplesSlugRoute,
 }
