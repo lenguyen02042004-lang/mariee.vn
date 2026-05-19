@@ -32,8 +32,9 @@ function Home() {
             Mariée tạo trang landing page cưới sang trọng, đẳng cấp dành riêng cho mỗi cặp đôi — và kết nối bạn với những nhà cung cấp dịch vụ tinh tế nhất.
           </p>
           <div className="mt-10 flex flex-wrap gap-4 justify-center">
-            <a href="#couples" className="px-8 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm shadow-elegant hover:bg-rose-deep transition">Khám phá cặp đôi</a>
+            <Link to="/register" className="px-8 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm shadow-elegant hover:bg-rose-deep transition">Tạo trang cưới của bạn</Link>
             <Link to="/vendors" className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm hover:bg-white/10 transition">Xem nhà cung cấp</Link>
+            <Link to="/pricing" className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm hover:bg-white/10 transition">Bảng giá vendor</Link>
           </div>
         </div>
       </section>
