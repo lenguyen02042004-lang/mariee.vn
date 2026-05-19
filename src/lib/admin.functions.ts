@@ -168,6 +168,30 @@ export const adminDeleteVendor = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const VENDOR_PUBLISHABLE_FIELDS = [
+  "name","slug","category","tagline","description","cover_image","logo_url",
+  "phone","email","address","city","website","price_range","youtube_url","gallery",
+] as const;
+
+export const adminPublishVendor = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data: vendor, error } = await context.supabase
+      .from("vendors").select("*").eq("id", data.id).maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!vendor) throw new Error("Không tìm thấy vendor");
+    const snapshot: Record<string, any> = {};
+    for (const k of VENDOR_PUBLISHABLE_FIELDS) snapshot[k] = (vendor as any)[k] ?? null;
+    const { error: upErr } = await context.supabase
+      .from("vendors")
+      .update({ published_content: snapshot, published_at: new Date().toISOString(), is_approved: true })
+      .eq("id", data.id);
+    if (upErr) throw new Error(upErr.message);
+    return { ok: true };
+  });
+
 export const adminListRsvp = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
