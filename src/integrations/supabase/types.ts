@@ -109,6 +109,36 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_settings: {
+        Row: {
+          bank_account_name: string | null
+          bank_account_number: string | null
+          bank_name: string | null
+          id: number
+          instructions: string | null
+          qr_image_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          id?: number
+          instructions?: string | null
+          qr_image_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          bank_account_name?: string | null
+          bank_account_number?: string | null
+          bank_name?: string | null
+          id?: number
+          instructions?: string | null
+          qr_image_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -195,6 +225,156 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_payments: {
+        Row: {
+          admin_note: string | null
+          amount_vnd: number
+          created_at: string
+          id: string
+          plan_id: string
+          proof_image_url: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          transfer_code: string | null
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          admin_note?: string | null
+          amount_vnd: number
+          created_at?: string
+          id?: string
+          plan_id: string
+          proof_image_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          transfer_code?: string | null
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          admin_note?: string | null
+          amount_vnd?: number
+          created_at?: string
+          id?: string
+          plan_id?: string
+          proof_image_url?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          transfer_code?: string | null
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_payments_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_payments_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vendor_plans: {
+        Row: {
+          billing_months: number
+          created_at: string
+          description: string | null
+          features: Json
+          id: string
+          is_active: boolean
+          name: string
+          price_vnd: number
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          billing_months?: number
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          price_vnd?: number
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          billing_months?: number
+          created_at?: string
+          description?: string | null
+          features?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          price_vnd?: number
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      vendor_subscriptions: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          plan_id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+          vendor_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_id: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          vendor_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          plan_id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+          vendor_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vendor_subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vendor_subscriptions_vendor_id_fkey"
+            columns: ["vendor_id"]
+            isOneToOne: false
+            referencedRelation: "vendors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vendors: {
         Row: {
           address: string | null
@@ -212,6 +392,8 @@ export type Database = {
           name: string
           owner_id: string | null
           phone: string | null
+          plan_expires_at: string | null
+          plan_id: string | null
           price_range: string | null
           published_at: string | null
           published_content: Json | null
@@ -237,6 +419,8 @@ export type Database = {
           name: string
           owner_id?: string | null
           phone?: string | null
+          plan_expires_at?: string | null
+          plan_id?: string | null
           price_range?: string | null
           published_at?: string | null
           published_content?: Json | null
@@ -262,6 +446,8 @@ export type Database = {
           name?: string
           owner_id?: string | null
           phone?: string | null
+          plan_expires_at?: string | null
+          plan_id?: string | null
           price_range?: string | null
           published_at?: string | null
           published_content?: Json | null
@@ -271,7 +457,15 @@ export type Database = {
           website?: string | null
           youtube_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "vendors_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "vendor_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
