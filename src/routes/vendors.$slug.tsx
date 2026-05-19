@@ -4,6 +4,13 @@ import { resolveImg } from "@/lib/image-map";
 import { useEffect, useState } from "react";
 import { VendorLeadForm } from "@/components/VendorLeadForm";
 
+const CAT_LABEL: Record<string, string> = {
+  venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
+  wedding_planner: "Wedding planner", makeup: "Trang điểm cô dâu", attire: "Trang phục cưới",
+  flowers: "Hoa cưới", catering: "Ẩm thực", music: "Âm nhạc & live band",
+  decor: "Trang trí", invitation: "Thiệp cưới", other: "Dịch vụ khác",
+};
+
 export const Route = createFileRoute("/vendors/$slug")({
   loader: async ({ params }) => {
     const v = await getVendorBySlug({ data: { slug: params.slug } });
@@ -167,7 +174,7 @@ function VendorPage() {
               {v.website && <li><span className="text-muted-foreground">Website:</span> <a href={v.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">{v.website}</a></li>}
               {(v.address || v.city) && <li><span className="text-muted-foreground">Địa chỉ:</span> {v.address}{v.city ? `, ${v.city}` : ""}</li>}
               {v.price_range && <li><span className="text-muted-foreground">Khoảng giá:</span> {v.price_range}</li>}
-              <li><span className="text-muted-foreground">Lĩnh vực:</span> {v.category}</li>
+              <li><span className="text-muted-foreground">Lĩnh vực:</span> {CAT_LABEL[v.category] ?? v.category}</li>
             </ul>
             <div className="mt-8">
               <Link to="/vendors" className="text-primary hover:underline">← Tất cả nhà cung cấp</Link>

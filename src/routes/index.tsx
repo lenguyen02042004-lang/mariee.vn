@@ -4,6 +4,13 @@ import { listVendors } from "@/lib/vendors.functions";
 import { resolveImg } from "@/lib/image-map";
 import hero from "@/assets/hero-wedding-1.jpg";
 
+const CAT_LABEL: Record<string, string> = {
+  venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
+  wedding_planner: "Wedding planner", makeup: "Trang điểm cô dâu", attire: "Trang phục cưới",
+  flowers: "Hoa cưới", catering: "Ẩm thực", music: "Âm nhạc & live band",
+  decor: "Trang trí", invitation: "Thiệp cưới", other: "Dịch vụ khác",
+};
+
 export const Route = createFileRoute("/")({
   loader: async () => ({
     couples: await listCouples(),
@@ -77,7 +84,7 @@ function Home() {
                   <img src={resolveImg(v.cover_image)} alt={v.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                 </div>
                 <div className="p-5">
-                  <p className="text-xs uppercase tracking-[0.2em] text-primary">{v.category.replace("_"," ")}</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-primary">{(CAT_LABEL[v.category] ?? v.category).replace("_"," ")}</p>
                   <h3 className="font-display text-2xl mt-1">{v.name}</h3>
                   <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{v.tagline}</p>
                 </div>
