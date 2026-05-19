@@ -68,3 +68,123 @@ export const publishMyVendor = createServerFn({ method: "POST" })
     if (upErr) throw new Error(upErr.message);
     return { ok: true, published_at: new Date().toISOString() };
   });
+
+async function getMyVendorId(supabase: any, userId: string) {
+  const { data, error } = await supabase.from("vendors").select("id").eq("owner_id", userId).maybeSingle();
+  if (error) throw new Error(error.message);
+  if (!data?.id) throw new Error("Chưa có hồ sơ vendor");
+  return data.id as string;
+}
+
+export const listMyProducts = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const { data, error } = await context.supabase.from("vendor_products").select("*").eq("vendor_id", vid).order("sort_order");
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+const productSchema = z.object({
+  id: z.string().uuid().optional(),
+  title: z.string().trim().min(1).max(200),
+  description: z.string().max(2000).optional().or(z.literal("")),
+  price_text: z.string().max(80).optional().or(z.literal("")),
+  image_url: z.string().max(800).optional().or(z.literal("")),
+  sort_order: z.number().int().min(0).max(9999).optional(),
+  is_active: z.boolean().optional(),
+});
+
+export const upsertMyProduct = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => productSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const payload: any = { ...data, vendor_id: vid };
+    for (const k of Object.keys(payload)) if (payload[k] === "") payload[k] = null;
+    if (data.id) {
+      const { error } = await context.supabase.from("vendor_products").update(payload).eq("id", data.id).eq("vendor_id", vid);
+      if (error) throw new Error(error.message);
+      return { id: data.id };
+    }
+    delete payload.id;
+    const { data: row, error } = await context.supabase.from("vendor_products").insert(payload).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: row!.id };
+  });
+
+export const deleteMyProduct = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const { error } = await context.supabase.from("vendor_products").delete().eq("id", data.id).eq("vendor_id", vid);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const listMyTestimonials = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const { data, error } = await context.supabase.from("vendor_testimonials").select("*").eq("vendor_id", vid).order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+const testiSchema = z.object({
+  id: z.string().uuid().optional(),
+  author_name: z.string().trim().min(1).max(120),
+  message: z.string().trim().min(1).max(1000),
+  rating: z.number().int().min(1).max(5).optional(),
+  is_approved: z.boolean().optional(),
+});
+
+export const upsertMyTestimonial = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => testiSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const payload: any = { ...data, vendor_id: vid };
+    if (data.id) {
+      const { error } = await context.supabase.from("vendor_testimonials").update(payload).eq("id", data.id).eq("vendor_id", vid);
+      if (error) throw new Error(error.message);
+      return { id: data.id };
+    }
+    delete payload.id;
+    const { data: row, error } = await context.supabase.from("vendor_testimonials").insert(payload).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: row!.id };
+  });
+
+export const deleteMyTestimonial = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const { error } = await context.supabase.from("vendor_testimonials").delete().eq("id", data.id).eq("vendor_id", vid);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const listMyLeads = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const { data, error } = await context.supabase.from("vendor_leads").select("*").eq("vendor_id", vid).order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+export const updateLeadStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    id: z.string().uuid(),
+    status: z.enum(["new","contacted","won","lost"]),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    const vid = await getMyVendorId(context.supabase, context.userId);
+    const { error } = await context.supabase.from("vendor_leads").update({ status: data.status }).eq("id", data.id).eq("vendor_id", vid);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
