@@ -10,7 +10,7 @@ const CAT_LABEL: Record<string, string> = {
   other: "Dịch vụ khác",
 };
 
-export const Route = createFileRoute("/vendors")({
+export const Route = createFileRoute("/vendors/")({
   loader: async () => await listVendors(),
   component: VendorsPage,
   head: () => ({ meta: [
