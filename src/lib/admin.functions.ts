@@ -55,6 +55,15 @@ const coupleSchema = z.object({
     title: z.string().max(200),
     description: z.string().max(500).optional().or(z.literal("")),
   })).max(40).optional(),
+  owner_id: z.string().uuid().nullable().optional(),
+  invitation_bride_url: z.string().max(800).optional().or(z.literal("")),
+  invitation_groom_url: z.string().max(800).optional().or(z.literal("")),
+  bride_party_time: z.string().max(120).optional().or(z.literal("")),
+  bride_party_venue: z.string().max(200).optional().or(z.literal("")),
+  bride_party_address: z.string().max(400).optional().or(z.literal("")),
+  groom_party_time: z.string().max(120).optional().or(z.literal("")),
+  groom_party_venue: z.string().max(200).optional().or(z.literal("")),
+  groom_party_address: z.string().max(400).optional().or(z.literal("")),
 });
 
 export const adminUpsertCouple = createServerFn({ method: "POST" })
@@ -64,7 +73,7 @@ export const adminUpsertCouple = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     const payload: any = { ...data };
     if (!payload.wedding_date) payload.wedding_date = null;
-    for (const k of ["venue_name","venue_address","story","quote","youtube_url","cover_image","hero_image_1","hero_image_2","hero_image_3","ceremony_time","reception_time","gift_bride_bank","gift_bride_account","gift_bride_holder","gift_groom_bank","gift_groom_account","gift_groom_holder"]) {
+    for (const k of ["venue_name","venue_address","story","quote","youtube_url","cover_image","hero_image_1","hero_image_2","hero_image_3","ceremony_time","reception_time","gift_bride_bank","gift_bride_account","gift_bride_holder","gift_groom_bank","gift_groom_account","gift_groom_holder","invitation_bride_url","invitation_groom_url","bride_party_time","bride_party_venue","bride_party_address","groom_party_time","groom_party_venue","groom_party_address"]) {
       if (payload[k] === "") payload[k] = null;
     }
     if (!payload.schedule) payload.schedule = [];

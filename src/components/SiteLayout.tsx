@@ -19,6 +19,7 @@ export function Header() {
           <Link to="/about" className="hover:text-primary transition hidden lg:inline">Giới thiệu</Link>
           {user ? (
             <>
+              <Link to="/couple" className="hover:text-primary transition hidden md:inline">Trang của tôi</Link>
               <Link to="/admin" className="hover:text-primary transition">Quản trị</Link>
               <Link to="/vendor" className="hover:text-primary transition hidden md:inline">Trang vendor</Link>
               <button onClick={signOut} className="text-muted-foreground hover:text-primary transition">Đăng xuất</button>

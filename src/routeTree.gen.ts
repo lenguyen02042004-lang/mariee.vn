@@ -25,7 +25,9 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
+import { Route as AuthenticatedCoupleRouteImport } from './routes/_authenticated/couple'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
+import { Route as CouplesRouteImport } from './routes/couples.'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_authenticated/vendor.testimonials'
 import { Route as AuthenticatedVendorProductsRouteImport } from './routes/_authenticated/vendor.products'
@@ -122,10 +124,20 @@ const AuthenticatedVendorRoute = AuthenticatedVendorRouteImport.update({
   path: '/vendor',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCoupleRoute = AuthenticatedCoupleRouteImport.update({
+  id: '/couple',
+  path: '/couple',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
+} as any)
+const CouplesRoute = CouplesRouteImport.update({
+  id: '/couples/',
+  path: '/couples/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
@@ -232,7 +244,9 @@ export interface FileRoutesByFullPath {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vendors': typeof VendorsRouteWithChildren
+  '/couples/': typeof CouplesRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -266,6 +280,8 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vendors': typeof VendorsRouteWithChildren
+  '/couples': typeof CouplesRoute
+  '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -301,7 +317,9 @@ export interface FileRoutesById {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/vendors': typeof VendorsRouteWithChildren
+  '/couples/': typeof CouplesRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/couple': typeof AuthenticatedCoupleRoute
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -337,7 +355,9 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/vendors'
+    | '/couples/'
     | '/admin'
+    | '/couple'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
@@ -371,6 +391,8 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/vendors'
+    | '/couples'
+    | '/couple'
     | '/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
@@ -405,7 +427,9 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/vendors'
+    | '/couples/'
     | '/_authenticated/admin'
+    | '/_authenticated/couple'
     | '/_authenticated/vendor'
     | '/couples/$slug'
     | '/vendors/$slug'
@@ -441,6 +465,7 @@ export interface RootRouteChildren {
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   VendorsRoute: typeof VendorsRouteWithChildren
+  CouplesRoute: typeof CouplesRoute
   CouplesSlugRoute: typeof CouplesSlugRoute
 }
 
@@ -558,12 +583,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVendorRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/couple': {
+      id: '/_authenticated/couple'
+      path: '/couple'
+      fullPath: '/couple'
+      preLoaderRoute: typeof AuthenticatedCoupleRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/couples/': {
+      id: '/couples/'
+      path: '/couples'
+      fullPath: '/couples/'
+      preLoaderRoute: typeof CouplesRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -744,11 +783,13 @@ const AuthenticatedVendorRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRoute
   AuthenticatedVendorRoute: typeof AuthenticatedVendorRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedCoupleRoute: AuthenticatedCoupleRoute,
   AuthenticatedVendorRoute: AuthenticatedVendorRouteWithChildren,
 }
 
@@ -781,8 +822,19 @@ const rootRouteChildren: RootRouteChildren = {
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   VendorsRoute: VendorsRouteWithChildren,
+  CouplesRoute: CouplesRoute,
   CouplesSlugRoute: CouplesSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

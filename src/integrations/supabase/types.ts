@@ -79,6 +79,9 @@ export type Database = {
       couples: {
         Row: {
           bride_name: string
+          bride_party_address: string | null
+          bride_party_time: string | null
+          bride_party_venue: string | null
           ceremony_time: string | null
           cover_image: string | null
           created_at: string
@@ -89,11 +92,17 @@ export type Database = {
           gift_groom_bank: string | null
           gift_groom_holder: string | null
           groom_name: string
+          groom_party_address: string | null
+          groom_party_time: string | null
+          groom_party_venue: string | null
           hero_image_1: string | null
           hero_image_2: string | null
           hero_image_3: string | null
           id: string
+          invitation_bride_url: string | null
+          invitation_groom_url: string | null
           is_published: boolean
+          owner_id: string | null
           quote: string | null
           reception_time: string | null
           schedule: Json
@@ -107,6 +116,9 @@ export type Database = {
         }
         Insert: {
           bride_name: string
+          bride_party_address?: string | null
+          bride_party_time?: string | null
+          bride_party_venue?: string | null
           ceremony_time?: string | null
           cover_image?: string | null
           created_at?: string
@@ -117,11 +129,17 @@ export type Database = {
           gift_groom_bank?: string | null
           gift_groom_holder?: string | null
           groom_name: string
+          groom_party_address?: string | null
+          groom_party_time?: string | null
+          groom_party_venue?: string | null
           hero_image_1?: string | null
           hero_image_2?: string | null
           hero_image_3?: string | null
           id?: string
+          invitation_bride_url?: string | null
+          invitation_groom_url?: string | null
           is_published?: boolean
+          owner_id?: string | null
           quote?: string | null
           reception_time?: string | null
           schedule?: Json
@@ -135,6 +153,9 @@ export type Database = {
         }
         Update: {
           bride_name?: string
+          bride_party_address?: string | null
+          bride_party_time?: string | null
+          bride_party_venue?: string | null
           ceremony_time?: string | null
           cover_image?: string | null
           created_at?: string
@@ -145,11 +166,17 @@ export type Database = {
           gift_groom_bank?: string | null
           gift_groom_holder?: string | null
           groom_name?: string
+          groom_party_address?: string | null
+          groom_party_time?: string | null
+          groom_party_venue?: string | null
           hero_image_1?: string | null
           hero_image_2?: string | null
           hero_image_3?: string | null
           id?: string
+          invitation_bride_url?: string | null
+          invitation_groom_url?: string | null
           is_published?: boolean
+          owner_id?: string | null
           quote?: string | null
           reception_time?: string | null
           schedule?: Json
