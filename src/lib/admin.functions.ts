@@ -42,6 +42,19 @@ const coupleSchema = z.object({
   hero_image_2: z.string().max(800).optional().or(z.literal("")),
   hero_image_3: z.string().max(800).optional().or(z.literal("")),
   is_published: z.boolean().default(true),
+  ceremony_time: z.string().max(120).optional().or(z.literal("")),
+  reception_time: z.string().max(120).optional().or(z.literal("")),
+  gift_bride_bank: z.string().max(120).optional().or(z.literal("")),
+  gift_bride_account: z.string().max(60).optional().or(z.literal("")),
+  gift_bride_holder: z.string().max(120).optional().or(z.literal("")),
+  gift_groom_bank: z.string().max(120).optional().or(z.literal("")),
+  gift_groom_account: z.string().max(60).optional().or(z.literal("")),
+  gift_groom_holder: z.string().max(120).optional().or(z.literal("")),
+  schedule: z.array(z.object({
+    time: z.string().max(40).optional().or(z.literal("")),
+    title: z.string().max(200),
+    description: z.string().max(500).optional().or(z.literal("")),
+  })).max(40).optional(),
 });
 
 export const adminUpsertCouple = createServerFn({ method: "POST" })
@@ -51,9 +64,10 @@ export const adminUpsertCouple = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     const payload: any = { ...data };
     if (!payload.wedding_date) payload.wedding_date = null;
-    for (const k of ["venue_name","venue_address","story","quote","youtube_url","cover_image","hero_image_1","hero_image_2","hero_image_3"]) {
+    for (const k of ["venue_name","venue_address","story","quote","youtube_url","cover_image","hero_image_1","hero_image_2","hero_image_3","ceremony_time","reception_time","gift_bride_bank","gift_bride_account","gift_bride_holder","gift_groom_bank","gift_groom_account","gift_groom_holder"]) {
       if (payload[k] === "") payload[k] = null;
     }
+    if (!payload.schedule) payload.schedule = [];
     if (payload.id) {
       const { error } = await context.supabase.from("couples").update(payload).eq("id", payload.id);
       if (error) throw new Error(error.message);
