@@ -1,0 +1,1 @@
+UPDATE vendors SET slug='rose-flowers' WHERE slug='rosé-flowers';
