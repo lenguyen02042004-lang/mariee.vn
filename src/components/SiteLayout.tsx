@@ -11,12 +11,16 @@ export function Header() {
           <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground hidden sm:inline">Wedding</span>
         </Link>
         <nav className="flex items-center gap-6 text-sm">
-          <Link to="/" className="hover:text-primary transition">Trang chủ</Link>
+          <Link to="/" className="hover:text-primary transition hidden md:inline">Trang chủ</Link>
           <Link to="/vendors" className="hover:text-primary transition">Nhà cung cấp</Link>
+          <Link to="/for-couples" className="hover:text-primary transition hidden lg:inline">Cặp đôi</Link>
+          <Link to="/for-vendors" className="hover:text-primary transition hidden lg:inline">Vendor</Link>
+          <Link to="/pricing" className="hover:text-primary transition hidden md:inline">Bảng giá</Link>
+          <Link to="/about" className="hover:text-primary transition hidden lg:inline">Giới thiệu</Link>
           {user ? (
             <>
               <Link to="/admin" className="hover:text-primary transition">Quản trị</Link>
-              <Link to="/vendor" className="hover:text-primary transition hidden md:inline">Vendor</Link>
+              <Link to="/vendor" className="hover:text-primary transition hidden md:inline">Trang vendor</Link>
               <button onClick={signOut} className="text-muted-foreground hover:text-primary transition">Đăng xuất</button>
             </>
           ) : (
@@ -31,7 +35,7 @@ export function Header() {
 export function Footer() {
   return (
     <footer className="mt-32 border-t border-border/60 bg-secondary/40">
-      <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8">
         <div>
           <div className="font-script text-3xl text-primary">Mariée</div>
           <p className="text-sm text-muted-foreground mt-3 max-w-xs">Nền tảng landing page cưới sang trọng và đẳng cấp cho mọi cặp đôi Việt.</p>
@@ -41,6 +45,17 @@ export function Footer() {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><Link to="/" className="hover:text-primary">Trang chủ</Link></li>
             <li><Link to="/vendors" className="hover:text-primary">Nhà cung cấp</Link></li>
+            <li><Link to="/pricing" className="hover:text-primary">Bảng giá</Link></li>
+            <li><Link to="/about" className="hover:text-primary">Giới thiệu</Link></li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="text-sm font-semibold uppercase tracking-wider mb-3">Giải pháp</h4>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/for-couples" className="hover:text-primary">Dành cho cặp đôi</Link></li>
+            <li><Link to="/for-vendors" className="hover:text-primary">Dành cho vendor</Link></li>
+            <li><Link to="/register" className="hover:text-primary">Đăng ký miễn phí</Link></li>
+            <li><Link to="/login" className="hover:text-primary">Đăng nhập</Link></li>
           </ul>
         </div>
         <div>
