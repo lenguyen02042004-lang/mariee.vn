@@ -7,7 +7,7 @@ import { uploadImage } from "@/lib/upload";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/vendor")({
+export const Route = createFileRoute("/_authenticated/vendor/")({
   component: VendorPortal,
   head: () => ({ meta: [{ title: "Vendor — Mariée" }] }),
 });
