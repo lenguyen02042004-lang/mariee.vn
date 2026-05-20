@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getMyVendor, upsertMyVendor, publishMyVendor } from "@/lib/vendor-owner.functions";
+import { listMyProducts } from "@/lib/vendor-owner.functions";
 import { uploadImage } from "@/lib/upload";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
@@ -33,7 +34,9 @@ function VendorPortal() {
   const fetchMine = useServerFn(getMyVendor);
   const save = useServerFn(upsertMyVendor);
   const publish = useServerFn(publishMyVendor);
+  const fetchProducts = useServerFn(listMyProducts);
   const { data, isLoading } = useQuery({ queryKey:["my-vendor"], queryFn:()=>fetchMine() });
+  const { data: products } = useQuery({ queryKey:["my-products"], queryFn:()=>fetchProducts(), enabled: !!data });
   const [form, setForm] = useState<any>({ category: "other", gallery: [] });
   const [uploading, setUploading] = useState<string | null>(null);
 
@@ -91,10 +94,10 @@ function VendorPortal() {
         <button onClick={signOut} className="text-sm text-primary underline">Đăng xuất</button>
       </div>
       <nav className="mt-4 flex flex-wrap gap-3 text-sm">
-        <Link to="/vendor/products" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Sản phẩm/Dịch vụ</Link>
-        <Link to="/vendor/testimonials" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Đánh giá</Link>
-        <Link to="/vendor/leads" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Yêu cầu tư vấn</Link>
-        <Link to="/vendor/billing" className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Gói thành viên</Link>
+        <Link to="/vendor/products" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Sản phẩm/Dịch vụ</Link>
+        <Link to="/vendor/testimonials" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Đánh giá</Link>
+        <Link to="/vendor/leads" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Yêu cầu tư vấn</Link>
+        <Link to="/vendor/billing" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Gói thành viên</Link>
         {data && (data as any).slug && (
           <Link to="/vendors/$slug" params={{ slug: (data as any).slug }} target="_blank" className="px-3 py-1.5 rounded border border-primary text-primary hover:bg-primary hover:text-primary-foreground">Xem trang công khai ↗</Link>
         )}
@@ -154,6 +157,30 @@ function VendorPortal() {
           <button type="button" onClick={()=>pub.mutate()} disabled={pub.isPending || !data || !(data as any).is_approved} title={!(data as any)?.is_approved ? "Cần admin duyệt trước" : ""} className="px-6 py-3 border border-primary text-primary rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">{pub.isPending?"Đang xuất bản…":"Xuất bản"}</button>
         </div>
       </form>
+
+      {data && (
+        <section className="mt-12">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-2xl">Sản phẩm & Dịch vụ</h2>
+            <Link to="/vendor/products" className="text-sm text-primary underline">Quản lý →</Link>
+          </div>
+          {(!products || products.length === 0) ? (
+            <p className="text-sm text-muted-foreground">Chưa có sản phẩm. <Link to="/vendor/products" className="text-primary underline">Thêm ngay</Link>.</p>
+          ) : (
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {(products as any[]).slice(0,6).map((p:any)=>(
+                <div key={p.id} className="bg-card border border-border/40 rounded overflow-hidden">
+                  {p.image_url && <img src={p.image_url} alt="" className="w-full aspect-[4/3] object-cover" />}
+                  <div className="p-3">
+                    <p className="font-display text-base">{p.title}</p>
+                    {p.price_text && <p className="text-sm text-primary mt-0.5">{p.price_text}</p>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
     </div>
   );
 }
