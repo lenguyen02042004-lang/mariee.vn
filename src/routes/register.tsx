@@ -21,16 +21,16 @@ function RegisterPage() {
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email, password,
-      options: { data: { display_name: name }, emailRedirectTo: `${window.location.origin}/admin` },
+      options: { data: { display_name: name }, emailRedirectTo: `${window.location.origin}/couple` },
     });
     setLoading(false);
     if (error) return toast.error(error.message);
     toast.success("Đăng ký thành công");
-    navigate({ to: "/admin" });
+    navigate({ to: "/couple" });
   };
 
   const onGoogle = async () => {
-    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/admin" });
+    const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/couple" });
     if (r.error) toast.error(r.error.message);
   };
 

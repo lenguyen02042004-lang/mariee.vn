@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 
 const updateSchema = z.object({
@@ -107,4 +108,32 @@ export const deleteMyGallery = createServerFn({ method: "POST" })
     const { error } = await context.supabase.from("couple_gallery").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
+  });
+
+const createSchema = z.object({
+  slug: z.string().trim().min(2).max(80).regex(/^[a-z0-9-]+$/, "Slug chỉ gồm chữ thường, số, dấu '-'"),
+  bride_name: z.string().trim().min(1).max(120),
+  groom_name: z.string().trim().min(1).max(120),
+  wedding_date: z.string().optional().or(z.literal("")),
+});
+
+export const createMyCouple = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => createSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    // Kiểm tra slug đã tồn tại chưa (bypass RLS để biết chắc)
+    const { data: existing } = await supabaseAdmin
+      .from("couples").select("id").eq("slug", data.slug).maybeSingle();
+    if (existing) throw new Error("Slug đã được sử dụng, vui lòng chọn slug khác");
+    // Dùng admin client vì chưa có RLS insert cho owner
+    const { data: row, error } = await supabaseAdmin.from("couples").insert({
+      slug: data.slug,
+      bride_name: data.bride_name,
+      groom_name: data.groom_name,
+      wedding_date: data.wedding_date || null,
+      owner_id: context.userId,
+      is_published: false,
+    }).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: row!.id };
   });
