@@ -31,7 +31,6 @@ export function VendorForm({ initial }: { initial: any }) {
     category: "other",
     is_approved: false,
     is_featured: false,
-    gallery: [],
     ...initial,
     gallery: Array.isArray(initial?.gallery) ? initial.gallery : [],
   });
