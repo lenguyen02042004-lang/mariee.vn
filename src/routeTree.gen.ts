@@ -42,6 +42,8 @@ import { Route as AuthenticatedAdminPlansRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
 import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authenticated/admin.couples'
+import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors.new'
+import { Route as AuthenticatedAdminVendorsIdRouteImport } from './routes/_authenticated/admin.vendors.$id'
 import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples.new'
 import { Route as AuthenticatedAdminCouplesIdRouteImport } from './routes/_authenticated/admin.couples.$id'
 
@@ -219,6 +221,18 @@ const AuthenticatedAdminCouplesRoute =
     path: '/couples',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminVendorsNewRoute =
+  AuthenticatedAdminVendorsNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminVendorsRoute,
+  } as any)
+const AuthenticatedAdminVendorsIdRoute =
+  AuthenticatedAdminVendorsIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminVendorsRoute,
+  } as any)
 const AuthenticatedAdminCouplesNewRoute =
   AuthenticatedAdminCouplesNewRouteImport.update({
     id: '/new',
@@ -257,7 +271,7 @@ export interface FileRoutesByFullPath {
   '/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/admin/vendors': typeof AuthenticatedAdminVendorsRouteWithChildren
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
@@ -267,6 +281,8 @@ export interface FileRoutesByFullPath {
   '/vendor/': typeof AuthenticatedVendorIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
+  '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
+  '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -291,7 +307,7 @@ export interface FileRoutesByTo {
   '/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/admin/vendors': typeof AuthenticatedAdminVendorsRouteWithChildren
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
@@ -301,6 +317,8 @@ export interface FileRoutesByTo {
   '/vendor': typeof AuthenticatedVendorIndexRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
+  '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
+  '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -329,7 +347,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
+  '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRouteWithChildren
   '/_authenticated/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/_authenticated/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/_authenticated/vendor/leads': typeof AuthenticatedVendorLeadsRoute
@@ -339,6 +357,8 @@ export interface FileRoutesById {
   '/_authenticated/vendor/': typeof AuthenticatedVendorIndexRoute
   '/_authenticated/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/_authenticated/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
+  '/_authenticated/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
+  '/_authenticated/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -377,6 +397,8 @@ export interface FileRouteTypes {
     | '/vendor/'
     | '/admin/couples/$id'
     | '/admin/couples/new'
+    | '/admin/vendors/$id'
+    | '/admin/vendors/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -411,6 +433,8 @@ export interface FileRouteTypes {
     | '/vendor'
     | '/admin/couples/$id'
     | '/admin/couples/new'
+    | '/admin/vendors/$id'
+    | '/admin/vendors/new'
   id:
     | '__root__'
     | '/'
@@ -448,6 +472,8 @@ export interface FileRouteTypes {
     | '/_authenticated/vendor/'
     | '/_authenticated/admin/couples/$id'
     | '/_authenticated/admin/couples/new'
+    | '/_authenticated/admin/vendors/$id'
+    | '/_authenticated/admin/vendors/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -701,6 +727,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCouplesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/vendors/new': {
+      id: '/_authenticated/admin/vendors/new'
+      path: '/new'
+      fullPath: '/admin/vendors/new'
+      preLoaderRoute: typeof AuthenticatedAdminVendorsNewRouteImport
+      parentRoute: typeof AuthenticatedAdminVendorsRoute
+    }
+    '/_authenticated/admin/vendors/$id': {
+      id: '/_authenticated/admin/vendors/$id'
+      path: '/$id'
+      fullPath: '/admin/vendors/$id'
+      preLoaderRoute: typeof AuthenticatedAdminVendorsIdRouteImport
+      parentRoute: typeof AuthenticatedAdminVendorsRoute
+    }
     '/_authenticated/admin/couples/new': {
       id: '/_authenticated/admin/couples/new'
       path: '/new'
@@ -734,6 +774,22 @@ const AuthenticatedAdminCouplesRouteWithChildren =
     AuthenticatedAdminCouplesRouteChildren,
   )
 
+interface AuthenticatedAdminVendorsRouteChildren {
+  AuthenticatedAdminVendorsIdRoute: typeof AuthenticatedAdminVendorsIdRoute
+  AuthenticatedAdminVendorsNewRoute: typeof AuthenticatedAdminVendorsNewRoute
+}
+
+const AuthenticatedAdminVendorsRouteChildren: AuthenticatedAdminVendorsRouteChildren =
+  {
+    AuthenticatedAdminVendorsIdRoute: AuthenticatedAdminVendorsIdRoute,
+    AuthenticatedAdminVendorsNewRoute: AuthenticatedAdminVendorsNewRoute,
+  }
+
+const AuthenticatedAdminVendorsRouteWithChildren =
+  AuthenticatedAdminVendorsRoute._addFileChildren(
+    AuthenticatedAdminVendorsRouteChildren,
+  )
+
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCouplesRoute: typeof AuthenticatedAdminCouplesRouteWithChildren
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
@@ -742,7 +798,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminRsvpRoute: typeof AuthenticatedAdminRsvpRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
-  AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRoute
+  AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRouteWithChildren
   AuthenticatedAdminWishesRoute: typeof AuthenticatedAdminWishesRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
@@ -755,7 +811,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminRsvpRoute: AuthenticatedAdminRsvpRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
-  AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRoute,
+  AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRouteWithChildren,
   AuthenticatedAdminWishesRoute: AuthenticatedAdminWishesRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
@@ -818,13 +874,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

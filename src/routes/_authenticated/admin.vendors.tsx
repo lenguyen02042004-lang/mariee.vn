@@ -25,8 +25,13 @@ function AdminVendors() {
   const publish = useMutation({ mutationFn:(id:string)=>pub({data:{id}}), onSuccess:()=>{ toast.success("Đã xuất bản bản công khai"); qc.invalidateQueries({queryKey:["a-vendors"]}); }, onError:(e:any)=>toast.error(e.message) });
   return (
     <div>
-      <h1 className="font-display text-3xl">Nhà cung cấp</h1>
-      <p className="text-sm text-muted-foreground mt-1">Duyệt vendor, xuất bản bản công khai, theo dõi lịch sử cập nhật.</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-3xl">Nhà cung cấp</h1>
+          <p className="text-sm text-muted-foreground mt-1">Tạo, sửa, duyệt và xuất bản vendor.</p>
+        </div>
+        <Link to="/admin/vendors/new" className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90">+ Thêm vendor</Link>
+      </div>
       {isLoading ? <p className="mt-6 text-muted-foreground">Đang tải…</p> : (
         <div className="mt-6 border border-border/60 rounded-lg overflow-hidden bg-card overflow-x-auto">
           <table className="w-full text-sm min-w-[900px]">
@@ -57,6 +62,7 @@ function AdminVendors() {
                     <div>Xuất bản: {v.published_at ? new Date(v.published_at).toLocaleString("vi-VN") : <span className="text-amber-600">chưa</span>}</div>
                   </td>
                   <td className="p-3 text-right space-x-3 whitespace-nowrap">
+                    <Link to="/admin/vendors/$id" params={{ id: v.id }} className="text-primary underline">Sửa</Link>
                     <button onClick={()=>publish.mutate(v.id)} className="text-primary underline">Xuất bản</button>
                     <button onClick={()=>{ if(confirm("Xoá vendor này?")) remove.mutate(v.id); }} className="text-destructive underline">Xoá</button>
                   </td>
