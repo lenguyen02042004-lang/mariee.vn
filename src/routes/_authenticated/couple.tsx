@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { myCouples, getMyCouple, createMyCouple } from "@/lib/couple-owner.functions";
 import { CoupleForm } from "@/components/CoupleForm";
+import { WeddingShareCard } from "@/components/WeddingShareCard";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -87,6 +88,15 @@ function CouplePortal() {
         <p className="mt-10 text-muted-foreground">Đang tải dữ liệu…</p>
       ) : (
         <div className="mt-8">
+          {detail.couple.slug && (
+            <div className="mb-10">
+              <div className="flex items-baseline justify-between mb-3">
+                <h2 className="font-display text-2xl">Thiệp cưới online &amp; mã QR</h2>
+                <span className="text-xs text-muted-foreground">Chia sẻ cho khách mời</span>
+              </div>
+              <WeddingShareCard couple={detail.couple as any} />
+            </div>
+          )}
           <CoupleForm mode="owner" initial={detail.couple} gallery={detail.gallery} />
         </div>
       )}
