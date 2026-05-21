@@ -1,4 +1,5 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
+import { useState } from "react";
 import { getCoupleBySlug } from "@/lib/couples.functions";
 import { resolveImg } from "@/lib/image-map";
 import { HeroSlider } from "@/components/HeroSlider";
@@ -6,6 +7,14 @@ import { RsvpForm } from "@/components/RsvpForm";
 import { Countdown } from "@/components/Countdown";
 import { WishWall } from "@/components/WishWall";
 import { WeddingShareCard } from "@/components/WeddingShareCard";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
+
+function toYouTubeEmbed(url: string): string {
+  if (!url) return "";
+  if (url.includes("/embed/")) return url;
+  const m = url.match(/(?:v=|youtu\.be\/|shorts\/|\/v\/)([\w-]{11})/);
+  return m ? `https://www.youtube.com/embed/${m[1]}` : url;
+}
 
 export const Route = createFileRoute("/couples/$slug")({
   loader: async ({ params }) => {
@@ -56,6 +65,14 @@ function CouplePage() {
 
   const hasGift = couple.gift_bride_account || couple.gift_groom_account;
   const weddingFuture = couple.wedding_date ? new Date(couple.wedding_date).getTime() > Date.now() : false;
+  const hasInvitations = couple.invitation_bride_url || couple.invitation_groom_url;
+  const hasParties = couple.bride_party_time || couple.bride_party_venue || couple.groom_party_time || couple.groom_party_venue;
+  const ytEmbed = toYouTubeEmbed(couple.youtube_url ?? "");
+  const [lightbox, setLightbox] = useState<number | null>(null);
+  const openLightbox = (i: number) => setLightbox(i);
+  const closeLightbox = () => setLightbox(null);
+  const nextLightbox = () => setLightbox(p => p === null ? p : (p + 1) % gallery.length);
+  const prevLightbox = () => setLightbox(p => p === null ? p : (p - 1 + gallery.length) % gallery.length);
 
   return (
     <>
@@ -81,10 +98,10 @@ function CouplePage() {
         </Section>
       )}
 
-      {couple.youtube_url && (
+      {ytEmbed && (
         <Section kicker="save the moment" title="Khoảnh khắc đáng nhớ">
           <div className="aspect-video rounded-lg overflow-hidden shadow-elegant max-w-5xl mx-auto">
-            <iframe src={couple.youtube_url} title="Wedding video" className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+            <iframe src={ytEmbed} title="Wedding video" className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
           </div>
         </Section>
       )}
@@ -128,16 +145,90 @@ function CouplePage() {
         </Section>
       )}
 
+      {hasParties && (
+        <Section kicker="reception" title="Tiệc cưới hai bên" dark>
+          <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            {(couple.bride_party_time || couple.bride_party_venue || couple.bride_party_address) && (
+              <div className="bg-card rounded-lg p-7 shadow-soft border border-border/40 text-center">
+                <p className="font-script text-3xl text-primary">Nhà cô dâu</p>
+                {couple.bride_party_time && <p className="mt-3 text-lg">{couple.bride_party_time}</p>}
+                {couple.bride_party_venue && <p className="mt-1 font-medium">{couple.bride_party_venue}</p>}
+                {couple.bride_party_address && <p className="text-sm text-muted-foreground mt-1">{couple.bride_party_address}</p>}
+              </div>
+            )}
+            {(couple.groom_party_time || couple.groom_party_venue || couple.groom_party_address) && (
+              <div className="bg-card rounded-lg p-7 shadow-soft border border-border/40 text-center">
+                <p className="font-script text-3xl text-primary">Nhà chú rể</p>
+                {couple.groom_party_time && <p className="mt-3 text-lg">{couple.groom_party_time}</p>}
+                {couple.groom_party_venue && <p className="mt-1 font-medium">{couple.groom_party_venue}</p>}
+                {couple.groom_party_address && <p className="text-sm text-muted-foreground mt-1">{couple.groom_party_address}</p>}
+              </div>
+            )}
+          </div>
+        </Section>
+      )}
+
+      {hasInvitations && (
+        <Section kicker="invitation" title="Thiệp cưới gia đình">
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {couple.invitation_bride_url && (
+              <figure className="text-center">
+                <a href={resolveImg(couple.invitation_bride_url)} target="_blank" rel="noopener" className="block group">
+                  <img src={resolveImg(couple.invitation_bride_url)} alt="Thiệp nhà cô dâu" loading="lazy" className="w-full rounded-lg shadow-elegant group-hover:scale-[1.02] transition-transform duration-500" />
+                </a>
+                <figcaption className="font-script text-2xl text-primary mt-4">Thiệp nhà cô dâu</figcaption>
+              </figure>
+            )}
+            {couple.invitation_groom_url && (
+              <figure className="text-center">
+                <a href={resolveImg(couple.invitation_groom_url)} target="_blank" rel="noopener" className="block group">
+                  <img src={resolveImg(couple.invitation_groom_url)} alt="Thiệp nhà chú rể" loading="lazy" className="w-full rounded-lg shadow-elegant group-hover:scale-[1.02] transition-transform duration-500" />
+                </a>
+                <figcaption className="font-script text-2xl text-primary mt-4">Thiệp nhà chú rể</figcaption>
+              </figure>
+            )}
+          </div>
+        </Section>
+      )}
+
       {gallery.length > 0 && (
         <Section kicker="our gallery" title="Thư viện ảnh cưới" dark>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {gallery.map((g: any) => (
-              <div key={g.id} className="group relative aspect-square overflow-hidden rounded-md shadow-soft">
+            {gallery.map((g: any, idx: number) => (
+              <button type="button" key={g.id} onClick={() => openLightbox(idx)}
+                className="group relative aspect-square overflow-hidden rounded-md shadow-soft cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary">
                 <img src={resolveImg(g.image_url)} alt={g.caption ?? ""} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-              </div>
+                <span className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+              </button>
             ))}
           </div>
         </Section>
+      )}
+
+      {lightbox !== null && gallery[lightbox] && (
+        <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-sm flex items-center justify-center animate-fade-in" onClick={closeLightbox}>
+          <button type="button" onClick={closeLightbox} aria-label="Đóng"
+            className="absolute top-5 right-5 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+            <X size={22} />
+          </button>
+          {gallery.length > 1 && (
+            <>
+              <button type="button" onClick={(e) => { e.stopPropagation(); prevLightbox(); }} aria-label="Trước"
+                className="absolute left-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+                <ChevronLeft size={26} />
+              </button>
+              <button type="button" onClick={(e) => { e.stopPropagation(); nextLightbox(); }} aria-label="Sau"
+                className="absolute right-5 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition">
+                <ChevronRight size={26} />
+              </button>
+            </>
+          )}
+          <figure className="max-w-[92vw] max-h-[88vh] flex flex-col items-center gap-4 animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <img src={resolveImg(gallery[lightbox].image_url)} alt={gallery[lightbox].caption ?? ""} className="max-w-full max-h-[80vh] object-contain rounded shadow-elegant" />
+            {gallery[lightbox].caption && <figcaption className="text-white/80 text-sm">{gallery[lightbox].caption}</figcaption>}
+            <p className="text-white/50 text-xs">{lightbox + 1} / {gallery.length}</p>
+          </figure>
+        </div>
       )}
 
       {hasGift && (
