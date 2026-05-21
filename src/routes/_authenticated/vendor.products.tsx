@@ -13,6 +13,7 @@ export const Route = createFileRoute("/_authenticated/vendor/products")({
 });
 
 const MAX_IMG_MB = 10;
+const QK = ["my-products"] as const;
 
 function ProductsPage() {
   const { user } = useAuth();
@@ -20,28 +21,76 @@ function ProductsPage() {
   const fetchAll = useServerFn(listMyProducts);
   const save = useServerFn(upsertMyProduct);
   const del = useServerFn(deleteMyProduct);
-  const { data, isLoading } = useQuery({ queryKey:["my-products"], queryFn:()=>fetchAll() });
+  const { data, isLoading } = useQuery({ queryKey: QK, queryFn: () => fetchAll() });
   const [editing, setEditing] = useState<any>(null);
+  const [reordering, setReordering] = useState(false);
 
+  // Save (create or update) with optimistic UI
   const m = useMutation({
-    mutationFn: (v:any) => save({ data: v }),
-    onSuccess: () => { toast.success("Đã lưu"); setEditing(null); qc.invalidateQueries({ queryKey:["my-products"] }); },
-    onError: (e:any) => toast.error(e.message),
+    mutationFn: (v: any) => save({ data: v }),
+    onMutate: async (v: any) => {
+      await qc.cancelQueries({ queryKey: QK });
+      const prev = qc.getQueryData<any[]>(QK) ?? [];
+      if (v.id) {
+        qc.setQueryData<any[]>(QK, prev.map((p) => (p.id === v.id ? { ...p, ...v } : p)));
+      } else {
+        const tempId = `temp-${crypto.randomUUID()}`;
+        qc.setQueryData<any[]>(QK, [...prev, { ...v, id: tempId, _optimistic: true }]);
+      }
+      return { prev };
+    },
+    onError: (e: any, _v, ctx) => { if (ctx?.prev) qc.setQueryData(QK, ctx.prev); toast.error(e.message); },
+    onSuccess: () => { toast.success("Đã lưu"); setEditing(null); },
+    onSettled: () => { qc.invalidateQueries({ queryKey: QK }); },
   });
+
+  // Delete with optimistic UI
   const dm = useMutation({
-    mutationFn: (id:string) => del({ data: { id } }),
-    onSuccess: () => { toast.success("Đã xoá"); qc.invalidateQueries({ queryKey:["my-products"] }); },
-    onError: (e:any) => toast.error(e.message),
+    mutationFn: (id: string) => del({ data: { id } }),
+    onMutate: async (id: string) => {
+      await qc.cancelQueries({ queryKey: QK });
+      const prev = qc.getQueryData<any[]>(QK) ?? [];
+      qc.setQueryData<any[]>(QK, prev.filter((p) => p.id !== id));
+      return { prev };
+    },
+    onError: (e: any, _v, ctx) => { if (ctx?.prev) qc.setQueryData(QK, ctx.prev); toast.error(e.message); },
+    onSuccess: () => toast.success("Đã xoá"),
+    onSettled: () => { qc.invalidateQueries({ queryKey: QK }); },
   });
 
   const items = (data ?? []) as any[];
 
-  function move(idx: number, dir: -1 | 1) {
+  async function move(idx: number, dir: -1 | 1) {
+    if (reordering) return;
     const next = items[idx + dir];
     const cur = items[idx];
     if (!next || !cur) return;
-    m.mutate({ id: cur.id, title: cur.title, description: cur.description ?? "", price_text: cur.price_text ?? "", image_url: cur.image_url ?? "", is_active: cur.is_active ?? true, sort_order: next.sort_order ?? (idx + dir) });
-    m.mutate({ id: next.id, title: next.title, description: next.description ?? "", price_text: next.price_text ?? "", image_url: next.image_url ?? "", is_active: next.is_active ?? true, sort_order: cur.sort_order ?? idx });
+    const aOrder = cur.sort_order ?? idx;
+    const bOrder = next.sort_order ?? (idx + dir);
+    setReordering(true);
+    // Optimistic swap
+    await qc.cancelQueries({ queryKey: QK });
+    const prev = qc.getQueryData<any[]>(QK) ?? [];
+    const swapped = [...prev];
+    swapped[idx] = { ...next, sort_order: aOrder };
+    swapped[idx + dir] = { ...cur, sort_order: bOrder };
+    swapped.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    qc.setQueryData(QK, swapped);
+    try {
+      const payload = (p: any, order: number) => ({
+        id: p.id, title: p.title, description: p.description ?? "",
+        price_text: p.price_text ?? "", image_url: p.image_url ?? "",
+        is_active: p.is_active ?? true, sort_order: order,
+      });
+      await save({ data: payload(cur, bOrder) });
+      await save({ data: payload(next, aOrder) });
+    } catch (e: any) {
+      qc.setQueryData(QK, prev);
+      toast.error(e?.message || "Sắp xếp thất bại");
+    } finally {
+      setReordering(false);
+      qc.invalidateQueries({ queryKey: QK });
+    }
   }
 
   return (
@@ -55,7 +104,11 @@ function ProductsPage() {
         <Link to="/vendor" className="text-sm text-primary underline">← Về hồ sơ</Link>
       </div>
 
-      <button onClick={()=>setEditing({ title:"", is_active:true, sort_order: items.length })} className="px-4 py-2 bg-primary text-primary-foreground rounded text-sm">+ Thêm dịch vụ</button>
+      <button
+        onClick={() => setEditing({ title: "", description: "", price_text: "", image_url: "", is_active: true, sort_order: items.length })}
+        disabled={!!editing}
+        className="px-4 py-2 bg-primary text-primary-foreground rounded text-sm disabled:opacity-50 hover:bg-primary/90"
+      >+ Thêm dịch vụ</button>
 
       {editing && <ProductEditor item={editing} userId={user?.id ?? ""} onCancel={()=>setEditing(null)} onSave={(v)=>m.mutate(v)} busy={m.isPending} />}
 
@@ -65,17 +118,17 @@ function ProductsPage() {
       )}
       <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((p:any, idx:number) => (
-          <div key={p.id} className="bg-card border border-border/40 rounded-lg overflow-hidden">
+          <div key={p.id} className={`bg-card border border-border/40 rounded-lg overflow-hidden ${p._optimistic ? "opacity-60" : ""}`}>
             {p.image_url && <img src={p.image_url} alt="" className="w-full aspect-[4/3] object-cover" />}
             <div className="p-4">
               <p className="font-display text-lg">{p.title}</p>
               {p.price_text && <p className="text-sm text-primary">{p.price_text}</p>}
               <p className="text-xs text-muted-foreground mt-1">{p.is_active ? "Đang hiển thị" : "Ẩn"}</p>
               <div className="mt-3 flex flex-wrap gap-2">
-                <button onClick={()=>setEditing(p)} className="text-sm text-primary underline">Sửa</button>
-                <button onClick={()=>{ if(confirm("Xoá?")) dm.mutate(p.id); }} className="text-sm text-destructive underline">Xoá</button>
-                <button disabled={idx===0} onClick={()=>move(idx,-1)} className="text-sm text-muted-foreground hover:text-foreground disabled:opacity-30">↑</button>
-                <button disabled={idx===items.length-1} onClick={()=>move(idx,1)} className="text-sm text-muted-foreground hover:text-foreground disabled:opacity-30">↓</button>
+                <button disabled={p._optimistic} onClick={()=>setEditing(p)} className="text-sm text-primary underline disabled:opacity-40">Sửa</button>
+                <button disabled={p._optimistic} onClick={()=>{ if(confirm("Xoá dịch vụ này?")) dm.mutate(p.id); }} className="text-sm text-destructive underline disabled:opacity-40">Xoá</button>
+                <button disabled={idx===0 || reordering || p._optimistic} onClick={()=>move(idx,-1)} className="text-sm text-muted-foreground hover:text-foreground disabled:opacity-30">↑</button>
+                <button disabled={idx===items.length-1 || reordering || p._optimistic} onClick={()=>move(idx,1)} className="text-sm text-muted-foreground hover:text-foreground disabled:opacity-30">↓</button>
               </div>
             </div>
           </div>
