@@ -2,6 +2,7 @@ import { useMemo, useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { resolveImg } from "@/lib/image-map";
 import { toast } from "sonner";
+import { Download, Link2, Share2, ExternalLink } from "lucide-react";
 
 type Couple = {
   slug: string;
@@ -58,35 +59,66 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
   };
 
   return (
-    <div className="relative overflow-hidden rounded-xl border border-border/60 shadow-elegant bg-card">
+    <div className="relative overflow-hidden rounded-2xl border border-primary/20 shadow-elegant bg-card">
       {/* Decorative background */}
       {bg && (
         <div
-          className="absolute inset-0 opacity-20 bg-cover bg-center"
+          className="absolute inset-0 opacity-25 bg-cover bg-center scale-110 blur-[2px]"
           style={{ backgroundImage: `url(${resolveImg(bg)})` }}
           aria-hidden
         />
       )}
-      <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/70 to-background/95" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-br from-background/92 via-background/85 to-background/95" aria-hidden />
+      {/* Ornamental frame */}
+      <div className="absolute inset-3 md:inset-5 border border-primary/25 rounded-xl pointer-events-none" aria-hidden />
+      <div className="absolute inset-4 md:inset-6 border border-primary/15 rounded-lg pointer-events-none" aria-hidden />
 
-      <div className="relative grid md:grid-cols-[1fr_auto] gap-8 p-8 md:p-10 items-center">
+      {/* Floating action icons */}
+      <div className="absolute top-4 right-4 z-20 flex gap-1.5">
+        <button type="button" onClick={downloadQR} aria-label="Tải QR (PNG)"
+          title="Tải QR (PNG)"
+          className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition">
+          <Download size={14} />
+        </button>
+        <button type="button" onClick={copyLink} aria-label="Sao chép liên kết"
+          title="Sao chép liên kết"
+          className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition">
+          <Link2 size={14} />
+        </button>
+        <button type="button" onClick={shareNative} aria-label="Chia sẻ"
+          title="Chia sẻ"
+          className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition">
+          <Share2 size={14} />
+        </button>
+        <a href={url} target="_blank" rel="noopener" aria-label="Mở thiệp"
+          title="Mở thiệp trong tab mới"
+          className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition">
+          <ExternalLink size={14} />
+        </a>
+      </div>
+
+      <div className="relative grid md:grid-cols-[1fr_auto] gap-10 p-10 md:p-14 items-center">
         {/* Invitation text */}
         <div className="text-center md:text-left">
-          <p className="font-script text-2xl text-primary">save the date</p>
-          <p className="uppercase tracking-[0.3em] text-xs text-muted-foreground mt-3">Trân trọng kính mời</p>
-          <h2 className="font-display text-3xl md:text-5xl mt-3 leading-tight">
+          <p className="font-script text-3xl md:text-4xl text-primary">save the date</p>
+          <div className="flex items-center gap-3 mt-4 justify-center md:justify-start">
+            <span className="h-px w-10 bg-primary/40" />
+            <p className="uppercase tracking-[0.3em] text-[11px] text-muted-foreground">Trân trọng kính mời tham dự tiệc cưới</p>
+            <span className="h-px w-10 bg-primary/40" />
+          </div>
+          <h2 className="font-display text-4xl md:text-6xl mt-5 leading-[1.05]">
             {couple.bride_name}
-            <span className="font-script text-primary mx-2">&amp;</span>
+            <span className="font-script text-primary mx-3 align-middle">&amp;</span>
             {couple.groom_name}
           </h2>
-          {dateLabel && <p className="mt-3 text-base md:text-lg">{dateLabel}</p>}
+          {dateLabel && <p className="mt-5 text-base md:text-lg tracking-wide">{dateLabel}</p>}
           {couple.venue_name && (
-            <p className="mt-1 text-sm text-muted-foreground">
+            <p className="mt-2 text-sm text-muted-foreground">
               {couple.venue_name}{couple.venue_address ? ` — ${couple.venue_address}` : ""}
             </p>
           )}
           {couple.quote && (
-            <blockquote className="mt-5 font-display italic text-lg md:text-xl text-balance max-w-md mx-auto md:mx-0">
+            <blockquote className="mt-6 font-display italic text-lg md:text-xl text-balance max-w-md mx-auto md:mx-0 text-foreground/80">
               "{couple.quote}"
             </blockquote>
           )}
@@ -94,7 +126,11 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
 
         {/* QR card */}
         <div className="flex flex-col items-center">
-          <div ref={qrRef} className="bg-white p-4 rounded-lg shadow-soft border border-border/60">
+          <div ref={qrRef} className="bg-white p-4 rounded-xl shadow-elegant border border-primary/30 relative">
+            <span className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-primary/60 rounded-tl" />
+            <span className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-primary/60 rounded-tr" />
+            <span className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-primary/60 rounded-bl" />
+            <span className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-primary/60 rounded-br" />
             <QRCodeCanvas
               value={url}
               size={196}
@@ -104,25 +140,9 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
               fgColor="#1a1a1a"
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-3 text-center">Quét mã để mở thiệp cưới online</p>
+          <p className="font-script text-xl text-primary mt-4 text-center">Quét để mở thiệp</p>
           <p className="text-[11px] text-muted-foreground/80 mt-1 break-all max-w-[220px] text-center font-mono">{url}</p>
         </div>
-      </div>
-
-      {/* Actions */}
-      <div className="relative px-8 md:px-10 pb-8 flex flex-wrap gap-3 justify-center md:justify-end">
-        <button type="button" onClick={downloadQR} className="px-4 py-2 rounded bg-primary text-primary-foreground text-sm uppercase tracking-[0.18em]">
-          Tải QR (PNG)
-        </button>
-        <button type="button" onClick={copyLink} className="px-4 py-2 rounded border border-input text-sm uppercase tracking-[0.18em]">
-          Sao chép liên kết
-        </button>
-        <button type="button" onClick={shareNative} className="px-4 py-2 rounded border border-input text-sm uppercase tracking-[0.18em]">
-          Chia sẻ
-        </button>
-        <a href={url} target="_blank" rel="noopener" className="px-4 py-2 rounded border border-input text-sm uppercase tracking-[0.18em]">
-          Mở thiệp
-        </a>
       </div>
     </div>
   );
