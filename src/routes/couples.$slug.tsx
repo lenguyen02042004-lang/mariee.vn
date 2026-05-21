@@ -5,6 +5,7 @@ import { HeroSlider } from "@/components/HeroSlider";
 import { RsvpForm } from "@/components/RsvpForm";
 import { Countdown } from "@/components/Countdown";
 import { WishWall } from "@/components/WishWall";
+import { WeddingShareCard } from "@/components/WeddingShareCard";
 
 export const Route = createFileRoute("/couples/$slug")({
   loader: async ({ params }) => {
@@ -165,6 +166,12 @@ function CouplePage() {
 
       <Section kicker="wishes" title="Sổ lưu bút" dark>
         <WishWall coupleId={couple.id} wishes={wishes} />
+      </Section>
+
+      <Section kicker="share the love" title="Mời thêm bạn bè">
+        <div className="max-w-4xl mx-auto">
+          <WeddingShareCard couple={couple as any} />
+        </div>
       </Section>
 
       <section className="bg-romance py-24">
