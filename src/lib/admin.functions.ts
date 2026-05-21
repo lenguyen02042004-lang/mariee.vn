@@ -144,6 +144,58 @@ export const adminListVendors = createServerFn({ method: "GET" })
     return data ?? [];
   });
 
+export const adminGetVendor = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data: vendor, error } = await context.supabase.from("vendors").select("*").eq("id", data.id).maybeSingle();
+    if (error) throw new Error(error.message);
+    return { vendor };
+  });
+
+const adminVendorSchema = z.object({
+  id: z.string().uuid().optional(),
+  name: z.string().trim().min(1).max(160),
+  slug: z.string().trim().min(1).max(120).regex(/^[a-z0-9-]+$/),
+  category: z.enum(["venue","photography","videography","wedding_planner","makeup","attire","flowers","catering","music","decor","invitation","other"]),
+  tagline: z.string().max(240).optional().or(z.literal("")),
+  description: z.string().max(4000).optional().or(z.literal("")),
+  cover_image: z.string().max(800).optional().or(z.literal("")),
+  logo_url: z.string().max(800).optional().or(z.literal("")),
+  phone: z.string().max(40).optional().or(z.literal("")),
+  email: z.string().max(160).optional().or(z.literal("")),
+  address: z.string().max(300).optional().or(z.literal("")),
+  city: z.string().max(80).optional().or(z.literal("")),
+  website: z.string().max(400).optional().or(z.literal("")),
+  price_range: z.string().max(80).optional().or(z.literal("")),
+  youtube_url: z.string().max(400).optional().or(z.literal("")),
+  gallery: z.array(z.string().max(800)).max(30).optional(),
+  owner_id: z.string().uuid().nullable().optional(),
+  is_approved: z.boolean().optional(),
+  is_featured: z.boolean().optional(),
+});
+
+export const adminUpsertVendor = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => adminVendorSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const payload: any = { ...data };
+    for (const k of Object.keys(payload)) if (payload[k] === "") payload[k] = null;
+    if (!payload.gallery) payload.gallery = [];
+    if (payload.id) {
+      const id = payload.id; delete payload.id;
+      const { error } = await context.supabase.from("vendors").update(payload).eq("id", id);
+      if (error) throw new Error(error.message);
+      return { id };
+    }
+    delete payload.id;
+    const { data: row, error } = await context.supabase.from("vendors").insert(payload).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: row!.id };
+  });
+
 export const adminSetVendorApproval = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => z.object({
