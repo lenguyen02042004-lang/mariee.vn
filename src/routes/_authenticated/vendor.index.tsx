@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMyVendor, upsertMyVendor, publishMyVendor } from "@/lib/vendor-owner.functions";
 import { listMyProducts } from "@/lib/vendor-owner.functions";
 import { uploadImage } from "@/lib/upload";
+import { ImagePicker, ImageUploadButton } from "@/components/ImagePicker";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -78,7 +79,9 @@ function VendorPortal() {
     try {
       const url = await uploadImage(file, user.id, "vendor-gallery");
       setForm((f:any)=>({ ...f, gallery: [...(f.gallery ?? []), url] }));
-    } catch (e:any) { toast.error(e.message); } finally { setUploading(null); }
+      toast.success("Đã thêm ảnh vào thư viện");
+    } catch (e:any) { toast.error(e.message || "Tải ảnh thất bại"); throw e; }
+    finally { setUploading(null); }
   };
 
   if (isLoading) return <p className="text-center py-20 text-muted-foreground">Đang tải…</p>;
@@ -135,13 +138,18 @@ function VendorPortal() {
         </div>
 
         <div className="grid sm:grid-cols-2 gap-4">
-          <ImageUpload label="Ảnh bìa" value={form.cover_image} onUpload={(f)=>onUpload("cover_image",f)} onClear={()=>setForm({...form,cover_image:""})} busy={uploading==="cover_image"} />
-          <ImageUpload label="Logo" value={form.logo_url} onUpload={(f)=>onUpload("logo_url",f)} onClear={()=>setForm({...form,logo_url:""})} busy={uploading==="logo_url"} />
+          <ImagePicker label="Ảnh bìa" value={form.cover_image ?? ""} onChange={(url)=>setForm({...form, cover_image: url})} folder="vendor" />
+          <ImagePicker label="Logo" value={form.logo_url ?? ""} onChange={(url)=>setForm({...form, logo_url: url})} folder="vendor" aspect="aspect-square" />
         </div>
 
         <div>
           <h3 className="font-display text-xl mb-3">Thư viện</h3>
-          <input type="file" accept="image/*" disabled={uploading==="gallery"} onChange={e=>{ const f=e.target.files?.[0]; if(f) onAddGallery(f); }} className="text-sm" />
+          <ImageUploadButton
+            disabled={uploading==="gallery"}
+            buttonLabel="+ Thêm ảnh vào thư viện"
+            helper={`${(form.gallery ?? []).length} ảnh`}
+            onUpload={onAddGallery}
+          />
           <div className="mt-3 grid grid-cols-3 md:grid-cols-5 gap-3">
             {(form.gallery ?? []).map((url:string,i:number)=>(
               <div key={i} className="relative group aspect-square rounded overflow-hidden border border-border/60">
@@ -191,17 +199,5 @@ function Field({ label, value, onChange, required, full }: { label: string; valu
       <span className="text-muted-foreground">{label}</span>
       <input required={required} value={value ?? ""} onChange={e=>onChange(e.target.value)} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
     </label>
-  );
-}
-function ImageUpload({ label, value, onUpload, onClear, busy }: { label:string; value:string; onUpload:(f:File)=>void; onClear:()=>void; busy:boolean }) {
-  return (
-    <div className="border border-border/60 rounded p-3 bg-card">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <div className="mt-2 aspect-[4/3] bg-secondary/50 rounded overflow-hidden flex items-center justify-center">
-        {value ? <img src={value} className="w-full h-full object-cover" /> : <span className="text-xs text-muted-foreground">Chưa có</span>}
-      </div>
-      <input type="file" accept="image/*" disabled={busy} onChange={e=>{ const f=e.target.files?.[0]; if(f) onUpload(f); }} className="mt-2 text-xs w-full" />
-      {value && <button type="button" onClick={onClear} className="mt-1 text-xs text-destructive">Xoá</button>}
-    </div>
   );
 }
