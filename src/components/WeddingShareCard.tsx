@@ -1,8 +1,9 @@
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 import { resolveImg } from "@/lib/image-map";
 import { toast } from "sonner";
-import { Download, Link2, Share2, ExternalLink } from "lucide-react";
+import { Download, Link2, Share2, ExternalLink, QrCode, Loader2 } from "lucide-react";
+import { toPng } from "html-to-image";
 
 type Couple = {
   slug: string;
@@ -22,6 +23,8 @@ type Couple = {
  */
 export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: string }) {
   const qrRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [busy, setBusy] = useState<null | "card" | "qr" | "share">(null);
 
   const url = useMemo(() => {
     const base = origin ?? (typeof window !== "undefined" ? window.location.origin : "");
@@ -58,6 +61,59 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
     a.click();
   };
 
+  const renderCardPng = async (): Promise<{ blob: Blob; dataUrl: string } | null> => {
+    if (!cardRef.current) return null;
+    const dataUrl = await toPng(cardRef.current, {
+      pixelRatio: 2,
+      cacheBust: true,
+      backgroundColor: "#ffffff",
+    });
+    const res = await fetch(dataUrl);
+    const blob = await res.blob();
+    return { blob, dataUrl };
+  };
+
+  const downloadCard = async () => {
+    if (busy) return;
+    setBusy("card");
+    try {
+      const out = await renderCardPng();
+      if (!out) throw new Error("no-card");
+      const a = document.createElement("a");
+      a.href = out.dataUrl;
+      a.download = `thiep-cuoi-${couple.slug}.png`;
+      a.click();
+      toast.success("Đã tải thiệp cưới (PNG)");
+    } catch {
+      toast.error("Không tạo được ảnh thiệp, vui lòng thử lại");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const shareCard = async () => {
+    if (busy) return;
+    setBusy("share");
+    try {
+      const out = await renderCardPng();
+      const text = `Trân trọng kính mời bạn đến dự lễ thành hôn của ${couple.bride_name} & ${couple.groom_name}`;
+      const file = out ? new File([out.blob], `thiep-cuoi-${couple.slug}.png`, { type: "image/png" }) : null;
+      const nav = navigator as any;
+      if (file && nav.canShare && nav.canShare({ files: [file] })) {
+        await nav.share({ files: [file], title: `${couple.bride_name} & ${couple.groom_name}`, text, url });
+      } else if (navigator.share) {
+        await navigator.share({ title: `${couple.bride_name} & ${couple.groom_name}`, text, url });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Đã sao chép liên kết");
+      }
+    } catch {
+      /* user cancel or unsupported */
+    } finally {
+      setBusy(null);
+    }
+  };
+
   return (
     <div className="relative overflow-hidden rounded-2xl border border-primary/20 shadow-elegant bg-card">
       {/* Decorative background */}
@@ -75,20 +131,25 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
 
       {/* Floating action icons */}
       <div className="absolute top-4 right-4 z-20 flex gap-1.5">
-        <button type="button" onClick={downloadQR} aria-label="Tải QR (PNG)"
-          title="Tải QR (PNG)"
+        <button type="button" onClick={downloadCard} disabled={busy !== null} aria-label="Tải thiệp cưới (PNG)"
+          title="Tải thiệp cưới (PNG)"
+          className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition disabled:opacity-50">
+          {busy === "card" ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
+        </button>
+        <button type="button" onClick={downloadQR} aria-label="Tải mã QR (PNG)"
+          title="Tải mã QR (PNG)"
           className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition">
-          <Download size={14} />
+          <QrCode size={14} />
         </button>
         <button type="button" onClick={copyLink} aria-label="Sao chép liên kết"
           title="Sao chép liên kết"
           className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition">
           <Link2 size={14} />
         </button>
-        <button type="button" onClick={shareNative} aria-label="Chia sẻ"
-          title="Chia sẻ"
-          className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition">
-          <Share2 size={14} />
+        <button type="button" onClick={shareCard} disabled={busy !== null} aria-label="Chia sẻ thiệp"
+          title="Chia sẻ thiệp (kèm ảnh)"
+          className="w-8 h-8 rounded-full bg-card/90 border border-border/60 text-foreground/70 hover:text-primary hover:border-primary/40 backdrop-blur flex items-center justify-center transition disabled:opacity-50">
+          {busy === "share" ? <Loader2 size={14} className="animate-spin" /> : <Share2 size={14} />}
         </button>
         <a href={url} target="_blank" rel="noopener" aria-label="Mở thiệp"
           title="Mở thiệp trong tab mới"
@@ -97,7 +158,7 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
         </a>
       </div>
 
-      <div className="relative grid md:grid-cols-[1fr_auto] gap-10 p-10 md:p-14 items-center">
+      <div ref={cardRef} className="relative grid md:grid-cols-[1fr_auto] gap-10 p-10 md:p-14 items-center">
         {/* Invitation text */}
         <div className="text-center md:text-left">
           <p className="font-script text-3xl md:text-4xl text-primary">save the date</p>
