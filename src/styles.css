@@ -149,3 +149,35 @@
     width: 60px; height: 1px; background: currentColor; opacity: .4; margin: 0 1rem;
   }
 }
+
+@keyframes hero-letter-in {
+  0% { opacity: 0; transform: translateY(28px) scale(0.92); filter: blur(8px); }
+  60% { filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+@keyframes hero-amp-in {
+  0% { opacity: 0; transform: rotate(-25deg) scale(0.4); }
+  100% { opacity: 1; transform: rotate(0) scale(1); }
+}
+@keyframes hero-fade-in {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes hero-kenburns {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+.hero-letter {
+  animation: hero-letter-in 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.hero-amp {
+  display: inline-block; opacity: 0;
+  animation: hero-amp-in 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+.hero-fade {
+  opacity: 0;
+  animation: hero-fade-in 0.9s ease-out forwards;
+}
+.hero-kenburns {
+  animation: hero-kenburns 8s ease-out forwards;
+}

@@ -13,6 +13,25 @@ export const Route = createFileRoute("/_authenticated/couple")({
   head: () => ({ meta: [{ title: "Trang của tôi — Mariée" }] }),
 });
 
+function slugify(input: string): string {
+  return input
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d").replace(/Đ/g, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+function buildSlug(bride: string, groom: string, date: string): string {
+  const names = [bride, groom].filter(Boolean).map(slugify).filter(Boolean).join("-");
+  if (!names) return "";
+  if (!date) return names;
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return names;
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${names}-${dd}${mm}${d.getFullYear()}`;
+}
+
 function CouplePortal() {
   const { user, signOut } = useAuth();
   const qc = useQueryClient();
@@ -25,6 +44,12 @@ function CouplePortal() {
     queryKey: ["my-couple", id], enabled: !!id, queryFn: () => get({ data: { id: id! } }),
   });
   const [form, setForm] = useState({ slug: "", bride_name: "", groom_name: "", wedding_date: "" });
+  const [slugTouched, setSlugTouched] = useState(false);
+  const updateName = (patch: Partial<typeof form>) => {
+    const next = { ...form, ...patch };
+    if (!slugTouched) next.slug = buildSlug(next.bride_name, next.groom_name, next.wedding_date);
+    setForm(next);
+  };
   const mCreate = useMutation({
     mutationFn: () => create({ data: form }),
     onSuccess: () => { toast.success("Đã tạo trang cưới, hãy hoàn thiện nội dung."); qc.invalidateQueries({ queryKey: ["my-couples"] }); },
@@ -45,17 +70,20 @@ function CouplePortal() {
         </div>
         <form onSubmit={e=>{e.preventDefault(); mCreate.mutate();}} className="mt-10 space-y-3 bg-card border border-border/60 rounded-lg p-6 shadow-soft">
           <label className="text-sm block"><span className="text-muted-foreground">Tên cô dâu *</span>
-            <input required value={form.bride_name} onChange={e=>setForm({...form,bride_name:e.target.value})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
+            <input required value={form.bride_name} onChange={e=>updateName({bride_name:e.target.value})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
           </label>
           <label className="text-sm block"><span className="text-muted-foreground">Tên chú rể *</span>
-            <input required value={form.groom_name} onChange={e=>setForm({...form,groom_name:e.target.value})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
-          </label>
-          <label className="text-sm block"><span className="text-muted-foreground">Slug — đường dẫn (vd: linh-minh) *</span>
-            <input required pattern="[a-z0-9-]+" value={form.slug} onChange={e=>setForm({...form,slug:e.target.value.toLowerCase()})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background font-mono text-xs" />
-            <span className="text-xs text-muted-foreground">Trang của bạn sẽ ở: /couples/{form.slug || "your-slug"}</span>
+            <input required value={form.groom_name} onChange={e=>updateName({groom_name:e.target.value})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
           </label>
           <label className="text-sm block"><span className="text-muted-foreground">Ngày cưới (có thể bỏ trống)</span>
-            <input type="date" value={form.wedding_date} onChange={e=>setForm({...form,wedding_date:e.target.value})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
+            <input type="date" value={form.wedding_date} onChange={e=>updateName({wedding_date:e.target.value})} className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
+          </label>
+          <label className="text-sm block">
+            <span className="text-muted-foreground">Đường dẫn (tự tạo từ tên &amp; ngày cưới, có thể sửa)</span>
+            <input required pattern="[a-z0-9-]+" value={form.slug}
+              onChange={e=>{ setSlugTouched(true); setForm({...form, slug: e.target.value.toLowerCase()}); }}
+              className="mt-1 w-full px-3 py-2 rounded border border-input bg-background font-mono text-xs" />
+            <span className="text-xs text-muted-foreground">Trang của bạn sẽ ở: /couples/{form.slug || "your-slug"}</span>
           </label>
           <button disabled={mCreate.isPending} className="w-full py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">
             {mCreate.isPending ? "Đang tạo…" : "Tạo trang cưới"}
