@@ -4,7 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { adminUpsertCouple, adminAddGallery, adminDeleteGallery } from "@/lib/admin.functions";
 import { updateMyCouple, addMyGallery, deleteMyGallery } from "@/lib/couple-owner.functions";
-import { uploadImage } from "@/lib/upload";
+import { uploadImage, validateImage } from "@/lib/upload";
+import { ImagePicker, ImageUploadButton } from "@/components/ImagePicker";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -77,33 +78,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
     onError: (e: any) => toast.error(e.message),
   });
 
-  const validateSize = (file: File) => {
-    if (file.size > MAX_MB * 1024 * 1024) {
-      toast.error(`Ảnh vượt quá ${MAX_MB}MB`); return false;
-    }
-    return true;
-  };
-
-  const onUpload = async (field: string, file: File) => {
-    if (!user || !validateSize(file)) return;
-    setUploading(field);
-    try {
-      const url = await uploadImage(file, user.id, "couples");
-      setForm((f: any) => ({ ...f, [field]: url }));
-      toast.success("Đã tải lên");
-    } catch (e: any) { toast.error(e.message); } finally { setUploading(null); }
-  };
-
-  const onUploadInvitation = async (field: string, file: File) => {
-    if (!user) return;
-    if (file.size > 15 * 1024 * 1024) { toast.error("Thiệp vượt quá 15MB"); return; }
-    setUploading(field);
-    try {
-      const url = await uploadImage(file, user.id, "invitations");
-      setForm((f: any) => ({ ...f, [field]: url }));
-      toast.success("Đã tải lên thiệp");
-    } catch (e: any) { toast.error(e.message); } finally { setUploading(null); }
-  };
+  void uploading;
 
   const onAddGallery = async (files: FileList) => {
     if (!form.id || !user) { toast.error("Lưu trang trước khi tải ảnh"); return; }
@@ -113,7 +88,8 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
     try {
       let added = 0;
       for (const file of Array.from(files).slice(0, remaining)) {
-        if (!validateSize(file)) continue;
+        const v = validateImage(file, { maxMB: MAX_MB });
+        if (v) { toast.error(v); continue; }
         const url = await uploadImage(file, user.id, "gallery");
         await addG({ data: { couple_id: form.id, image_url: url, caption: "" } } as any);
         added++;
@@ -163,17 +139,14 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
         <p className="text-xs text-muted-foreground mb-3">Mỗi ảnh tối đa <strong>{MAX_MB}MB</strong>, định dạng JPG/PNG/WEBP.</p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {imageFields.map(f => (
-            <div key={f.k} className="border border-border/60 rounded p-3 bg-card">
-              <p className="text-xs text-muted-foreground">{f.label}</p>
-              <div className="mt-2 aspect-[4/3] bg-secondary/50 rounded overflow-hidden flex items-center justify-center">
-                {form[f.k]
-                  ? <img src={form[f.k]} className="w-full h-full object-cover" />
-                  : <span className="text-xs text-muted-foreground">Chưa có</span>}
-              </div>
-              <input type="file" accept="image/*" disabled={uploading === f.k}
-                onChange={e => { const file = e.target.files?.[0]; if (file) onUpload(f.k, file); }}
-                className="mt-2 text-xs w-full" />
-              {form[f.k] && <button type="button" onClick={() => setForm({ ...form, [f.k]: "" })} className="mt-1 text-xs text-destructive">Xoá</button>}
+            <div key={f.k} className="border border-border/60 rounded-md p-3 bg-card">
+              <ImagePicker
+                label={f.label}
+                value={form[f.k] ?? ""}
+                onChange={(url) => setForm({ ...form, [f.k]: url })}
+                folder="couples"
+                maxMB={MAX_MB}
+              />
             </div>
           ))}
         </div>
@@ -187,17 +160,15 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
             { k: "invitation_bride_url", label: "Thiệp nhà cô dâu" },
             { k: "invitation_groom_url", label: "Thiệp nhà chú rể" },
           ].map(f => (
-            <div key={f.k} className="border border-border/60 rounded p-3 bg-card">
-              <p className="text-sm font-medium">{f.label}</p>
-              <div className="mt-2 aspect-[3/4] bg-secondary/50 rounded overflow-hidden flex items-center justify-center">
-                {form[f.k]
-                  ? <img src={form[f.k]} className="w-full h-full object-contain bg-white" />
-                  : <span className="text-xs text-muted-foreground">Chưa tải</span>}
-              </div>
-              <input type="file" accept="image/*" disabled={uploading === f.k}
-                onChange={e => { const file = e.target.files?.[0]; if (file) onUploadInvitation(f.k, file); }}
-                className="mt-2 text-xs w-full" />
-              {form[f.k] && <button type="button" onClick={() => setForm({ ...form, [f.k]: "" })} className="mt-1 text-xs text-destructive">Xoá</button>}
+            <div key={f.k} className="border border-border/60 rounded-md p-3 bg-card">
+              <ImagePicker
+                label={f.label}
+                value={form[f.k] ?? ""}
+                onChange={(url) => setForm({ ...form, [f.k]: url })}
+                folder="invitations"
+                maxMB={15}
+                aspect="aspect-[3/4]"
+              />
             </div>
           ))}
         </div>
@@ -212,8 +183,16 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
           <p className="text-xs text-muted-foreground mb-3">
             Tải lên tối đa <strong>{MAX_GALLERY} ảnh</strong>, mỗi ảnh ≤ <strong>{MAX_MB}MB</strong>. Có thể chọn nhiều ảnh cùng lúc.
           </p>
-          <input type="file" accept="image/*" multiple disabled={uploading === "gallery" || gallery.length >= MAX_GALLERY}
-            onChange={e => { if (e.target.files?.length) onAddGallery(e.target.files); }} className="text-sm" />
+          <ImageUploadButton
+            disabled={uploading === "gallery" || gallery.length >= MAX_GALLERY}
+            buttonLabel="+ Thêm ảnh vào thư viện"
+            maxMB={MAX_MB}
+            helper={`Còn lại ${Math.max(0, MAX_GALLERY - gallery.length)} chỗ`}
+            onUpload={async (file) => {
+              const fl = { 0: file, length: 1, item: (i: number) => (i === 0 ? file : null) } as unknown as FileList;
+              await onAddGallery(fl);
+            }}
+          />
           <div className="mt-4 grid grid-cols-3 md:grid-cols-5 gap-3">
             {gallery.map((g: any) => (
               <div key={g.id} className="relative group aspect-square rounded overflow-hidden border border-border/60">
