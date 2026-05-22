@@ -1,5 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { getBlogPostBySlug, BLOG_CATEGORIES } from "@/lib/blog.functions";
+import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
+import { getBlogPostBySlug, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { resolveImg } from "@/lib/image-map";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -33,7 +35,9 @@ export const Route = createFileRoute("/blog/$slug")({
 
 function BlogPostPage() {
   const { post, related } = Route.useLoaderData();
-  const cat = BLOG_CATEGORIES.find((c) => c.value === post.category);
+  const fetchCats = useServerFn(listBlogCategories);
+  const { data: cats = [] } = useQuery<BlogCategory[]>({ queryKey: ["blog-cats"], queryFn: () => fetchCats() });
+  const cat = cats.find((c) => c.slug === post.category);
 
   return (
     <article className="pb-20">
@@ -49,10 +53,10 @@ function BlogPostPage() {
           <div className="flex items-center gap-3 text-xs">
             <Link
               to="/blog"
-              search={{ category: post.category as any, page: 1 }}
+              search={{ category: post.category, page: 1 }}
               className="px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-[0.16em] hover:bg-primary/20 transition"
             >
-              {cat?.label ?? post.category}
+              {cat?.name ?? post.category}
             </Link>
             <span className="text-muted-foreground">{new Date(post.published_at).toLocaleDateString("vi-VN")}</span>
             {post.author_name && <span className="text-muted-foreground">• {post.author_name}</span>}
