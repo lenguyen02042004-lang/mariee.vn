@@ -60,6 +60,7 @@ export const listBlogPosts = createServerFn({ method: "GET" })
       page: z.number().int().min(1).max(1000).default(1),
       pageSize: z.number().int().min(1).max(48).default(9),
       category: CategorySlug.optional().nullable(),
+      q: z.string().trim().max(120).optional().nullable(),
     }).parse(d ?? {}),
   )
   .handler(async ({ data }) => {
@@ -72,6 +73,10 @@ export const listBlogPosts = createServerFn({ method: "GET" })
       .order("published_at", { ascending: false })
       .range(from, to);
     if (data.category) q = q.eq("category", data.category);
+    if (data.q) {
+      const term = data.q.replace(/[%,]/g, " ").trim();
+      if (term) q = q.or(`title.ilike.%${term}%,excerpt.ilike.%${term}%,content.ilike.%${term}%`);
+    }
     const { data: rows, count, error } = await q;
     if (error) throw new Error(error.message);
     return { items: rows ?? [], total: count ?? 0, page: data.page, pageSize: data.pageSize };

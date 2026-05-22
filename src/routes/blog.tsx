@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { listBlogPosts, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { resolveImg } from "@/lib/image-map";
@@ -8,6 +9,7 @@ import { resolveImg } from "@/lib/image-map";
 const searchSchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1).catch(1),
   category: z.string().min(1).max(60).optional().catch(undefined),
+  q: z.string().min(1).max(120).optional().catch(undefined),
 });
 
 const PAGE_SIZE = 9;
@@ -26,25 +28,39 @@ export const Route = createFileRoute("/blog")({
 });
 
 function BlogPage() {
-  const { page, category } = Route.useSearch();
+  const { page, category, q } = Route.useSearch();
   const navigate = useNavigate({ from: "/blog" });
   const fetcher = useServerFn(listBlogPosts);
   const fetchCats = useServerFn(listBlogCategories);
-  const { data: cats = [] } = useQuery<BlogCategory[]>({ queryKey: ["blog-cats"], queryFn: () => fetchCats() });
+  const catsQ = useQuery<BlogCategory[]>({ queryKey: ["blog-cats"], queryFn: () => fetchCats() });
+  const cats = catsQ.data ?? [];
   const { data, isLoading } = useQuery({
-    queryKey: ["blog", page, category ?? "all"],
-    queryFn: () => fetcher({ data: { page, pageSize: PAGE_SIZE, category: category ?? null } }),
+    queryKey: ["blog", page, category ?? "all", q ?? ""],
+    queryFn: () => fetcher({ data: { page, pageSize: PAGE_SIZE, category: category ?? null, q: q ?? null } }),
   });
+
+  // Debounced search input
+  const [term, setTerm] = useState(q ?? "");
+  useEffect(() => { setTerm(q ?? ""); }, [q]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = term.trim();
+      if ((next || undefined) === (q || undefined)) return;
+      navigate({ search: { page: 1, category, q: next || undefined } });
+    }, 350);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [term]);
 
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
   function setCategory(value: string | undefined) {
-    navigate({ search: { page: 1, category: value as any } });
+    navigate({ search: { page: 1, category: value as any, q } });
   }
   function gotoPage(p: number) {
-    navigate({ search: { page: p, category } });
+    navigate({ search: { page: p, category, q } });
     if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -67,6 +83,34 @@ function BlogPage() {
           </CatChip>
         ))}
       </nav>
+
+      {/* Search */}
+      <div className="mt-6 max-w-xl mx-auto relative">
+        <input
+          type="search"
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+          placeholder="Tìm bài viết theo từ khoá..."
+          className="w-full h-12 pl-11 pr-10 rounded-full border border-border bg-background text-sm focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition"
+          aria-label="Tìm bài viết"
+        />
+        <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        {term && (
+          <button
+            type="button"
+            onClick={() => setTerm("")}
+            aria-label="Xoá tìm kiếm"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
+          >
+            ✕
+          </button>
+        )}
+        {q && !isLoading && (
+          <p className="mt-3 text-xs text-muted-foreground text-center">
+            {total} kết quả cho "<span className="text-foreground">{q}</span>"
+          </p>
+        )}
+      </div>
 
       {/* Grid */}
       <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[40vh]">

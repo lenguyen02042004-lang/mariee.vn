@@ -25,7 +25,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsIndexRouteImport } from './routes/vendors.index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
-import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedCoupleRouteImport } from './routes/_authenticated/couple'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -132,9 +132,9 @@ const CouplesSlugRoute = CouplesSlugRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => BlogRoute,
+  id: '/blog_/$slug',
+  path: '/blog/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedVendorRoute = AuthenticatedVendorRouteImport.update({
   id: '/vendor',
@@ -281,7 +281,7 @@ const AuthenticatedAdminBlogIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
+  '/blog': typeof BlogRoute
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -324,7 +324,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
+  '/blog': typeof BlogRoute
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -367,7 +367,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
+  '/blog': typeof BlogRoute
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -380,7 +380,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/couple': typeof AuthenticatedCoupleRoute
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
-  '/blog/$slug': typeof BlogSlugRoute
+  '/blog_/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
@@ -510,7 +510,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/couple'
     | '/_authenticated/vendor'
-    | '/blog/$slug'
+    | '/blog_/$slug'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
@@ -542,7 +542,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
-  BlogRoute: typeof BlogRouteWithChildren
+  BlogRoute: typeof BlogRoute
   ForCouplesRoute: typeof ForCouplesRoute
   ForVendorsRoute: typeof ForVendorsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -552,6 +552,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   CouplesSlugRoute: typeof CouplesSlugRoute
   VendorsSlugRoute: typeof VendorsSlugRoute
   VendorsIndexRoute: typeof VendorsIndexRoute
@@ -671,12 +672,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CouplesSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/$slug': {
-      id: '/blog/$slug'
-      path: '/$slug'
+    '/blog_/$slug': {
+      id: '/blog_/$slug'
+      path: '/blog/$slug'
       fullPath: '/blog/$slug'
       preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof BlogRoute
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/vendor': {
       id: '/_authenticated/vendor'
@@ -934,21 +935,11 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface BlogRouteChildren {
-  BlogSlugRoute: typeof BlogSlugRoute
-}
-
-const BlogRouteChildren: BlogRouteChildren = {
-  BlogSlugRoute: BlogSlugRoute,
-}
-
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
-  BlogRoute: BlogRouteWithChildren,
+  BlogRoute: BlogRoute,
   ForCouplesRoute: ForCouplesRoute,
   ForVendorsRoute: ForVendorsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
@@ -958,6 +949,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  BlogSlugRoute: BlogSlugRoute,
   CouplesSlugRoute: CouplesSlugRoute,
   VendorsSlugRoute: VendorsSlugRoute,
   VendorsIndexRoute: VendorsIndexRoute,
@@ -965,3 +957,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
