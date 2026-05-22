@@ -3,16 +3,7 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 
-export const BLOG_CATEGORIES = [
-  { value: "news", label: "Tin tức" },
-  { value: "tips", label: "Mẹo cưới" },
-  { value: "real_stories", label: "Câu chuyện thật" },
-  { value: "trends", label: "Xu hướng" },
-  { value: "venues", label: "Địa điểm" },
-  { value: "other", label: "Khác" },
-] as const;
-
-const CategoryEnum = z.enum(["news", "tips", "real_stories", "trends", "venues", "other"]);
+const CategorySlug = z.string().trim().min(1).max(60).regex(/^[a-z0-9-_]+$/);
 
 async function assertAdmin(supabase: any, userId: string) {
   const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
@@ -25,7 +16,7 @@ export const listBlogPosts = createServerFn({ method: "GET" })
     z.object({
       page: z.number().int().min(1).max(1000).default(1),
       pageSize: z.number().int().min(1).max(48).default(9),
-      category: CategoryEnum.optional().nullable(),
+      category: CategorySlug.optional().nullable(),
     }).parse(d ?? {}),
   )
   .handler(async ({ data }) => {
@@ -67,7 +58,7 @@ const postSchema = z.object({
   excerpt: z.string().trim().max(500).optional().or(z.literal("")),
   content: z.string().max(50000).optional().or(z.literal("")),
   cover_image: z.string().max(2000).optional().or(z.literal("")),
-  category: CategoryEnum,
+  category: CategorySlug,
   author_name: z.string().trim().max(120).optional().or(z.literal("")),
   is_published: z.boolean().default(true),
   published_at: z.string().optional().or(z.literal("")),
