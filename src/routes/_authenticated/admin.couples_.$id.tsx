@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { adminGetCouple } from "@/lib/admin.functions";
 import { CoupleForm } from "@/components/CoupleForm";
 
-export const Route = createFileRoute("/_authenticated/admin/couples/$id")({ component: EditCouple });
+export const Route = createFileRoute("/_authenticated/admin/couples_/$id")({ component: EditCouple });
 
 function EditCouple() {
   const { id } = Route.useParams();
