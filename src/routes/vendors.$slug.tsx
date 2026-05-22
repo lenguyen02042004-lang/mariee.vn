@@ -3,6 +3,8 @@ import { getVendorBySlug } from "@/lib/vendors.functions";
 import { resolveImg } from "@/lib/image-map";
 import { useEffect, useState } from "react";
 import { VendorLeadForm } from "@/components/VendorLeadForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { CalendarDays, Tag, MessageCircle, ArrowRight } from "lucide-react";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
@@ -108,19 +110,9 @@ function VendorPage() {
             <div className="text-center mb-12">
               <p className="font-script text-3xl text-primary">services</p>
               <h2 className="font-display text-3xl md:text-4xl mt-2">Sản phẩm & Dịch vụ</h2>
+              <p className="text-sm text-muted-foreground mt-3">Nhấn vào mỗi gói để xem chi tiết và gửi yêu cầu tư vấn — chúng tôi chỉ hỗ trợ kết nối, không xử lý giao dịch mua bán.</p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map(p => (
-                <div key={p.id} className="bg-card rounded-lg overflow-hidden shadow-soft border border-border/40 flex flex-col">
-                  {p.image_url && <div className="aspect-[4/3]"><img src={resolveImg(p.image_url)} alt={p.title} loading="lazy" className="w-full h-full object-cover" /></div>}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="font-display text-xl">{p.title}</h3>
-                    {p.description && <p className="mt-2 text-sm text-muted-foreground flex-1">{p.description}</p>}
-                    {p.price_text && <p className="mt-3 text-primary font-medium">{p.price_text}</p>}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ProductGrid products={products} vendorId={v.id} vendorName={v.name} />
           </div>
         </section>
       )}
