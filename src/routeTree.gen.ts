@@ -45,12 +45,12 @@ import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
 import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authenticated/admin.couples'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
-import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors.new'
-import { Route as AuthenticatedAdminVendorsIdRouteImport } from './routes/_authenticated/admin.vendors.$id'
-import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples.new'
-import { Route as AuthenticatedAdminCouplesIdRouteImport } from './routes/_authenticated/admin.couples.$id'
-import { Route as AuthenticatedAdminBlogNewRouteImport } from './routes/_authenticated/admin.blog.new'
-import { Route as AuthenticatedAdminBlogIdRouteImport } from './routes/_authenticated/admin.blog.$id'
+import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors_.new'
+import { Route as AuthenticatedAdminVendorsIdRouteImport } from './routes/_authenticated/admin.vendors_.$id'
+import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples_.new'
+import { Route as AuthenticatedAdminCouplesIdRouteImport } from './routes/_authenticated/admin.couples_.$id'
+import { Route as AuthenticatedAdminBlogNewRouteImport } from './routes/_authenticated/admin.blog_.new'
+import { Route as AuthenticatedAdminBlogIdRouteImport } from './routes/_authenticated/admin.blog_.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -243,39 +243,39 @@ const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
 } as any)
 const AuthenticatedAdminVendorsNewRoute =
   AuthenticatedAdminVendorsNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => AuthenticatedAdminVendorsRoute,
+    id: '/vendors_/new',
+    path: '/vendors/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminVendorsIdRoute =
   AuthenticatedAdminVendorsIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAdminVendorsRoute,
+    id: '/vendors_/$id',
+    path: '/vendors/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminCouplesNewRoute =
   AuthenticatedAdminCouplesNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => AuthenticatedAdminCouplesRoute,
+    id: '/couples_/new',
+    path: '/couples/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminCouplesIdRoute =
   AuthenticatedAdminCouplesIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAdminCouplesRoute,
+    id: '/couples_/$id',
+    path: '/couples/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminBlogNewRoute =
   AuthenticatedAdminBlogNewRouteImport.update({
-    id: '/new',
-    path: '/new',
-    getParentRoute: () => AuthenticatedAdminBlogRoute,
+    id: '/blog_/new',
+    path: '/blog/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminBlogIdRoute =
   AuthenticatedAdminBlogIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedAdminBlogRoute,
+    id: '/blog_/$id',
+    path: '/blog/$id',
+    getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -298,15 +298,15 @@ export interface FileRoutesByFullPath {
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
-  '/admin/blog': typeof AuthenticatedAdminBlogRouteWithChildren
-  '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/couples': typeof AuthenticatedAdminCouplesRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/plans': typeof AuthenticatedAdminPlansRoute
   '/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/vendors': typeof AuthenticatedAdminVendorsRouteWithChildren
+  '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
@@ -339,15 +339,15 @@ export interface FileRoutesByTo {
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors': typeof VendorsIndexRoute
-  '/admin/blog': typeof AuthenticatedAdminBlogRouteWithChildren
-  '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/admin/couples': typeof AuthenticatedAdminCouplesRoute
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/admin/plans': typeof AuthenticatedAdminPlansRoute
   '/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/vendors': typeof AuthenticatedAdminVendorsRouteWithChildren
+  '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
@@ -384,15 +384,15 @@ export interface FileRoutesById {
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
-  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRouteWithChildren
-  '/_authenticated/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
+  '/_authenticated/admin/couples': typeof AuthenticatedAdminCouplesRoute
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
   '/_authenticated/admin/plans': typeof AuthenticatedAdminPlansRoute
   '/_authenticated/admin/rsvp': typeof AuthenticatedAdminRsvpRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRouteWithChildren
+  '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/_authenticated/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/_authenticated/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/_authenticated/vendor/leads': typeof AuthenticatedVendorLeadsRoute
@@ -400,12 +400,12 @@ export interface FileRoutesById {
   '/_authenticated/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/vendor/': typeof AuthenticatedVendorIndexRoute
-  '/_authenticated/admin/blog/$id': typeof AuthenticatedAdminBlogIdRoute
-  '/_authenticated/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
-  '/_authenticated/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
-  '/_authenticated/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
-  '/_authenticated/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
-  '/_authenticated/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
+  '/_authenticated/admin/blog_/$id': typeof AuthenticatedAdminBlogIdRoute
+  '/_authenticated/admin/blog_/new': typeof AuthenticatedAdminBlogNewRoute
+  '/_authenticated/admin/couples_/$id': typeof AuthenticatedAdminCouplesIdRoute
+  '/_authenticated/admin/couples_/new': typeof AuthenticatedAdminCouplesNewRoute
+  '/_authenticated/admin/vendors_/$id': typeof AuthenticatedAdminVendorsIdRoute
+  '/_authenticated/admin/vendors_/new': typeof AuthenticatedAdminVendorsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -530,12 +530,12 @@ export interface FileRouteTypes {
     | '/_authenticated/vendor/testimonials'
     | '/_authenticated/admin/'
     | '/_authenticated/vendor/'
-    | '/_authenticated/admin/blog/$id'
-    | '/_authenticated/admin/blog/new'
-    | '/_authenticated/admin/couples/$id'
-    | '/_authenticated/admin/couples/new'
-    | '/_authenticated/admin/vendors/$id'
-    | '/_authenticated/admin/vendors/new'
+    | '/_authenticated/admin/blog_/$id'
+    | '/_authenticated/admin/blog_/new'
+    | '/_authenticated/admin/couples_/$id'
+    | '/_authenticated/admin/couples_/new'
+    | '/_authenticated/admin/vendors_/$id'
+    | '/_authenticated/admin/vendors_/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -811,125 +811,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/vendors/new': {
-      id: '/_authenticated/admin/vendors/new'
-      path: '/new'
+    '/_authenticated/admin/vendors_/new': {
+      id: '/_authenticated/admin/vendors_/new'
+      path: '/vendors/new'
       fullPath: '/admin/vendors/new'
       preLoaderRoute: typeof AuthenticatedAdminVendorsNewRouteImport
-      parentRoute: typeof AuthenticatedAdminVendorsRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/vendors/$id': {
-      id: '/_authenticated/admin/vendors/$id'
-      path: '/$id'
+    '/_authenticated/admin/vendors_/$id': {
+      id: '/_authenticated/admin/vendors_/$id'
+      path: '/vendors/$id'
       fullPath: '/admin/vendors/$id'
       preLoaderRoute: typeof AuthenticatedAdminVendorsIdRouteImport
-      parentRoute: typeof AuthenticatedAdminVendorsRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/couples/new': {
-      id: '/_authenticated/admin/couples/new'
-      path: '/new'
+    '/_authenticated/admin/couples_/new': {
+      id: '/_authenticated/admin/couples_/new'
+      path: '/couples/new'
       fullPath: '/admin/couples/new'
       preLoaderRoute: typeof AuthenticatedAdminCouplesNewRouteImport
-      parentRoute: typeof AuthenticatedAdminCouplesRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/couples/$id': {
-      id: '/_authenticated/admin/couples/$id'
-      path: '/$id'
+    '/_authenticated/admin/couples_/$id': {
+      id: '/_authenticated/admin/couples_/$id'
+      path: '/couples/$id'
       fullPath: '/admin/couples/$id'
       preLoaderRoute: typeof AuthenticatedAdminCouplesIdRouteImport
-      parentRoute: typeof AuthenticatedAdminCouplesRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/blog/new': {
-      id: '/_authenticated/admin/blog/new'
-      path: '/new'
+    '/_authenticated/admin/blog_/new': {
+      id: '/_authenticated/admin/blog_/new'
+      path: '/blog/new'
       fullPath: '/admin/blog/new'
       preLoaderRoute: typeof AuthenticatedAdminBlogNewRouteImport
-      parentRoute: typeof AuthenticatedAdminBlogRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/blog/$id': {
-      id: '/_authenticated/admin/blog/$id'
-      path: '/$id'
+    '/_authenticated/admin/blog_/$id': {
+      id: '/_authenticated/admin/blog_/$id'
+      path: '/blog/$id'
       fullPath: '/admin/blog/$id'
       preLoaderRoute: typeof AuthenticatedAdminBlogIdRouteImport
-      parentRoute: typeof AuthenticatedAdminBlogRoute
+      parentRoute: typeof AuthenticatedAdminRoute
     }
   }
 }
 
-interface AuthenticatedAdminBlogRouteChildren {
-  AuthenticatedAdminBlogIdRoute: typeof AuthenticatedAdminBlogIdRoute
-  AuthenticatedAdminBlogNewRoute: typeof AuthenticatedAdminBlogNewRoute
-}
-
-const AuthenticatedAdminBlogRouteChildren: AuthenticatedAdminBlogRouteChildren =
-  {
-    AuthenticatedAdminBlogIdRoute: AuthenticatedAdminBlogIdRoute,
-    AuthenticatedAdminBlogNewRoute: AuthenticatedAdminBlogNewRoute,
-  }
-
-const AuthenticatedAdminBlogRouteWithChildren =
-  AuthenticatedAdminBlogRoute._addFileChildren(
-    AuthenticatedAdminBlogRouteChildren,
-  )
-
-interface AuthenticatedAdminCouplesRouteChildren {
-  AuthenticatedAdminCouplesIdRoute: typeof AuthenticatedAdminCouplesIdRoute
-  AuthenticatedAdminCouplesNewRoute: typeof AuthenticatedAdminCouplesNewRoute
-}
-
-const AuthenticatedAdminCouplesRouteChildren: AuthenticatedAdminCouplesRouteChildren =
-  {
-    AuthenticatedAdminCouplesIdRoute: AuthenticatedAdminCouplesIdRoute,
-    AuthenticatedAdminCouplesNewRoute: AuthenticatedAdminCouplesNewRoute,
-  }
-
-const AuthenticatedAdminCouplesRouteWithChildren =
-  AuthenticatedAdminCouplesRoute._addFileChildren(
-    AuthenticatedAdminCouplesRouteChildren,
-  )
-
-interface AuthenticatedAdminVendorsRouteChildren {
-  AuthenticatedAdminVendorsIdRoute: typeof AuthenticatedAdminVendorsIdRoute
-  AuthenticatedAdminVendorsNewRoute: typeof AuthenticatedAdminVendorsNewRoute
-}
-
-const AuthenticatedAdminVendorsRouteChildren: AuthenticatedAdminVendorsRouteChildren =
-  {
-    AuthenticatedAdminVendorsIdRoute: AuthenticatedAdminVendorsIdRoute,
-    AuthenticatedAdminVendorsNewRoute: AuthenticatedAdminVendorsNewRoute,
-  }
-
-const AuthenticatedAdminVendorsRouteWithChildren =
-  AuthenticatedAdminVendorsRoute._addFileChildren(
-    AuthenticatedAdminVendorsRouteChildren,
-  )
-
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRouteWithChildren
-  AuthenticatedAdminCouplesRoute: typeof AuthenticatedAdminCouplesRouteWithChildren
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
+  AuthenticatedAdminCouplesRoute: typeof AuthenticatedAdminCouplesRoute
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
   AuthenticatedAdminPlansRoute: typeof AuthenticatedAdminPlansRoute
   AuthenticatedAdminRsvpRoute: typeof AuthenticatedAdminRsvpRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
-  AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRouteWithChildren
+  AuthenticatedAdminVendorsRoute: typeof AuthenticatedAdminVendorsRoute
   AuthenticatedAdminWishesRoute: typeof AuthenticatedAdminWishesRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminBlogIdRoute: typeof AuthenticatedAdminBlogIdRoute
+  AuthenticatedAdminBlogNewRoute: typeof AuthenticatedAdminBlogNewRoute
+  AuthenticatedAdminCouplesIdRoute: typeof AuthenticatedAdminCouplesIdRoute
+  AuthenticatedAdminCouplesNewRoute: typeof AuthenticatedAdminCouplesNewRoute
+  AuthenticatedAdminVendorsIdRoute: typeof AuthenticatedAdminVendorsIdRoute
+  AuthenticatedAdminVendorsNewRoute: typeof AuthenticatedAdminVendorsNewRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRouteWithChildren,
-  AuthenticatedAdminCouplesRoute: AuthenticatedAdminCouplesRouteWithChildren,
+  AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
+  AuthenticatedAdminCouplesRoute: AuthenticatedAdminCouplesRoute,
   AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
   AuthenticatedAdminPlansRoute: AuthenticatedAdminPlansRoute,
   AuthenticatedAdminRsvpRoute: AuthenticatedAdminRsvpRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
-  AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRouteWithChildren,
+  AuthenticatedAdminVendorsRoute: AuthenticatedAdminVendorsRoute,
   AuthenticatedAdminWishesRoute: AuthenticatedAdminWishesRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminBlogIdRoute: AuthenticatedAdminBlogIdRoute,
+  AuthenticatedAdminBlogNewRoute: AuthenticatedAdminBlogNewRoute,
+  AuthenticatedAdminCouplesIdRoute: AuthenticatedAdminCouplesIdRoute,
+  AuthenticatedAdminCouplesNewRoute: AuthenticatedAdminCouplesNewRoute,
+  AuthenticatedAdminVendorsIdRoute: AuthenticatedAdminVendorsIdRoute,
+  AuthenticatedAdminVendorsNewRoute: AuthenticatedAdminVendorsNewRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =

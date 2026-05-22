@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { BlogPostForm } from "@/components/BlogPostForm";
 
-export const Route = createFileRoute("/_authenticated/admin/blog/new")({ component: NewBlogPost });
+export const Route = createFileRoute("/_authenticated/admin/blog_/new")({ component: NewBlogPost });
 
 function NewBlogPost() {
   return (

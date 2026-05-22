@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { adminGetBlogPost } from "@/lib/blog.functions";
 import { BlogPostForm } from "@/components/BlogPostForm";
 
-export const Route = createFileRoute("/_authenticated/admin/blog/$id")({ component: EditBlogPost });
+export const Route = createFileRoute("/_authenticated/admin/blog_/$id")({ component: EditBlogPost });
 
 function EditBlogPost() {
   const { id } = Route.useParams();

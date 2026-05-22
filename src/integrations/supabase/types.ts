@@ -336,6 +336,45 @@ export type Database = {
           },
         ]
       }
+      site_settings: {
+        Row: {
+          accent_color: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          favicon_url: string | null
+          footer_text: string | null
+          id: number
+          logo_url: string | null
+          primary_color: string | null
+          site_name: string | null
+          updated_at: string
+        }
+        Insert: {
+          accent_color?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          favicon_url?: string | null
+          footer_text?: string | null
+          id?: number
+          logo_url?: string | null
+          primary_color?: string | null
+          site_name?: string | null
+          updated_at?: string
+        }
+        Update: {
+          accent_color?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          favicon_url?: string | null
+          footer_text?: string | null
+          id?: number
+          logo_url?: string | null
+          primary_color?: string | null
+          site_name?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string

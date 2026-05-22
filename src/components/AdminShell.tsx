@@ -9,10 +9,10 @@ const nav = [
   { to: "/admin/rsvp", label: "RSVP" },
   { to: "/admin/wishes", label: "Lời chúc" },
   { to: "/admin/leads", label: "Yêu cầu vendor" },
-  { to: "/admin/plans", label: "Gói thành viên" },
+  { to: "/admin/plans", label: "Gói & Thanh toán" },
   { to: "/admin/payments", label: "Thanh toán" },
   { to: "/admin/users", label: "Người dùng" },
-  { to: "/admin/settings", label: "Cài đặt" },
+  { to: "/admin/settings", label: "Cài đặt ứng dụng" },
 ] as const;
 
 export function AdminShell() {
