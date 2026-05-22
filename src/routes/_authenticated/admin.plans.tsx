@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { adminListPlans, adminUpsertPlan, adminDeletePlan } from "@/lib/admin-billing.functions";
-import { useState } from "react";
+import { adminListPlans, adminUpsertPlan, adminDeletePlan, adminUpdatePaymentSettings } from "@/lib/admin-billing.functions";
+import { getPaymentSettings } from "@/lib/plans.functions";
+import { uploadImage } from "@/lib/upload";
+import { useAuth } from "@/hooks/use-auth";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/plans")({ component: PlansAdmin });
@@ -22,7 +25,13 @@ function PlansAdmin() {
   const [editing, setEditing] = useState<any>(null);
   return (
     <div>
-      <div className="flex items-center justify-between"><h1 className="font-display text-3xl">Gói thành viên</h1><button onClick={() => setEditing({ name: "", slug: "", description: "", price_vnd: 0, billing_months: 1, features: [], sort_order: 99, is_active: true })} className="px-4 py-2 bg-primary text-primary-foreground rounded text-sm">+ Tạo gói</button></div>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-3xl">Gói thành viên & Thanh toán</h1>
+          <p className="text-sm text-muted-foreground mt-1">Tạo gói cho vendor và cấu hình thông tin nhận thanh toán.</p>
+        </div>
+        <button onClick={() => setEditing({ name: "", slug: "", description: "", price_vnd: 0, billing_months: 1, features: [], sort_order: 99, is_active: true })} className="px-4 py-2 bg-primary text-primary-foreground rounded text-sm">+ Tạo gói</button>
+      </div>
       <div className="mt-6 grid gap-3">
         {plans.map((p: any) => (
           <div key={p.id} className="border border-border/60 rounded p-4 flex justify-between items-center">
@@ -31,6 +40,9 @@ function PlansAdmin() {
           </div>
         ))}
       </div>
+
+      <PaymentSettingsPanel />
+
       {editing && (
         <form onSubmit={e => { e.preventDefault(); m.mutate({ ...editing, features: typeof editing.features === "string" ? editing.features.split("\n").filter(Boolean) : editing.features }); }} className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
           <div className="bg-card max-w-lg w-full rounded-lg p-6 space-y-3 max-h-[90vh] overflow-auto">
