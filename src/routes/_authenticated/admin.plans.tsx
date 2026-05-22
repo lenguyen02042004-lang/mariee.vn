@@ -64,3 +64,40 @@ function PlansAdmin() {
     </div>
   );
 }
+
+function PaymentSettingsPanel() {
+  const get = useServerFn(getPaymentSettings);
+  const upd = useServerFn(adminUpdatePaymentSettings);
+  const qc = useQueryClient();
+  const { user } = useAuth();
+  const { data } = useQuery({ queryKey: ["pay-settings"], queryFn: () => get() });
+  const [form, setForm] = useState<any>({ bank_name: "", bank_account_name: "", bank_account_number: "", qr_image_url: "", instructions: "" });
+  useEffect(() => { if (data) setForm((p: any) => ({ ...p, ...data })); }, [data]);
+  const m = useMutation({
+    mutationFn: (v: any) => upd({ data: v }),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["pay-settings"] }); toast.success("Đã lưu thông tin thanh toán"); },
+    onError: (e: any) => toast.error(e.message),
+  });
+  const onQr = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0]; if (!f || !user) return;
+    try { const url = await uploadImage(f, user.id, "qr"); setForm({ ...form, qr_image_url: url }); } catch (err: any) { toast.error(err.message); }
+  };
+  return (
+    <section className="mt-10 bg-card border border-border/60 rounded-lg p-6">
+      <h2 className="font-display text-2xl">Thông tin nhận thanh toán</h2>
+      <p className="text-sm text-muted-foreground mt-1">Vendor sẽ thấy thông tin này khi đăng ký gói.</p>
+      <form onSubmit={e => { e.preventDefault(); m.mutate(form); }} className="mt-5 grid gap-3 max-w-xl">
+        <input placeholder="Ngân hàng" value={form.bank_name || ""} onChange={e => setForm({ ...form, bank_name: e.target.value })} className="px-3 py-2 border border-input bg-background rounded" />
+        <input placeholder="Chủ tài khoản" value={form.bank_account_name || ""} onChange={e => setForm({ ...form, bank_account_name: e.target.value })} className="px-3 py-2 border border-input bg-background rounded" />
+        <input placeholder="Số tài khoản" value={form.bank_account_number || ""} onChange={e => setForm({ ...form, bank_account_number: e.target.value })} className="px-3 py-2 border border-input bg-background rounded" />
+        <div>
+          <label className="text-xs text-muted-foreground">Ảnh QR</label>
+          <input type="file" accept="image/*" onChange={onQr} className="block mt-1 text-sm" />
+          {form.qr_image_url && <img src={form.qr_image_url} alt="qr" className="mt-2 h-40 border border-border/60 rounded" />}
+        </div>
+        <textarea placeholder="Hướng dẫn chuyển khoản" value={form.instructions || ""} onChange={e => setForm({ ...form, instructions: e.target.value })} className="px-3 py-2 border border-input bg-background rounded h-24" />
+        <div><button disabled={m.isPending} className="px-4 py-2 bg-primary text-primary-foreground rounded">Lưu thanh toán</button></div>
+      </form>
+    </section>
+  );
+}
