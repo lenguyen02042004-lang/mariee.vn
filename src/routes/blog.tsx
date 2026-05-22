@@ -2,12 +2,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { listBlogPosts, BLOG_CATEGORIES } from "@/lib/blog.functions";
+import { listBlogPosts, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { resolveImg } from "@/lib/image-map";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1).catch(1),
-  category: z.enum(["news", "tips", "real_stories", "trends", "venues", "other"]).optional().catch(undefined),
+  category: z.string().min(1).max(60).optional().catch(undefined),
 });
 
 const PAGE_SIZE = 9;
@@ -29,6 +29,8 @@ function BlogPage() {
   const { page, category } = Route.useSearch();
   const navigate = useNavigate({ from: "/blog" });
   const fetcher = useServerFn(listBlogPosts);
+  const fetchCats = useServerFn(listBlogCategories);
+  const { data: cats = [] } = useQuery<BlogCategory[]>({ queryKey: ["blog-cats"], queryFn: () => fetchCats() });
   const { data, isLoading } = useQuery({
     queryKey: ["blog", page, category ?? "all"],
     queryFn: () => fetcher({ data: { page, pageSize: PAGE_SIZE, category: category ?? null } }),
@@ -59,9 +61,9 @@ function BlogPage() {
       {/* Categories */}
       <nav aria-label="Danh mục" className="mt-10 flex flex-wrap justify-center gap-2">
         <CatChip active={!category} onClick={() => setCategory(undefined)}>Tất cả</CatChip>
-        {BLOG_CATEGORIES.map((c) => (
-          <CatChip key={c.value} active={category === c.value} onClick={() => setCategory(c.value)}>
-            {c.label}
+        {cats.map((c) => (
+          <CatChip key={c.id} active={category === c.slug} onClick={() => setCategory(c.slug)}>
+            {c.name}
           </CatChip>
         ))}
       </nav>
@@ -83,7 +85,7 @@ function BlogPage() {
           <div className="col-span-full text-center text-muted-foreground py-16">Chưa có bài viết trong danh mục này.</div>
         )}
         {!isLoading && items.map((p: any) => {
-          const cat = BLOG_CATEGORIES.find((c) => c.value === p.category);
+          const cat = cats.find((c) => c.slug === p.category);
           return (
             <Link
               key={p.id}
@@ -105,7 +107,7 @@ function BlogPage() {
               </div>
               <div className="p-5 flex-1 flex flex-col">
                 <div className="flex items-center gap-3 text-xs">
-                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-[0.16em]">{cat?.label ?? p.category}</span>
+                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-[0.16em]">{cat?.name ?? p.category}</span>
                   <span className="text-muted-foreground">{new Date(p.published_at).toLocaleDateString("vi-VN")}</span>
                 </div>
                 <h2 className="font-display text-xl mt-3 group-hover:text-primary transition-colors line-clamp-2">{p.title}</h2>

@@ -3,16 +3,9 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 
-export const BLOG_CATEGORIES = [
-  { value: "news", label: "Tin tức" },
-  { value: "tips", label: "Mẹo cưới" },
-  { value: "real_stories", label: "Câu chuyện thật" },
-  { value: "trends", label: "Xu hướng" },
-  { value: "venues", label: "Địa điểm" },
-  { value: "other", label: "Khác" },
-] as const;
+const CategorySlug = z.string().trim().min(1).max(60).regex(/^[a-z0-9-_]+$/);
 
-const CategoryEnum = z.enum(["news", "tips", "real_stories", "trends", "venues", "other"]);
+export type BlogCategory = { id: string; slug: string; name: string; sort_order: number };
 
 async function assertAdmin(supabase: any, userId: string) {
   const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
@@ -20,12 +13,53 @@ async function assertAdmin(supabase: any, userId: string) {
   if (!(data ?? []).some((r: any) => r.role === "admin")) throw new Error("Forbidden: cần quyền quản trị");
 }
 
+export const listBlogCategories = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data, error } = await supabaseAdmin
+      .from("blog_categories" as any).select("*").order("sort_order").order("name");
+    if (error) throw new Error(error.message);
+    return (data ?? []) as unknown as BlogCategory[];
+  });
+
+const categorySchema = z.object({
+  id: z.string().uuid().optional(),
+  slug: CategorySlug,
+  name: z.string().trim().min(1).max(120),
+  sort_order: z.number().int().min(0).max(9999).default(0),
+});
+
+export const adminUpsertBlogCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => categorySchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const payload: any = { slug: data.slug, name: data.name, sort_order: data.sort_order };
+    if (data.id) {
+      const { error } = await context.supabase.from("blog_categories" as any).update(payload).eq("id", data.id);
+      if (error) throw new Error(error.message);
+      return { id: data.id };
+    }
+    const { data: ins, error } = await context.supabase.from("blog_categories" as any).insert(payload).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: (ins as any).id };
+  });
+
+export const adminDeleteBlogCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase.from("blog_categories" as any).delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const listBlogPosts = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
     z.object({
       page: z.number().int().min(1).max(1000).default(1),
       pageSize: z.number().int().min(1).max(48).default(9),
-      category: CategoryEnum.optional().nullable(),
+      category: CategorySlug.optional().nullable(),
     }).parse(d ?? {}),
   )
   .handler(async ({ data }) => {
@@ -67,7 +101,7 @@ const postSchema = z.object({
   excerpt: z.string().trim().max(500).optional().or(z.literal("")),
   content: z.string().max(50000).optional().or(z.literal("")),
   cover_image: z.string().max(2000).optional().or(z.literal("")),
-  category: CategoryEnum,
+  category: CategorySlug,
   author_name: z.string().trim().max(120).optional().or(z.literal("")),
   is_published: z.boolean().default(true),
   published_at: z.string().optional().or(z.literal("")),

@@ -4,7 +4,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ImagePicker } from "@/components/ImagePicker";
-import { adminUpsertBlogPost, BLOG_CATEGORIES } from "@/lib/blog.functions";
+import { useQuery } from "@tanstack/react-query";
+import { adminUpsertBlogPost, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 
 function slugify(s: string) {
   return s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -15,6 +16,8 @@ export function BlogPostForm({ initial }: { initial?: any }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const save = useServerFn(adminUpsertBlogPost);
+  const fetchCats = useServerFn(listBlogCategories);
+  const { data: cats = [] } = useQuery<BlogCategory[]>({ queryKey: ["blog-cats"], queryFn: () => fetchCats() });
 
   const today = new Date().toISOString().slice(0, 10);
   const [f, setF] = useState<any>(initial ?? {
@@ -82,7 +85,8 @@ export function BlogPostForm({ initial }: { initial?: any }) {
         <div>
           <label className="text-xs font-medium text-muted-foreground">Danh mục *</label>
           <select value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} className="mt-1 w-full px-3 py-2 border border-input bg-background rounded">
-            {BLOG_CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
+            {cats.length === 0 && <option value="">— Chưa có danh mục —</option>}
+            {cats.map((c) => <option key={c.id} value={c.slug}>{c.name}</option>)}
           </select>
         </div>
         <div>

@@ -14,10 +14,34 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
       blog_posts: {
         Row: {
           author_name: string | null
-          category: Database["public"]["Enums"]["blog_category"]
+          category: string
           content: string | null
           cover_image: string | null
           created_at: string
@@ -32,7 +56,7 @@ export type Database = {
         }
         Insert: {
           author_name?: string | null
-          category?: Database["public"]["Enums"]["blog_category"]
+          category?: string
           content?: string | null
           cover_image?: string | null
           created_at?: string
@@ -47,7 +71,7 @@ export type Database = {
         }
         Update: {
           author_name?: string | null
-          category?: Database["public"]["Enums"]["blog_category"]
+          category?: string
           content?: string | null
           cover_image?: string | null
           created_at?: string

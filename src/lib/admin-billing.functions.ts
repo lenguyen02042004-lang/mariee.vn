@@ -100,11 +100,11 @@ export const adminReviewPayment = createServerFn({ method: "POST" })
   });
 
 const settingsSchema = z.object({
-  bank_name: z.string().max(120).optional().or(z.literal("")),
-  bank_account_name: z.string().max(120).optional().or(z.literal("")),
-  bank_account_number: z.string().max(60).optional().or(z.literal("")),
-  qr_image_url: z.string().max(800).optional().or(z.literal("")),
-  instructions: z.string().max(1000).optional().or(z.literal("")),
+  bank_name: z.string().max(120).nullish().or(z.literal("")),
+  bank_account_name: z.string().max(120).nullish().or(z.literal("")),
+  bank_account_number: z.string().max(60).nullish().or(z.literal("")),
+  qr_image_url: z.string().max(800).nullish().or(z.literal("")),
+  instructions: z.string().max(1000).nullish().or(z.literal("")),
 });
 
 export const adminUpdatePaymentSettings = createServerFn({ method: "POST" })
@@ -120,14 +120,14 @@ export const adminUpdatePaymentSettings = createServerFn({ method: "POST" })
   });
 
 const siteSchema = z.object({
-  site_name: z.string().max(120).optional().or(z.literal("")),
-  logo_url: z.string().max(800).optional().or(z.literal("")),
-  favicon_url: z.string().max(800).optional().or(z.literal("")),
-  primary_color: z.string().max(40).optional().or(z.literal("")),
-  accent_color: z.string().max(40).optional().or(z.literal("")),
-  contact_email: z.string().max(160).optional().or(z.literal("")),
-  contact_phone: z.string().max(60).optional().or(z.literal("")),
-  footer_text: z.string().max(500).optional().or(z.literal("")),
+  site_name: z.string().max(120).nullish().or(z.literal("")),
+  logo_url: z.string().max(800).nullish().or(z.literal("")),
+  favicon_url: z.string().max(800).nullish().or(z.literal("")),
+  primary_color: z.string().max(40).nullish().or(z.literal("")),
+  accent_color: z.string().max(40).nullish().or(z.literal("")),
+  contact_email: z.string().max(160).nullish().or(z.literal("")),
+  contact_phone: z.string().max(60).nullish().or(z.literal("")),
+  footer_text: z.string().max(500).nullish().or(z.literal("")),
 });
 
 export const adminUpdateSiteSettings = createServerFn({ method: "POST" })
