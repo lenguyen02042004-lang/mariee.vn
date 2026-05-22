@@ -14,6 +14,54 @@ export type Database = {
   }
   public: {
     Tables: {
+      blog_posts: {
+        Row: {
+          author_name: string | null
+          category: Database["public"]["Enums"]["blog_category"]
+          content: string | null
+          cover_image: string | null
+          created_at: string
+          excerpt: string | null
+          id: string
+          is_published: boolean
+          published_at: string
+          slug: string
+          title: string
+          updated_at: string
+          views: number
+        }
+        Insert: {
+          author_name?: string | null
+          category?: Database["public"]["Enums"]["blog_category"]
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string
+          slug: string
+          title: string
+          updated_at?: string
+          views?: number
+        }
+        Update: {
+          author_name?: string | null
+          category?: Database["public"]["Enums"]["blog_category"]
+          content?: string | null
+          cover_image?: string | null
+          created_at?: string
+          excerpt?: string | null
+          id?: string
+          is_published?: boolean
+          published_at?: string
+          slug?: string
+          title?: string
+          updated_at?: string
+          views?: number
+        }
+        Relationships: []
+      }
       couple_gallery: {
         Row: {
           caption: string | null
@@ -665,6 +713,13 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "vendor" | "user"
+      blog_category:
+        | "news"
+        | "tips"
+        | "real_stories"
+        | "trends"
+        | "venues"
+        | "other"
       vendor_category:
         | "venue"
         | "photography"
@@ -806,6 +861,14 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "vendor", "user"],
+      blog_category: [
+        "news",
+        "tips",
+        "real_stories",
+        "trends",
+        "venues",
+        "other",
+      ],
       vendor_category: [
         "venue",
         "photography",
