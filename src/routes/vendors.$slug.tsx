@@ -4,7 +4,7 @@ import { resolveImg } from "@/lib/image-map";
 import { useEffect, useState } from "react";
 import { VendorLeadForm } from "@/components/VendorLeadForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { CalendarDays, Tag, MessageCircle, ArrowRight } from "lucide-react";
+import { CalendarDays, Tag, MessageCircle, ArrowRight, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
@@ -123,14 +123,9 @@ function VendorPage() {
             <div className="text-center mb-12">
               <p className="font-script text-3xl text-primary">portfolio</p>
               <h2 className="font-display text-3xl md:text-4xl mt-2">Thư viện ảnh</h2>
+              <p className="text-sm text-muted-foreground mt-3">Nhấn vào ảnh để xem chi tiết.</p>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {gallery.map((url, i) => (
-                <div key={i} className="group aspect-square overflow-hidden rounded-md">
-                  <img src={resolveImg(url)} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                </div>
-              ))}
-            </div>
+            <GalleryLightbox images={gallery} />
           </div>
         </section>
       )}
