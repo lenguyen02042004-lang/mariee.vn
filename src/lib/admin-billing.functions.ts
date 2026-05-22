@@ -119,6 +119,29 @@ export const adminUpdatePaymentSettings = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const siteSchema = z.object({
+  site_name: z.string().max(120).optional().or(z.literal("")),
+  logo_url: z.string().max(800).optional().or(z.literal("")),
+  favicon_url: z.string().max(800).optional().or(z.literal("")),
+  primary_color: z.string().max(40).optional().or(z.literal("")),
+  accent_color: z.string().max(40).optional().or(z.literal("")),
+  contact_email: z.string().max(160).optional().or(z.literal("")),
+  contact_phone: z.string().max(60).optional().or(z.literal("")),
+  footer_text: z.string().max(500).optional().or(z.literal("")),
+});
+
+export const adminUpdateSiteSettings = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => siteSchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const payload: any = { updated_at: new Date().toISOString() };
+    for (const [k, v] of Object.entries(data)) payload[k] = v || null;
+    const { error } = await context.supabase.from("site_settings" as any).upsert({ id: 1, ...payload });
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 export const adminListUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
