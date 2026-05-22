@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBlogPostBySlug, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { resolveImg } from "@/lib/image-map";
 
-export const Route = createFileRoute("/blog/$slug")({
+export const Route = createFileRoute("/blog_/$slug")({
   loader: async ({ params }) => {
     const res = await getBlogPostBySlug({ data: { slug: params.slug } });
     if (!res) throw notFound();
