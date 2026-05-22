@@ -18,7 +18,7 @@ export const listBlogCategories = createServerFn({ method: "GET" })
     const { data, error } = await supabaseAdmin
       .from("blog_categories" as any).select("*").order("sort_order").order("name");
     if (error) throw new Error(error.message);
-    return (data ?? []) as BlogCategory[];
+    return (data ?? []) as unknown as BlogCategory[];
   });
 
 const categorySchema = z.object({
