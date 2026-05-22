@@ -5,11 +5,54 @@ import { z } from "zod";
 
 const CategorySlug = z.string().trim().min(1).max(60).regex(/^[a-z0-9-_]+$/);
 
+export type BlogCategory = { id: string; slug: string; name: string; sort_order: number };
+
 async function assertAdmin(supabase: any, userId: string) {
   const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
   if (error) throw new Error(error.message);
   if (!(data ?? []).some((r: any) => r.role === "admin")) throw new Error("Forbidden: cần quyền quản trị");
 }
+
+export const listBlogCategories = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { data, error } = await supabaseAdmin
+      .from("blog_categories" as any).select("*").order("sort_order").order("name");
+    if (error) throw new Error(error.message);
+    return (data ?? []) as BlogCategory[];
+  });
+
+const categorySchema = z.object({
+  id: z.string().uuid().optional(),
+  slug: CategorySlug,
+  name: z.string().trim().min(1).max(120),
+  sort_order: z.number().int().min(0).max(9999).default(0),
+});
+
+export const adminUpsertBlogCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => categorySchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const payload: any = { slug: data.slug, name: data.name, sort_order: data.sort_order };
+    if (data.id) {
+      const { error } = await context.supabase.from("blog_categories" as any).update(payload).eq("id", data.id);
+      if (error) throw new Error(error.message);
+      return { id: data.id };
+    }
+    const { data: ins, error } = await context.supabase.from("blog_categories" as any).insert(payload).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: (ins as any).id };
+  });
+
+export const adminDeleteBlogCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase.from("blog_categories" as any).delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
 
 export const listBlogPosts = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) =>
