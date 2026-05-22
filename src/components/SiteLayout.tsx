@@ -13,6 +13,7 @@ export function Header() {
         <nav className="flex items-center gap-6 text-sm">
           <Link to="/" className="hover:text-primary transition hidden md:inline">Trang chủ</Link>
           <Link to="/vendors" className="hover:text-primary transition">Nhà cung cấp</Link>
+          <Link to="/blog" className="hover:text-primary transition hidden md:inline">Blog</Link>
           <Link to="/for-couples" className="hover:text-primary transition hidden lg:inline">Cặp đôi</Link>
           <Link to="/for-vendors" className="hover:text-primary transition hidden lg:inline">Vendor</Link>
           <Link to="/pricing" className="hover:text-primary transition hidden md:inline">Bảng giá</Link>
@@ -46,6 +47,7 @@ export function Footer() {
           <ul className="space-y-2 text-sm text-muted-foreground">
             <li><Link to="/" className="hover:text-primary">Trang chủ</Link></li>
             <li><Link to="/vendors" className="hover:text-primary">Nhà cung cấp</Link></li>
+            <li><Link to="/blog" className="hover:text-primary">Blog</Link></li>
             <li><Link to="/pricing" className="hover:text-primary">Bảng giá</Link></li>
             <li><Link to="/about" className="hover:text-primary">Giới thiệu</Link></li>
           </ul>

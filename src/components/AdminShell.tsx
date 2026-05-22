@@ -5,6 +5,7 @@ const nav = [
   { to: "/admin", label: "Tổng quan" },
   { to: "/admin/couples", label: "Cặp đôi" },
   { to: "/admin/vendors", label: "Nhà cung cấp" },
+  { to: "/admin/blog", label: "Blog" },
   { to: "/admin/rsvp", label: "RSVP" },
   { to: "/admin/wishes", label: "Lời chúc" },
   { to: "/admin/leads", label: "Yêu cầu vendor" },
