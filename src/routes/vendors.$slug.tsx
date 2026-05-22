@@ -278,3 +278,101 @@ function ProductGrid({ products, vendorId, vendorName }: { products: any[]; vend
     </>
   );
 }
+
+function GalleryLightbox({ images }: { images: string[] }) {
+  const [idx, setIdx] = useState<number | null>(null);
+  const open = idx !== null;
+  const close = () => setIdx(null);
+  const prev = () => setIdx((i) => (i === null ? i : (i - 1 + images.length) % images.length));
+  const next = () => setIdx((i) => (i === null ? i : (i + 1) % images.length));
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+      else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
+  return (
+    <>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {images.map((url, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => setIdx(i)}
+            className="group aspect-square overflow-hidden rounded-md cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            aria-label={`Mở ảnh ${i + 1}`}
+          >
+            <img
+              src={resolveImg(url)}
+              alt=""
+              loading="lazy"
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+            />
+          </button>
+        ))}
+      </div>
+
+      {open && (
+        <div
+          className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center animate-in fade-in duration-200"
+          onClick={close}
+          role="dialog"
+          aria-modal="true"
+        >
+          <button
+            onClick={(e) => { e.stopPropagation(); close(); }}
+            className="absolute top-4 right-4 z-10 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+            aria-label="Đóng"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prev(); }}
+                className="absolute left-3 md:left-6 z-10 w-11 h-11 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+                aria-label="Ảnh trước"
+              >
+                <ChevronLeft className="w-6 h-6" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); next(); }}
+                className="absolute right-3 md:right-6 z-10 w-11 h-11 md:w-12 md:h-12 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition cursor-pointer"
+                aria-label="Ảnh kế"
+              >
+                <ChevronRight className="w-6 h-6" />
+              </button>
+            </>
+          )}
+
+          <div
+            className="relative max-w-[92vw] max-h-[88vh] flex items-center justify-center"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={resolveImg(images[idx!])}
+              alt=""
+              className="max-w-[92vw] max-h-[82vh] object-contain rounded-md shadow-2xl animate-in zoom-in-95 duration-200"
+            />
+            <p className="absolute -bottom-9 left-1/2 -translate-x-1/2 text-xs uppercase tracking-[0.2em] text-white/70">
+              {idx! + 1} / {images.length}
+            </p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
