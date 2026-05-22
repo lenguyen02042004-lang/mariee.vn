@@ -15,3 +15,8 @@ export const getPaymentSettings = createServerFn({ method: "GET" }).handler(asyn
   const { data } = await supabaseAdmin.from("payment_settings" as any).select("*").eq("id", 1).maybeSingle();
   return data as any;
 });
+
+export const getSiteSettings = createServerFn({ method: "GET" }).handler(async () => {
+  const { data } = await supabaseAdmin.from("site_settings" as any).select("*").eq("id", 1).maybeSingle();
+  return data as any;
+});
