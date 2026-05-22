@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { adminGetVendor } from "@/lib/admin.functions";
 import { VendorForm } from "@/components/VendorForm";
 
-export const Route = createFileRoute("/_authenticated/admin/vendors/$id")({ component: EditVendor });
+export const Route = createFileRoute("/_authenticated/admin/vendors_/$id")({ component: EditVendor });
 
 function EditVendor() {
   const { id } = Route.useParams();
