@@ -3,6 +3,8 @@ import { getVendorBySlug } from "@/lib/vendors.functions";
 import { resolveImg } from "@/lib/image-map";
 import { useEffect, useState } from "react";
 import { VendorLeadForm } from "@/components/VendorLeadForm";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { CalendarDays, Tag, MessageCircle, ArrowRight } from "lucide-react";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
@@ -108,19 +110,9 @@ function VendorPage() {
             <div className="text-center mb-12">
               <p className="font-script text-3xl text-primary">services</p>
               <h2 className="font-display text-3xl md:text-4xl mt-2">Sản phẩm & Dịch vụ</h2>
+              <p className="text-sm text-muted-foreground mt-3">Nhấn vào mỗi gói để xem chi tiết và gửi yêu cầu tư vấn — chúng tôi chỉ hỗ trợ kết nối, không xử lý giao dịch mua bán.</p>
             </div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map(p => (
-                <div key={p.id} className="bg-card rounded-lg overflow-hidden shadow-soft border border-border/40 flex flex-col">
-                  {p.image_url && <div className="aspect-[4/3]"><img src={resolveImg(p.image_url)} alt={p.title} loading="lazy" className="w-full h-full object-cover" /></div>}
-                  <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="font-display text-xl">{p.title}</h3>
-                    {p.description && <p className="mt-2 text-sm text-muted-foreground flex-1">{p.description}</p>}
-                    {p.price_text && <p className="mt-3 text-primary font-medium">{p.price_text}</p>}
-                  </div>
-                </div>
-              ))}
-            </div>
+            <ProductGrid products={products} vendorId={v.id} vendorName={v.name} />
           </div>
         </section>
       )}
@@ -187,6 +179,107 @@ function VendorPage() {
           </div>
         </div>
       </section>
+    </>
+  );
+}
+
+function ProductGrid({ products, vendorId, vendorName }: { products: any[]; vendorId: string; vendorName: string }) {
+  const [active, setActive] = useState<any | null>(null);
+  return (
+    <>
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {products.map((p) => (
+          <button
+            key={p.id}
+            type="button"
+            onClick={() => setActive(p)}
+            className="group text-left bg-card rounded-xl overflow-hidden shadow-soft border border-border/40 flex flex-col cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            {p.image_url ? (
+              <div className="aspect-[4/3] overflow-hidden">
+                <img
+                  src={resolveImg(p.image_url)}
+                  alt={p.title}
+                  loading="lazy"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+              </div>
+            ) : (
+              <div className="aspect-[4/3] bg-gradient-to-br from-secondary to-secondary/40" />
+            )}
+            <div className="p-5 flex-1 flex flex-col">
+              <h3 className="font-display text-xl">{p.title}</h3>
+              {p.description && (
+                <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.description}</p>
+              )}
+              <div className="mt-4 flex items-center justify-between">
+                {p.price_text ? (
+                  <span className="inline-flex items-center gap-1.5 text-primary font-medium text-sm">
+                    <Tag className="w-3.5 h-3.5" /> {p.price_text}
+                  </span>
+                ) : <span />}
+                <span className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.18em] text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                  Chi tiết <ArrowRight className="w-3.5 h-3.5" />
+                </span>
+              </div>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      <Dialog open={!!active} onOpenChange={(o) => !o && setActive(null)}>
+        <DialogContent className="max-w-3xl p-0 overflow-hidden max-h-[90vh] overflow-y-auto">
+          {active && (
+            <div>
+              {active.image_url && (
+                <div className="aspect-[16/9] w-full overflow-hidden bg-secondary">
+                  <img src={resolveImg(active.image_url)} alt={active.title} className="w-full h-full object-cover" />
+                </div>
+              )}
+              <div className="p-6 md:p-8">
+                <DialogHeader>
+                  <p className="font-script text-2xl text-primary">{vendorName}</p>
+                  <DialogTitle className="font-display text-2xl md:text-3xl">{active.title}</DialogTitle>
+                  {active.price_text && (
+                    <DialogDescription className="text-primary text-base inline-flex items-center gap-1.5">
+                      <Tag className="w-4 h-4" /> {active.price_text}
+                    </DialogDescription>
+                  )}
+                </DialogHeader>
+                {active.description && (
+                  <p className="mt-4 text-sm md:text-base text-foreground/80 whitespace-pre-line leading-relaxed">
+                    {active.description}
+                  </p>
+                )}
+
+                <div className="mt-6 rounded-lg bg-secondary/40 border border-border/40 p-4 text-xs text-muted-foreground flex items-start gap-2">
+                  <MessageCircle className="w-4 h-4 mt-0.5 shrink-0 text-primary" />
+                  <p>
+                    Mariée Wedding chỉ hỗ trợ kết nối thông tin giữa bạn và nhà cung cấp. Mọi chi tiết về báo giá,
+                    hợp đồng và thanh toán sẽ được hai bên trao đổi trực tiếp sau khi vendor liên hệ.
+                  </p>
+                </div>
+
+                <div className="mt-6">
+                  <h4 className="font-display text-xl flex items-center gap-2">
+                    <CalendarDays className="w-5 h-5 text-primary" /> Yêu cầu tư vấn / đặt lịch
+                  </h4>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Gửi thông tin để vendor liên hệ lại trong vòng 24h.
+                  </p>
+                  <div className="mt-4">
+                    <VendorLeadForm
+                      vendorId={vendorId}
+                      productTitle={active.title}
+                      onSubmitted={() => setTimeout(() => setActive(null), 1800)}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
