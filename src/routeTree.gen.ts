@@ -18,12 +18,14 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ForVendorsRouteImport } from './routes/for-vendors'
 import { Route as ForCouplesRouteImport } from './routes/for-couples'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsIndexRouteImport } from './routes/vendors.index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedCoupleRouteImport } from './routes/_authenticated/couple'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -42,10 +44,13 @@ import { Route as AuthenticatedAdminPlansRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
 import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authenticated/admin.couples'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
 import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors.new'
 import { Route as AuthenticatedAdminVendorsIdRouteImport } from './routes/_authenticated/admin.vendors.$id'
 import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples.new'
 import { Route as AuthenticatedAdminCouplesIdRouteImport } from './routes/_authenticated/admin.couples.$id'
+import { Route as AuthenticatedAdminBlogNewRouteImport } from './routes/_authenticated/admin.blog.new'
+import { Route as AuthenticatedAdminBlogIdRouteImport } from './routes/_authenticated/admin.blog.$id'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -92,6 +97,11 @@ const ForCouplesRoute = ForCouplesRouteImport.update({
   path: '/for-couples',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -120,6 +130,11 @@ const CouplesSlugRoute = CouplesSlugRouteImport.update({
   id: '/couples/$slug',
   path: '/couples/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
 } as any)
 const AuthenticatedVendorRoute = AuthenticatedVendorRouteImport.update({
   id: '/vendor',
@@ -221,6 +236,11 @@ const AuthenticatedAdminCouplesRoute =
     path: '/couples',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminVendorsNewRoute =
   AuthenticatedAdminVendorsNewRouteImport.update({
     id: '/new',
@@ -245,10 +265,23 @@ const AuthenticatedAdminCouplesIdRoute =
     path: '/$id',
     getParentRoute: () => AuthenticatedAdminCouplesRoute,
   } as any)
+const AuthenticatedAdminBlogNewRoute =
+  AuthenticatedAdminBlogNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminBlogRoute,
+  } as any)
+const AuthenticatedAdminBlogIdRoute =
+  AuthenticatedAdminBlogIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedAdminBlogRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -261,9 +294,11 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRouteWithChildren
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -279,6 +314,8 @@ export interface FileRoutesByFullPath {
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/vendor/': typeof AuthenticatedVendorIndexRoute
+  '/admin/blog/$id': typeof AuthenticatedAdminBlogIdRoute
+  '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
   '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
@@ -287,6 +324,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -297,9 +335,11 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/couple': typeof AuthenticatedCoupleRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors': typeof VendorsIndexRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRouteWithChildren
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -315,6 +355,8 @@ export interface FileRoutesByTo {
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/vendor': typeof AuthenticatedVendorIndexRoute
+  '/admin/blog/$id': typeof AuthenticatedAdminBlogIdRoute
+  '/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
   '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
@@ -325,6 +367,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -337,9 +380,11 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/couple': typeof AuthenticatedCoupleRoute
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRouteWithChildren
   '/_authenticated/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -355,6 +400,8 @@ export interface FileRoutesById {
   '/_authenticated/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/vendor/': typeof AuthenticatedVendorIndexRoute
+  '/_authenticated/admin/blog/$id': typeof AuthenticatedAdminBlogIdRoute
+  '/_authenticated/admin/blog/new': typeof AuthenticatedAdminBlogNewRoute
   '/_authenticated/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/_authenticated/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
   '/_authenticated/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
@@ -365,6 +412,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/blog'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -377,9 +425,11 @@ export interface FileRouteTypes {
     | '/admin'
     | '/couple'
     | '/vendor'
+    | '/blog/$slug'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
+    | '/admin/blog'
     | '/admin/couples'
     | '/admin/leads'
     | '/admin/payments'
@@ -395,6 +445,8 @@ export interface FileRouteTypes {
     | '/vendor/testimonials'
     | '/admin/'
     | '/vendor/'
+    | '/admin/blog/$id'
+    | '/admin/blog/new'
     | '/admin/couples/$id'
     | '/admin/couples/new'
     | '/admin/vendors/$id'
@@ -403,6 +455,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/blog'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -413,9 +466,11 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/couple'
+    | '/blog/$slug'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors'
+    | '/admin/blog'
     | '/admin/couples'
     | '/admin/leads'
     | '/admin/payments'
@@ -431,6 +486,8 @@ export interface FileRouteTypes {
     | '/vendor/testimonials'
     | '/admin'
     | '/vendor'
+    | '/admin/blog/$id'
+    | '/admin/blog/new'
     | '/admin/couples/$id'
     | '/admin/couples/new'
     | '/admin/vendors/$id'
@@ -440,6 +497,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/blog'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -452,9 +510,11 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/couple'
     | '/_authenticated/vendor'
+    | '/blog/$slug'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
+    | '/_authenticated/admin/blog'
     | '/_authenticated/admin/couples'
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/payments'
@@ -470,6 +530,8 @@ export interface FileRouteTypes {
     | '/_authenticated/vendor/testimonials'
     | '/_authenticated/admin/'
     | '/_authenticated/vendor/'
+    | '/_authenticated/admin/blog/$id'
+    | '/_authenticated/admin/blog/new'
     | '/_authenticated/admin/couples/$id'
     | '/_authenticated/admin/couples/new'
     | '/_authenticated/admin/vendors/$id'
@@ -480,6 +542,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  BlogRoute: typeof BlogRouteWithChildren
   ForCouplesRoute: typeof ForCouplesRoute
   ForVendorsRoute: typeof ForVendorsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -559,6 +622,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForCouplesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -600,6 +670,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/couples/$slug'
       preLoaderRoute: typeof CouplesSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
     }
     '/_authenticated/vendor': {
       id: '/_authenticated/vendor'
@@ -727,6 +804,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCouplesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/vendors/new': {
       id: '/_authenticated/admin/vendors/new'
       path: '/new'
@@ -755,8 +839,38 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCouplesIdRouteImport
       parentRoute: typeof AuthenticatedAdminCouplesRoute
     }
+    '/_authenticated/admin/blog/new': {
+      id: '/_authenticated/admin/blog/new'
+      path: '/new'
+      fullPath: '/admin/blog/new'
+      preLoaderRoute: typeof AuthenticatedAdminBlogNewRouteImport
+      parentRoute: typeof AuthenticatedAdminBlogRoute
+    }
+    '/_authenticated/admin/blog/$id': {
+      id: '/_authenticated/admin/blog/$id'
+      path: '/$id'
+      fullPath: '/admin/blog/$id'
+      preLoaderRoute: typeof AuthenticatedAdminBlogIdRouteImport
+      parentRoute: typeof AuthenticatedAdminBlogRoute
+    }
   }
 }
+
+interface AuthenticatedAdminBlogRouteChildren {
+  AuthenticatedAdminBlogIdRoute: typeof AuthenticatedAdminBlogIdRoute
+  AuthenticatedAdminBlogNewRoute: typeof AuthenticatedAdminBlogNewRoute
+}
+
+const AuthenticatedAdminBlogRouteChildren: AuthenticatedAdminBlogRouteChildren =
+  {
+    AuthenticatedAdminBlogIdRoute: AuthenticatedAdminBlogIdRoute,
+    AuthenticatedAdminBlogNewRoute: AuthenticatedAdminBlogNewRoute,
+  }
+
+const AuthenticatedAdminBlogRouteWithChildren =
+  AuthenticatedAdminBlogRoute._addFileChildren(
+    AuthenticatedAdminBlogRouteChildren,
+  )
 
 interface AuthenticatedAdminCouplesRouteChildren {
   AuthenticatedAdminCouplesIdRoute: typeof AuthenticatedAdminCouplesIdRoute
@@ -791,6 +905,7 @@ const AuthenticatedAdminVendorsRouteWithChildren =
   )
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRouteWithChildren
   AuthenticatedAdminCouplesRoute: typeof AuthenticatedAdminCouplesRouteWithChildren
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
@@ -804,6 +919,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRouteWithChildren,
   AuthenticatedAdminCouplesRoute: AuthenticatedAdminCouplesRouteWithChildren,
   AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
@@ -854,10 +970,21 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  BlogRoute: BlogRouteWithChildren,
   ForCouplesRoute: ForCouplesRoute,
   ForVendorsRoute: ForVendorsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
