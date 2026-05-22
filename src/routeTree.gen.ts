@@ -44,6 +44,7 @@ import { Route as AuthenticatedAdminPlansRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminPaymentsRouteImport } from './routes/_authenticated/admin.payments'
 import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authenticated/admin.leads'
 import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authenticated/admin.couples'
+import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
 import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors.new'
 import { Route as AuthenticatedAdminVendorsIdRouteImport } from './routes/_authenticated/admin.vendors.$id'
 import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples.new'
@@ -233,6 +234,11 @@ const AuthenticatedAdminCouplesRoute =
     path: '/couples',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminVendorsNewRoute =
   AuthenticatedAdminVendorsNewRouteImport.update({
     id: '/new',
@@ -278,6 +284,7 @@ export interface FileRoutesByFullPath {
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -316,6 +323,7 @@ export interface FileRoutesByTo {
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors': typeof VendorsIndexRoute
+  '/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -358,6 +366,7 @@ export interface FileRoutesById {
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
+  '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
   '/_authenticated/admin/couples': typeof AuthenticatedAdminCouplesRouteWithChildren
   '/_authenticated/admin/leads': typeof AuthenticatedAdminLeadsRoute
   '/_authenticated/admin/payments': typeof AuthenticatedAdminPaymentsRoute
@@ -400,6 +409,7 @@ export interface FileRouteTypes {
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
+    | '/admin/blog'
     | '/admin/couples'
     | '/admin/leads'
     | '/admin/payments'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors'
+    | '/admin/blog'
     | '/admin/couples'
     | '/admin/leads'
     | '/admin/payments'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
+    | '/_authenticated/admin/blog'
     | '/_authenticated/admin/couples'
     | '/_authenticated/admin/leads'
     | '/_authenticated/admin/payments'
@@ -766,6 +778,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCouplesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/blog': {
+      id: '/_authenticated/admin/blog'
+      path: '/blog'
+      fullPath: '/admin/blog'
+      preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/vendors/new': {
       id: '/_authenticated/admin/vendors/new'
       path: '/new'
@@ -830,6 +849,7 @@ const AuthenticatedAdminVendorsRouteWithChildren =
   )
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminBlogRoute: typeof AuthenticatedAdminBlogRoute
   AuthenticatedAdminCouplesRoute: typeof AuthenticatedAdminCouplesRouteWithChildren
   AuthenticatedAdminLeadsRoute: typeof AuthenticatedAdminLeadsRoute
   AuthenticatedAdminPaymentsRoute: typeof AuthenticatedAdminPaymentsRoute
@@ -843,6 +863,7 @@ interface AuthenticatedAdminRouteChildren {
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminBlogRoute: AuthenticatedAdminBlogRoute,
   AuthenticatedAdminCouplesRoute: AuthenticatedAdminCouplesRouteWithChildren,
   AuthenticatedAdminLeadsRoute: AuthenticatedAdminLeadsRoute,
   AuthenticatedAdminPaymentsRoute: AuthenticatedAdminPaymentsRoute,
