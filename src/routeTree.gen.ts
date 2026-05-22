@@ -18,12 +18,14 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ForVendorsRouteImport } from './routes/for-vendors'
 import { Route as ForCouplesRouteImport } from './routes/for-couples'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsIndexRouteImport } from './routes/vendors.index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
 import { Route as AuthenticatedCoupleRouteImport } from './routes/_authenticated/couple'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -92,6 +94,11 @@ const ForCouplesRoute = ForCouplesRouteImport.update({
   path: '/for-couples',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -120,6 +127,11 @@ const CouplesSlugRoute = CouplesSlugRouteImport.update({
   id: '/couples/$slug',
   path: '/couples/$slug',
   getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => BlogRoute,
 } as any)
 const AuthenticatedVendorRoute = AuthenticatedVendorRouteImport.update({
   id: '/vendor',
@@ -249,6 +261,7 @@ const AuthenticatedAdminCouplesIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -261,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
@@ -287,6 +301,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -297,6 +312,7 @@ export interface FileRoutesByTo {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/couple': typeof AuthenticatedCoupleRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors': typeof VendorsIndexRoute
@@ -325,6 +341,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/blog': typeof BlogRouteWithChildren
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -337,6 +354,7 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/couple': typeof AuthenticatedCoupleRoute
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
+  '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
@@ -365,6 +383,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/blog'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -377,6 +396,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/couple'
     | '/vendor'
+    | '/blog/$slug'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
@@ -403,6 +423,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/blog'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -413,6 +434,7 @@ export interface FileRouteTypes {
     | '/robots.txt'
     | '/sitemap.xml'
     | '/couple'
+    | '/blog/$slug'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors'
@@ -440,6 +462,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/blog'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -452,6 +475,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/_authenticated/couple'
     | '/_authenticated/vendor'
+    | '/blog/$slug'
     | '/couples/$slug'
     | '/vendors/$slug'
     | '/vendors/'
@@ -480,6 +504,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  BlogRoute: typeof BlogRouteWithChildren
   ForCouplesRoute: typeof ForCouplesRoute
   ForVendorsRoute: typeof ForVendorsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -559,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ForCouplesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -600,6 +632,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/couples/$slug'
       preLoaderRoute: typeof CouplesSlugRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/blog/$slug': {
+      id: '/blog/$slug'
+      path: '/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
+      parentRoute: typeof BlogRoute
     }
     '/_authenticated/vendor': {
       id: '/_authenticated/vendor'
@@ -854,10 +893,21 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
+interface BlogRouteChildren {
+  BlogSlugRoute: typeof BlogSlugRoute
+}
+
+const BlogRouteChildren: BlogRouteChildren = {
+  BlogSlugRoute: BlogSlugRoute,
+}
+
+const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  BlogRoute: BlogRouteWithChildren,
   ForCouplesRoute: ForCouplesRoute,
   ForVendorsRoute: ForVendorsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
@@ -874,3 +924,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
