@@ -110,6 +110,30 @@ export const deleteMyGallery = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const listMyRsvp = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { couple_id: string }) => z.object({ couple_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertOwner(context.supabase, data.couple_id, context.userId);
+    const { data: rows, error } = await supabaseAdmin
+      .from("rsvp").select("*").eq("couple_id", data.couple_id)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
+export const deleteMyRsvp = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: row } = await supabaseAdmin.from("rsvp").select("couple_id").eq("id", data.id).maybeSingle();
+    if (!row) throw new Error("Không tìm thấy");
+    await assertOwner(context.supabase, row.couple_id, context.userId);
+    const { error } = await supabaseAdmin.from("rsvp").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 const createSchema = z.object({
   slug: z.string().trim().min(2).max(80).regex(/^[a-z0-9-]+$/, "Slug chỉ gồm chữ thường, số, dấu '-'"),
   bride_name: z.string().trim().min(1).max(120),
