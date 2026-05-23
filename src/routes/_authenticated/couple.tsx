@@ -108,6 +108,7 @@ function CouplePortal() {
           {detail?.couple?.slug && (
             <Link to="/couples/$slug" params={{ slug: detail.couple.slug }} className="px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary">Xem trang công khai</Link>
           )}
+          <Link to="/couple/rsvp" className="px-3 py-1.5 rounded bg-primary text-primary-foreground hover:opacity-90">Hộp thư RSVP</Link>
           <button onClick={signOut} className="text-primary underline">Đăng xuất</button>
         </div>
       </div>
