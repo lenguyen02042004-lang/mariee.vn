@@ -187,22 +187,38 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
 
         {/* QR card */}
         <div className="flex flex-col items-center">
-          <div ref={qrRef} className="bg-white p-4 rounded-xl shadow-elegant border border-primary/30 relative">
+          {/* Portrait photo of the couple */}
+          <div className="relative bg-white p-3 rounded-xl shadow-elegant border border-primary/30">
             <span className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-primary/60 rounded-tl" />
             <span className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-primary/60 rounded-tr" />
             <span className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-primary/60 rounded-bl" />
             <span className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-primary/60 rounded-br" />
+            {bg ? (
+              <img
+                src={resolveImg(bg)}
+                alt={`${couple.bride_name} & ${couple.groom_name}`}
+                crossOrigin="anonymous"
+                className="w-[240px] h-[300px] object-cover rounded-lg"
+              />
+            ) : (
+              <div className="w-[240px] h-[300px] rounded-lg bg-gradient-to-br from-primary/20 to-primary/40 flex items-center justify-center font-script text-3xl text-primary">
+                {couple.bride_name?.[0]}&amp;{couple.groom_name?.[0]}
+              </div>
+            )}
+          </div>
+          <p className="font-script text-xl text-primary mt-4 text-center">Quét để mở thiệp</p>
+          {/* Compact QR */}
+          <div ref={qrRef} className="mt-2 bg-white p-2 rounded-md border border-primary/20">
             <QRCodeCanvas
               value={url}
-              size={196}
+              size={96}
               level="H"
               includeMargin={false}
               bgColor="#ffffff"
               fgColor="#1a1a1a"
             />
           </div>
-          <p className="font-script text-xl text-primary mt-4 text-center">Quét để mở thiệp</p>
-          <p className="text-[11px] text-muted-foreground/80 mt-1 break-all max-w-[220px] text-center font-mono">{url}</p>
+          <p className="text-[10px] text-muted-foreground/80 mt-2 break-all max-w-[220px] text-center font-mono">{url}</p>
         </div>
       </div>
     </div>
