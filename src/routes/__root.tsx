@@ -37,8 +37,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Mariée — Landing page cưới sang trọng" },
-      { name: "description", content: "Mariée — Nền tảng landing page cưới đẳng cấp cho từng cặp đôi và nhà cung cấp dịch vụ cưới hàng đầu Việt Nam." },
+      { title: "Mariée — Trang lễ cưới sang trọng cho những cặp đôi" },
+      { name: "description", content: "Mariée — Nền tảng cung cấp trang lễ cưới đẳng cấp cho từng cặp đôi và nhà cung cấp dịch vụ cưới hàng đầu Việt Nam." },
+      { property: "og:title", content: "Mariée — Trang lễ cưới sang trọng cho những cặp đôi" },
+      { name: "twitter:title", content: "Mariée — Trang lễ cưới sang trọng cho những cặp đôi" },
+      { property: "og:description", content: "Mariée — Nền tảng cung cấp trang lễ cưới đẳng cấp cho từng cặp đôi và nhà cung cấp dịch vụ cưới hàng đầu Việt Nam." },
+      { name: "twitter:description", content: "Mariée — Nền tảng cung cấp trang lễ cưới đẳng cấp cho từng cặp đôi và nhà cung cấp dịch vụ cưới hàng đầu Việt Nam." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/89e0542a-9cbe-482e-9a49-e6a0fdf4d1e7" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/89e0542a-9cbe-482e-9a49-e6a0fdf4d1e7" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { property: "og:type", content: "website" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
