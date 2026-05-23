@@ -35,6 +35,7 @@ import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_a
 import { Route as AuthenticatedVendorProductsRouteImport } from './routes/_authenticated/vendor.products'
 import { Route as AuthenticatedVendorLeadsRouteImport } from './routes/_authenticated/vendor.leads'
 import { Route as AuthenticatedVendorBillingRouteImport } from './routes/_authenticated/vendor.billing'
+import { Route as AuthenticatedCoupleRsvpRouteImport } from './routes/_authenticated/couple.rsvp'
 import { Route as AuthenticatedAdminWishesRouteImport } from './routes/_authenticated/admin.wishes'
 import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin.vendors'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
@@ -186,6 +187,11 @@ const AuthenticatedVendorBillingRoute =
     path: '/billing',
     getParentRoute: () => AuthenticatedVendorRoute,
   } as any)
+const AuthenticatedCoupleRsvpRoute = AuthenticatedCoupleRsvpRouteImport.update({
+  id: '/rsvp',
+  path: '/rsvp',
+  getParentRoute: () => AuthenticatedCoupleRoute,
+} as any)
 const AuthenticatedAdminWishesRoute =
   AuthenticatedAdminWishesRouteImport.update({
     id: '/wishes',
@@ -292,7 +298,7 @@ export interface FileRoutesByFullPath {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/couple': typeof AuthenticatedCoupleRoute
+  '/couple': typeof AuthenticatedCoupleRouteWithChildren
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
@@ -308,6 +314,7 @@ export interface FileRoutesByFullPath {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
+  '/couple/rsvp': typeof AuthenticatedCoupleRsvpRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
@@ -334,7 +341,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/couple': typeof AuthenticatedCoupleRoute
+  '/couple': typeof AuthenticatedCoupleRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -349,6 +356,7 @@ export interface FileRoutesByTo {
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
+  '/couple/rsvp': typeof AuthenticatedCoupleRsvpRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
@@ -378,7 +386,7 @@ export interface FileRoutesById {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/couple': typeof AuthenticatedCoupleRoute
+  '/_authenticated/couple': typeof AuthenticatedCoupleRouteWithChildren
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/blog_/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
@@ -394,6 +402,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/_authenticated/admin/wishes': typeof AuthenticatedAdminWishesRoute
+  '/_authenticated/couple/rsvp': typeof AuthenticatedCoupleRsvpRoute
   '/_authenticated/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/_authenticated/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/_authenticated/vendor/products': typeof AuthenticatedVendorProductsRoute
@@ -439,6 +448,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/vendors'
     | '/admin/wishes'
+    | '/couple/rsvp'
     | '/vendor/billing'
     | '/vendor/leads'
     | '/vendor/products'
@@ -480,6 +490,7 @@ export interface FileRouteTypes {
     | '/admin/users'
     | '/admin/vendors'
     | '/admin/wishes'
+    | '/couple/rsvp'
     | '/vendor/billing'
     | '/vendor/leads'
     | '/vendor/products'
@@ -524,6 +535,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/vendors'
     | '/_authenticated/admin/wishes'
+    | '/_authenticated/couple/rsvp'
     | '/_authenticated/vendor/billing'
     | '/_authenticated/vendor/leads'
     | '/_authenticated/vendor/products'
@@ -742,6 +754,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVendorBillingRouteImport
       parentRoute: typeof AuthenticatedVendorRoute
     }
+    '/_authenticated/couple/rsvp': {
+      id: '/_authenticated/couple/rsvp'
+      path: '/rsvp'
+      fullPath: '/couple/rsvp'
+      preLoaderRoute: typeof AuthenticatedCoupleRsvpRouteImport
+      parentRoute: typeof AuthenticatedCoupleRoute
+    }
     '/_authenticated/admin/wishes': {
       id: '/_authenticated/admin/wishes'
       path: '/wishes'
@@ -900,6 +919,17 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedCoupleRouteChildren {
+  AuthenticatedCoupleRsvpRoute: typeof AuthenticatedCoupleRsvpRoute
+}
+
+const AuthenticatedCoupleRouteChildren: AuthenticatedCoupleRouteChildren = {
+  AuthenticatedCoupleRsvpRoute: AuthenticatedCoupleRsvpRoute,
+}
+
+const AuthenticatedCoupleRouteWithChildren =
+  AuthenticatedCoupleRoute._addFileChildren(AuthenticatedCoupleRouteChildren)
+
 interface AuthenticatedVendorRouteChildren {
   AuthenticatedVendorBillingRoute: typeof AuthenticatedVendorBillingRoute
   AuthenticatedVendorLeadsRoute: typeof AuthenticatedVendorLeadsRoute
@@ -921,13 +951,13 @@ const AuthenticatedVendorRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRoute
+  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRouteWithChildren
   AuthenticatedVendorRoute: typeof AuthenticatedVendorRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedCoupleRoute: AuthenticatedCoupleRoute,
+  AuthenticatedCoupleRoute: AuthenticatedCoupleRouteWithChildren,
   AuthenticatedVendorRoute: AuthenticatedVendorRouteWithChildren,
 }
 
