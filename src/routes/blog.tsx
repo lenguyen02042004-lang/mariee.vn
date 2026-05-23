@@ -12,7 +12,7 @@ const searchSchema = z.object({
   q: z.string().min(1).max(120).optional().catch(undefined),
 });
 
-const PAGE_SIZE = 9;
+const PAGE_SIZE = 8;
 
 export const Route = createFileRoute("/blog")({
   validateSearch: searchSchema,
@@ -38,6 +38,11 @@ function BlogPage() {
     queryKey: ["blog", page, category ?? "all", q ?? ""],
     queryFn: () => fetcher({ data: { page, pageSize: PAGE_SIZE, category: category ?? null, q: q ?? null } }),
   });
+  // Latest posts for sidebar (independent of filters)
+  const { data: latestData } = useQuery({
+    queryKey: ["blog-latest"],
+    queryFn: () => fetcher({ data: { page: 1, pageSize: 5, category: null, q: null } }),
+  });
 
   // Debounced search input
   const [term, setTerm] = useState(q ?? "");
@@ -55,6 +60,11 @@ function BlogPage() {
   const items = data?.items ?? [];
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const activeCat = cats.find((c) => c.slug === category);
+  // On unfiltered first page, hero is first item, grid shows the rest
+  const showHero = !category && !q && page === 1 && items.length > 0;
+  const hero = showHero ? items[0] : null;
+  const gridItems = showHero ? items.slice(1) : items;
 
   function setCategory(value: string | undefined) {
     navigate({ search: { page: 1, category: value as any, q } });
@@ -65,108 +75,201 @@ function BlogPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
-      <header className="text-center max-w-2xl mx-auto">
-        <p className="font-script text-3xl text-primary">journal</p>
-        <h1 className="font-display text-4xl md:text-5xl mt-2">Blog cưới</h1>
-        <p className="text-muted-foreground mt-4">
-          Mẹo lên kế hoạch, xu hướng mới và những câu chuyện thật từ các cặp đôi.
-        </p>
-      </header>
-
-      {/* Categories */}
-      <nav aria-label="Danh mục" className="mt-10 flex flex-wrap justify-center gap-2">
-        <CatChip active={!category} onClick={() => setCategory(undefined)}>Tất cả</CatChip>
-        {cats.map((c) => (
-          <CatChip key={c.id} active={category === c.slug} onClick={() => setCategory(c.slug)}>
-            {c.name}
-          </CatChip>
-        ))}
-      </nav>
-
-      {/* Search */}
-      <div className="mt-6 max-w-xl mx-auto relative">
-        <input
-          type="search"
-          value={term}
-          onChange={(e) => setTerm(e.target.value)}
-          placeholder="Tìm bài viết theo từ khoá..."
-          className="w-full h-12 pl-11 pr-10 rounded-full border border-border bg-background text-sm focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition"
-          aria-label="Tìm bài viết"
-        />
-        <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        {term && (
-          <button
-            type="button"
-            onClick={() => setTerm("")}
-            aria-label="Xoá tìm kiếm"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer"
-          >
-            ✕
-          </button>
-        )}
-        {q && !isLoading && (
-          <p className="mt-3 text-xs text-muted-foreground text-center">
-            {total} kết quả cho "<span className="text-foreground">{q}</span>"
+    <div className="bg-gradient-to-b from-secondary/30 via-background to-background">
+      {/* Magazine header */}
+      <div className="border-b border-border/50">
+        <div className="max-w-7xl mx-auto px-6 py-14 md:py-20 text-center">
+          <p className="font-script text-3xl text-primary">journal</p>
+          <h1 className="font-display text-4xl md:text-6xl mt-2 tracking-tight">
+            {activeCat ? activeCat.name : "Blog cưới"}
+          </h1>
+          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+            Mẹo lên kế hoạch, xu hướng mới và những câu chuyện thật từ các cặp đôi.
           </p>
-        )}
+          <div className="mt-8 max-w-xl mx-auto relative">
+            <input
+              type="search"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
+              placeholder="Tìm bài viết theo từ khoá..."
+              className="w-full h-12 pl-11 pr-10 rounded-full border border-border bg-background text-sm shadow-soft focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition"
+              aria-label="Tìm bài viết"
+            />
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            {term && (
+              <button type="button" onClick={() => setTerm("")} aria-label="Xoá tìm kiếm"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 cursor-pointer">✕</button>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Grid */}
-      <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[40vh]">
-        {isLoading &&
-          Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="bg-card rounded-xl border border-border/40 overflow-hidden animate-pulse">
-              <div className="aspect-[16/10] bg-secondary" />
-              <div className="p-5 space-y-3">
-                <div className="h-3 w-16 bg-secondary rounded" />
-                <div className="h-5 w-3/4 bg-secondary rounded" />
-                <div className="h-4 w-full bg-secondary rounded" />
-              </div>
-            </div>
-          ))}
-        {!isLoading && items.length === 0 && (
-          <div className="col-span-full text-center text-muted-foreground py-16">Chưa có bài viết trong danh mục này.</div>
-        )}
-        {!isLoading && items.map((p: any) => {
-          const cat = cats.find((c) => c.slug === p.category);
-          return (
-            <Link
-              key={p.id}
-              to="/blog/$slug"
-              params={{ slug: p.slug }}
-              className="group bg-card rounded-xl border border-border/40 overflow-hidden flex flex-col shadow-soft hover:-translate-y-1 hover:shadow-elegant hover:border-primary/40 transition-all duration-300"
-            >
-              <div className="aspect-[16/10] overflow-hidden bg-secondary">
-                {p.cover_image ? (
-                  <img
-                    src={resolveImg(p.cover_image)}
-                    alt={p.title}
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-secondary to-secondary/40" />
+      <div className="max-w-7xl mx-auto px-6 py-10 md:py-14">
+        {/* Mobile category chips */}
+        <nav aria-label="Danh mục" className="lg:hidden -mx-2 px-2 mb-8 overflow-x-auto">
+          <div className="flex gap-2 min-w-max">
+            <CatChip active={!category} onClick={() => setCategory(undefined)}>Tất cả</CatChip>
+            {cats.map((c) => (
+              <CatChip key={c.id} active={category === c.slug} onClick={() => setCategory(c.slug)}>
+                {c.name}
+              </CatChip>
+            ))}
+          </div>
+        </nav>
+
+        <div className="grid lg:grid-cols-[1fr_280px] gap-10">
+          {/* Main column */}
+          <div className="min-w-0">
+            {(q || category) && (
+              <p className="mb-6 text-sm text-muted-foreground">
+                {total} kết quả{q ? <> cho "<span className="text-foreground">{q}</span>"</> : null}
+                {activeCat ? <> trong <span className="text-foreground">{activeCat.name}</span></> : null}
+                {(q || category) && (
+                  <button onClick={() => navigate({ search: { page: 1 } })} className="ml-3 text-primary underline cursor-pointer">Xoá bộ lọc</button>
                 )}
-              </div>
-              <div className="p-5 flex-1 flex flex-col">
-                <div className="flex items-center gap-3 text-xs">
-                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-[0.16em]">{cat?.name ?? p.category}</span>
-                  <span className="text-muted-foreground">{new Date(p.published_at).toLocaleDateString("vi-VN")}</span>
-                </div>
-                <h2 className="font-display text-xl mt-3 group-hover:text-primary transition-colors line-clamp-2">{p.title}</h2>
-                {p.excerpt && <p className="mt-2 text-sm text-muted-foreground line-clamp-3 flex-1">{p.excerpt}</p>}
-                {p.author_name && <p className="mt-4 text-xs text-muted-foreground">— {p.author_name}</p>}
-              </div>
-            </Link>
-          );
-        })}
-      </div>
+              </p>
+            )}
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <Pagination current={page} total={totalPages} onChange={gotoPage} />
-      )}
+            {/* Hero featured */}
+            {hero && (
+              <Link
+                to="/blog/$slug"
+                params={{ slug: hero.slug }}
+                className="group block bg-card rounded-2xl border border-border/40 overflow-hidden shadow-soft hover:shadow-elegant hover:border-primary/40 transition-all duration-300 mb-10"
+              >
+                <div className="grid md:grid-cols-2">
+                  <div className="aspect-[16/10] md:aspect-auto md:h-full overflow-hidden bg-secondary">
+                    {hero.cover_image ? (
+                      <img src={resolveImg(hero.cover_image)} alt={hero.title} loading="eager"
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    ) : <div className="w-full h-full bg-gradient-to-br from-secondary to-secondary/40" />}
+                  </div>
+                  <div className="p-7 md:p-10 flex flex-col justify-center">
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-[0.16em]">
+                        ⭐ Nổi bật
+                      </span>
+                      <span className="text-muted-foreground">{new Date(hero.published_at).toLocaleDateString("vi-VN")}</span>
+                    </div>
+                    <h2 className="font-display text-2xl md:text-3xl mt-3 leading-tight group-hover:text-primary transition-colors line-clamp-3">
+                      {hero.title}
+                    </h2>
+                    {hero.excerpt && <p className="mt-3 text-muted-foreground line-clamp-3">{hero.excerpt}</p>}
+                    <span className="mt-5 text-sm text-primary font-medium">Đọc bài viết →</span>
+                  </div>
+                </div>
+              </Link>
+            )}
+
+            {/* Grid */}
+            <div className="grid sm:grid-cols-2 gap-6 min-h-[40vh]">
+              {isLoading &&
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="bg-card rounded-xl border border-border/40 overflow-hidden animate-pulse">
+                    <div className="aspect-[16/10] bg-secondary" />
+                    <div className="p-5 space-y-3">
+                      <div className="h-3 w-16 bg-secondary rounded" />
+                      <div className="h-5 w-3/4 bg-secondary rounded" />
+                      <div className="h-4 w-full bg-secondary rounded" />
+                    </div>
+                  </div>
+                ))}
+              {!isLoading && items.length === 0 && (
+                <div className="col-span-full text-center text-muted-foreground py-20 border border-dashed border-border/60 rounded-xl bg-card/40">
+                  Chưa có bài viết phù hợp.
+                </div>
+              )}
+              {!isLoading && gridItems.map((p: any) => {
+                const cat = cats.find((c) => c.slug === p.category);
+                return (
+                  <Link
+                    key={p.id}
+                    to="/blog/$slug"
+                    params={{ slug: p.slug }}
+                    className="group bg-card rounded-xl border border-border/40 overflow-hidden flex flex-col shadow-soft hover:-translate-y-1 hover:shadow-elegant hover:border-primary/40 transition-all duration-300"
+                  >
+                    <div className="aspect-[16/10] overflow-hidden bg-secondary">
+                      {p.cover_image ? (
+                        <img src={resolveImg(p.cover_image)} alt={p.title} loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      ) : <div className="w-full h-full bg-gradient-to-br from-secondary to-secondary/40" />}
+                    </div>
+                    <div className="p-5 flex-1 flex flex-col">
+                      <div className="flex items-center gap-3 text-xs">
+                        <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary uppercase tracking-[0.16em]">{cat?.name ?? p.category}</span>
+                        <span className="text-muted-foreground">{new Date(p.published_at).toLocaleDateString("vi-VN")}</span>
+                      </div>
+                      <h2 className="font-display text-lg mt-3 group-hover:text-primary transition-colors line-clamp-2">{p.title}</h2>
+                      {p.excerpt && <p className="mt-2 text-sm text-muted-foreground line-clamp-2 flex-1">{p.excerpt}</p>}
+                      {p.author_name && <p className="mt-4 text-xs text-muted-foreground">— {p.author_name}</p>}
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+
+            {totalPages > 1 && <Pagination current={page} total={totalPages} onChange={gotoPage} />}
+          </div>
+
+          {/* Sidebar */}
+          <aside className="hidden lg:block space-y-8">
+            <div className="bg-card border border-border/50 rounded-xl p-5 shadow-soft sticky-safe">
+              <h3 className="font-display text-lg mb-4 flex items-center gap-2">
+                <span className="w-1 h-5 bg-primary rounded-full" /> Danh mục
+              </h3>
+              <ul className="space-y-1">
+                <li>
+                  <button onClick={() => setCategory(undefined)}
+                    className={`w-full text-left px-3 py-2 rounded-md text-sm transition cursor-pointer flex items-center justify-between ${
+                      !category ? "bg-primary/10 text-primary font-medium" : "hover:bg-secondary/60"
+                    }`}>
+                    <span>Tất cả bài viết</span>
+                    <span className="text-xs text-muted-foreground">{!category ? total : ""}</span>
+                  </button>
+                </li>
+                {cats.map((c) => (
+                  <li key={c.id}>
+                    <button onClick={() => setCategory(c.slug)}
+                      className={`w-full text-left px-3 py-2 rounded-md text-sm transition cursor-pointer ${
+                        category === c.slug ? "bg-primary/10 text-primary font-medium" : "hover:bg-secondary/60"
+                      }`}>
+                      {c.name}
+                    </button>
+                  </li>
+                ))}
+                {cats.length === 0 && <li className="text-xs text-muted-foreground px-3 py-2">Chưa có danh mục</li>}
+              </ul>
+            </div>
+
+            <div className="bg-card border border-border/50 rounded-xl p-5 shadow-soft">
+              <h3 className="font-display text-lg mb-4 flex items-center gap-2">
+                <span className="w-1 h-5 bg-primary rounded-full" /> Bài viết mới
+              </h3>
+              <ul className="space-y-4">
+                {(latestData?.items ?? []).map((p: any) => (
+                  <li key={p.id}>
+                    <Link to="/blog/$slug" params={{ slug: p.slug }} className="group flex gap-3">
+                      <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-secondary">
+                        {p.cover_image && (
+                          <img src={resolveImg(p.cover_image)} alt="" loading="lazy"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        )}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium line-clamp-2 group-hover:text-primary transition-colors">{p.title}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{new Date(p.published_at).toLocaleDateString("vi-VN")}</p>
+                      </div>
+                    </Link>
+                  </li>
+                ))}
+                {(!latestData || latestData.items.length === 0) && (
+                  <li className="text-xs text-muted-foreground">Chưa có bài viết</li>
+                )}
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
     </div>
   );
 }
