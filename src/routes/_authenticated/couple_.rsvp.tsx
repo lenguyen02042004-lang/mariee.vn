@@ -6,7 +6,7 @@ import { myCouples, listMyRsvp, deleteMyRsvp } from "@/lib/couple-owner.function
 import * as XLSX from "xlsx";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/couple/rsvp")({
+export const Route = createFileRoute("/_authenticated/couple_/rsvp")({
   component: RsvpInbox,
   head: () => ({ meta: [{ title: "Hộp thư xác nhận — Mariée" }] }),
 });
