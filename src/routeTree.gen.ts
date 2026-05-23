@@ -35,7 +35,7 @@ import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_a
 import { Route as AuthenticatedVendorProductsRouteImport } from './routes/_authenticated/vendor.products'
 import { Route as AuthenticatedVendorLeadsRouteImport } from './routes/_authenticated/vendor.leads'
 import { Route as AuthenticatedVendorBillingRouteImport } from './routes/_authenticated/vendor.billing'
-import { Route as AuthenticatedCoupleRsvpRouteImport } from './routes/_authenticated/couple.rsvp'
+import { Route as AuthenticatedCoupleRsvpRouteImport } from './routes/_authenticated/couple_.rsvp'
 import { Route as AuthenticatedAdminWishesRouteImport } from './routes/_authenticated/admin.wishes'
 import { Route as AuthenticatedAdminVendorsRouteImport } from './routes/_authenticated/admin.vendors'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin.users'
@@ -188,9 +188,9 @@ const AuthenticatedVendorBillingRoute =
     getParentRoute: () => AuthenticatedVendorRoute,
   } as any)
 const AuthenticatedCoupleRsvpRoute = AuthenticatedCoupleRsvpRouteImport.update({
-  id: '/rsvp',
-  path: '/rsvp',
-  getParentRoute: () => AuthenticatedCoupleRoute,
+  id: '/couple_/rsvp',
+  path: '/couple/rsvp',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminWishesRoute =
   AuthenticatedAdminWishesRouteImport.update({
@@ -298,7 +298,7 @@ export interface FileRoutesByFullPath {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/couple': typeof AuthenticatedCoupleRouteWithChildren
+  '/couple': typeof AuthenticatedCoupleRoute
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
@@ -341,7 +341,7 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/couple': typeof AuthenticatedCoupleRouteWithChildren
+  '/couple': typeof AuthenticatedCoupleRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
   '/vendors/$slug': typeof VendorsSlugRoute
@@ -386,7 +386,7 @@ export interface FileRoutesById {
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
-  '/_authenticated/couple': typeof AuthenticatedCoupleRouteWithChildren
+  '/_authenticated/couple': typeof AuthenticatedCoupleRoute
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/blog_/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
@@ -402,7 +402,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/vendors': typeof AuthenticatedAdminVendorsRoute
   '/_authenticated/admin/wishes': typeof AuthenticatedAdminWishesRoute
-  '/_authenticated/couple/rsvp': typeof AuthenticatedCoupleRsvpRoute
+  '/_authenticated/couple_/rsvp': typeof AuthenticatedCoupleRsvpRoute
   '/_authenticated/vendor/billing': typeof AuthenticatedVendorBillingRoute
   '/_authenticated/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/_authenticated/vendor/products': typeof AuthenticatedVendorProductsRoute
@@ -535,7 +535,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/vendors'
     | '/_authenticated/admin/wishes'
-    | '/_authenticated/couple/rsvp'
+    | '/_authenticated/couple_/rsvp'
     | '/_authenticated/vendor/billing'
     | '/_authenticated/vendor/leads'
     | '/_authenticated/vendor/products'
@@ -754,12 +754,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVendorBillingRouteImport
       parentRoute: typeof AuthenticatedVendorRoute
     }
-    '/_authenticated/couple/rsvp': {
-      id: '/_authenticated/couple/rsvp'
-      path: '/rsvp'
+    '/_authenticated/couple_/rsvp': {
+      id: '/_authenticated/couple_/rsvp'
+      path: '/couple/rsvp'
       fullPath: '/couple/rsvp'
       preLoaderRoute: typeof AuthenticatedCoupleRsvpRouteImport
-      parentRoute: typeof AuthenticatedCoupleRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin/wishes': {
       id: '/_authenticated/admin/wishes'
@@ -919,17 +919,6 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
-interface AuthenticatedCoupleRouteChildren {
-  AuthenticatedCoupleRsvpRoute: typeof AuthenticatedCoupleRsvpRoute
-}
-
-const AuthenticatedCoupleRouteChildren: AuthenticatedCoupleRouteChildren = {
-  AuthenticatedCoupleRsvpRoute: AuthenticatedCoupleRsvpRoute,
-}
-
-const AuthenticatedCoupleRouteWithChildren =
-  AuthenticatedCoupleRoute._addFileChildren(AuthenticatedCoupleRouteChildren)
-
 interface AuthenticatedVendorRouteChildren {
   AuthenticatedVendorBillingRoute: typeof AuthenticatedVendorBillingRoute
   AuthenticatedVendorLeadsRoute: typeof AuthenticatedVendorLeadsRoute
@@ -951,14 +940,16 @@ const AuthenticatedVendorRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
-  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRouteWithChildren
+  AuthenticatedCoupleRoute: typeof AuthenticatedCoupleRoute
   AuthenticatedVendorRoute: typeof AuthenticatedVendorRouteWithChildren
+  AuthenticatedCoupleRsvpRoute: typeof AuthenticatedCoupleRsvpRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
-  AuthenticatedCoupleRoute: AuthenticatedCoupleRouteWithChildren,
+  AuthenticatedCoupleRoute: AuthenticatedCoupleRoute,
   AuthenticatedVendorRoute: AuthenticatedVendorRouteWithChildren,
+  AuthenticatedCoupleRsvpRoute: AuthenticatedCoupleRsvpRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -987,3 +978,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
