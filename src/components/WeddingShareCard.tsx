@@ -167,10 +167,10 @@ export function WeddingShareCard({ couple, origin }: { couple: Couple; origin?: 
             <p className="uppercase tracking-[0.3em] text-[11px] text-muted-foreground">Trân trọng kính mời tham dự tiệc cưới</p>
             <span className="h-px w-10 bg-primary/40" />
           </div>
-          <h2 className="font-display text-4xl md:text-6xl mt-5 leading-[1.05]">
-            {couple.bride_name}
-            <span className="font-script text-primary mx-3 align-middle">&amp;</span>
-            {couple.groom_name}
+          <h2 className="font-display mt-5 leading-[1.1] text-balance text-[clamp(1.75rem,5vw,3.75rem)]">
+            <span className="whitespace-nowrap">{couple.bride_name}</span>
+            <span className="font-script text-primary mx-2 md:mx-3 align-middle">&amp;</span>
+            <span className="whitespace-nowrap">{couple.groom_name}</span>
           </h2>
           {dateLabel && <p className="mt-5 text-base md:text-lg tracking-wide">{dateLabel}</p>}
           {couple.venue_name && (
