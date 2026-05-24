@@ -128,6 +128,15 @@ const siteSchema = z.object({
   contact_email: z.string().max(160).nullish().or(z.literal("")),
   contact_phone: z.string().max(60).nullish().or(z.literal("")),
   footer_text: z.string().max(500).nullish().or(z.literal("")),
+  hero_youtube_url: z.string().max(500).nullish().or(z.literal("")),
+  hero_slides: z.array(z.object({
+    image_url: z.string().max(800).optional().or(z.literal("")),
+    eyebrow: z.string().max(120).optional().or(z.literal("")),
+    title: z.string().max(200).optional().or(z.literal("")),
+    subtitle: z.string().max(400).optional().or(z.literal("")),
+    cta_label: z.string().max(80).optional().or(z.literal("")),
+    cta_href: z.string().max(400).optional().or(z.literal("")),
+  })).max(6).optional(),
 });
 
 export const adminUpdateSiteSettings = createServerFn({ method: "POST" })
@@ -136,7 +145,10 @@ export const adminUpdateSiteSettings = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const payload: any = { updated_at: new Date().toISOString() };
-    for (const [k, v] of Object.entries(data)) payload[k] = v || null;
+    for (const [k, v] of Object.entries(data)) {
+      if (k === "hero_slides") payload[k] = Array.isArray(v) ? v : [];
+      else payload[k] = v || null;
+    }
     const { error } = await context.supabase.from("site_settings" as any).upsert({ id: 1, ...payload });
     if (error) throw new Error(error.message);
     return { ok: true };

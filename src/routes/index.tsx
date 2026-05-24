@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { listCouples } from "@/lib/couples.functions";
 import { listVendors } from "@/lib/vendors.functions";
+import { getSiteSettings } from "@/lib/plans.functions";
 import { resolveImg } from "@/lib/image-map";
-import hero from "@/assets/hero-wedding-1.jpg";
+import { HomeHero } from "@/components/HomeHero";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
@@ -15,6 +16,7 @@ export const Route = createFileRoute("/")({
   loader: async () => ({
     couples: await listCouples(),
     vendors: (await listVendors()).slice(0, 4),
+    settings: await getSiteSettings(),
   }),
   component: Home,
   head: () => ({ meta: [
@@ -24,27 +26,10 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
-  const { couples, vendors } = Route.useLoaderData();
+  const { couples, vendors, settings } = Route.useLoaderData();
   return (
     <>
-      <section className="relative h-[90vh] min-h-[600px] overflow-hidden">
-        <img src={hero} alt="Wedding" className="absolute inset-0 w-full h-full object-cover" width={1600} height={1100} />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
-          <p className="font-script text-3xl md:text-5xl text-blush">la vie est belle</p>
-          <h1 className="mt-4 font-display text-5xl md:text-7xl text-balance max-w-4xl">
-            Lưu giữ ngày trọng đại bằng một <em className="font-script text-gold not-italic">câu chuyện</em> riêng
-          </h1>
-          <p className="mt-6 text-base md:text-lg text-white/80 max-w-2xl">
-            Mariée tạo trang landing page cưới sang trọng, đẳng cấp dành riêng cho mỗi cặp đôi — và kết nối bạn với những nhà cung cấp dịch vụ tinh tế nhất.
-          </p>
-          <div className="mt-10 flex flex-wrap gap-4 justify-center">
-            <Link to="/register" className="px-8 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm shadow-elegant hover:bg-rose-deep transition">Tạo trang cưới của bạn</Link>
-            <Link to="/vendors" className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm hover:bg-white/10 transition">Xem nhà cung cấp</Link>
-            <Link to="/pricing" className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm hover:bg-white/10 transition">Bảng giá vendor</Link>
-          </div>
-        </div>
-      </section>
+      <HomeHero slides={settings?.hero_slides} youtubeUrl={settings?.hero_youtube_url} />
 
       <section id="couples" className="max-w-7xl mx-auto px-6 py-24">
         <div className="text-center mb-16">
