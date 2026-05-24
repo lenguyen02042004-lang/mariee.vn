@@ -367,6 +367,8 @@ export type Database = {
           contact_phone: string | null
           favicon_url: string | null
           footer_text: string | null
+          hero_slides: Json
+          hero_youtube_url: string | null
           id: number
           logo_url: string | null
           primary_color: string | null
@@ -379,6 +381,8 @@ export type Database = {
           contact_phone?: string | null
           favicon_url?: string | null
           footer_text?: string | null
+          hero_slides?: Json
+          hero_youtube_url?: string | null
           id?: number
           logo_url?: string | null
           primary_color?: string | null
@@ -391,6 +395,8 @@ export type Database = {
           contact_phone?: string | null
           favicon_url?: string | null
           footer_text?: string | null
+          hero_slides?: Json
+          hero_youtube_url?: string | null
           id?: number
           logo_url?: string | null
           primary_color?: string | null
