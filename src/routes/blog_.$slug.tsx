@@ -98,7 +98,7 @@ function BlogPostPage() {
           {/* Body */}
           {post.content && (
             <div className="mt-10 max-w-3xl">
-              <div className="text-foreground/90 leading-[1.85] text-[17px] whitespace-pre-line break-words font-serif">
+              <div className="text-foreground/90 leading-[1.85] text-[17px] whitespace-pre-line break-words">
                 {post.content}
               </div>
             </div>
