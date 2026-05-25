@@ -72,6 +72,9 @@ export function HomeHero({
           <img
             src={s.image_url ? resolveImg(s.image_url) : heroFallback}
             alt={s.title ?? "Wedding"}
+            loading={i === 0 ? "eager" : "lazy"}
+            decoding="async"
+            fetchPriority={i === 0 ? "high" : "auto"}
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />

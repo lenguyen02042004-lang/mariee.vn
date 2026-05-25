@@ -32,16 +32,19 @@ function BlogPage() {
   const navigate = useNavigate({ from: "/blog" });
   const fetcher = useServerFn(listBlogPosts);
   const fetchCats = useServerFn(listBlogCategories);
-  const catsQ = useQuery<BlogCategory[]>({ queryKey: ["blog-cats"], queryFn: () => fetchCats() });
+  const catsQ = useQuery<BlogCategory[]>({ queryKey: ["blog-cats"], queryFn: () => fetchCats(), staleTime: 5 * 60_000 });
   const cats = catsQ.data ?? [];
   const { data, isLoading } = useQuery({
     queryKey: ["blog", page, category ?? "all", q ?? ""],
     queryFn: () => fetcher({ data: { page, pageSize: PAGE_SIZE, category: category ?? null, q: q ?? null } }),
+    staleTime: 60_000,
+    placeholderData: (prev) => prev,
   });
   // Latest posts for sidebar (independent of filters)
   const { data: latestData } = useQuery({
     queryKey: ["blog-latest"],
     queryFn: () => fetcher({ data: { page: 1, pageSize: 5, category: null, q: null } }),
+    staleTime: 2 * 60_000,
   });
 
   // Debounced search input
