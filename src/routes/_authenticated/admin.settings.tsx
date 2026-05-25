@@ -7,8 +7,30 @@ import { getSiteSettings } from "@/lib/plans.functions";
 import { adminUpdateSiteSettings } from "@/lib/admin-billing.functions";
 import { uploadImage } from "@/lib/upload";
 import { useAuth } from "@/hooks/use-auth";
+import { HomeHero, type HeroSlide } from "@/components/HomeHero";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({ component: SiteSettings });
+
+function extractYoutubeId(url: string): string | null {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/))([\w-]{11})/);
+  return m ? m[1] : null;
+}
+function validateYoutube(url: string): { ok: boolean; message?: string } {
+  const v = (url || "").trim();
+  if (!v) return { ok: true };
+  try {
+    const u = new URL(v);
+    const host = u.hostname.replace(/^www\./, "");
+    if (host !== "youtube.com" && host !== "m.youtube.com" && host !== "youtu.be") {
+      return { ok: false, message: "Link phải thuộc youtube.com hoặc youtu.be" };
+    }
+  } catch {
+    return { ok: false, message: "Đường dẫn không hợp lệ (thiếu http/https)" };
+  }
+  if (!extractYoutubeId(v)) return { ok: false, message: "Không tìm thấy mã video YouTube (11 ký tự)" };
+  return { ok: true };
+}
 
 function SiteSettings() {
   const get = useServerFn(getSiteSettings);
@@ -58,12 +80,23 @@ function SiteSettings() {
   const addSlide = () => { if (slides.length >= 3) return; setF({ ...f, hero_slides: [...slides, { eyebrow: "", title: "", subtitle: "", cta_label: "", cta_href: "", image_url: "" }] }); };
   const removeSlide = (i: number) => setF({ ...f, hero_slides: slides.filter((_, idx) => idx !== i) });
 
+  const ytCheck = validateYoutube(f.hero_youtube_url ?? "");
+
+  function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!ytCheck.ok) {
+      toast.error(`Link YouTube không hợp lệ: ${ytCheck.message}`);
+      return;
+    }
+    m.mutate(f);
+  }
+
   return (
     <div>
       <h1 className="font-display text-3xl">Cài đặt ứng dụng</h1>
       <p className="text-sm text-muted-foreground mt-1">Tên, logo, màu thương hiệu và thông tin liên hệ chung của website.</p>
 
-      <form onSubmit={(e) => { e.preventDefault(); m.mutate(f); }} className="mt-6 grid gap-6 max-w-3xl">
+      <form onSubmit={onSubmit} className="mt-6 grid gap-6 max-w-3xl">
         <section className="bg-card border border-border/60 rounded-lg p-6 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-xl">Hero trang chủ</h2>
@@ -71,7 +104,19 @@ function SiteSettings() {
           </div>
           <div>
             <label className="text-xs font-medium text-muted-foreground">Link YouTube (tuỳ chọn — nếu nhập sẽ thay thế slide ảnh)</label>
-            <input value={f.hero_youtube_url ?? ""} onChange={e => setF({ ...f, hero_youtube_url: e.target.value })} placeholder="https://www.youtube.com/watch?v=..." className="mt-1 w-full px-3 py-2 border border-input bg-background rounded font-mono text-sm" />
+            <input
+              value={f.hero_youtube_url ?? ""}
+              onChange={e => setF({ ...f, hero_youtube_url: e.target.value })}
+              placeholder="https://www.youtube.com/watch?v=..."
+              className={`mt-1 w-full px-3 py-2 border bg-background rounded font-mono text-sm ${ytCheck.ok ? "border-input" : "border-destructive ring-1 ring-destructive/40"}`}
+              aria-invalid={!ytCheck.ok}
+            />
+            {!ytCheck.ok && (
+              <p className="mt-1 text-xs text-destructive">⚠ {ytCheck.message}. Ví dụ hợp lệ: https://www.youtube.com/watch?v=dQw4w9WgXcQ</p>
+            )}
+            {ytCheck.ok && f.hero_youtube_url && (
+              <p className="mt-1 text-xs text-emerald-600">✓ Link hợp lệ — sẽ phát video làm nền hero.</p>
+            )}
           </div>
           <div className="space-y-4">
             {slides.length === 0 && <p className="text-sm text-muted-foreground">Chưa có slide nào. Nhấn “+ Thêm slide” để tạo (tối đa 3).</p>}
@@ -113,6 +158,16 @@ function SiteSettings() {
                 </div>
               </div>
             ))}
+          </div>
+          <div className="pt-2">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Xem trước trực tiếp</p>
+            <div className="rounded-lg overflow-hidden border border-border/60 [&_section]:!h-[360px] [&_section]:!min-h-0">
+              <HomeHero
+                slides={slides as HeroSlide[]}
+                youtubeUrl={ytCheck.ok ? f.hero_youtube_url : null}
+              />
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">Bản xem trước cập nhật theo thời gian thực; bấm “Lưu cài đặt” để áp dụng cho trang chủ.</p>
           </div>
         </section>
 
