@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { listVendors } from "@/lib/vendors.functions";
-import { resolveImg } from "@/lib/image-map";
+import { VendorCard } from "@/components/VendorCard";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới",
@@ -20,6 +20,7 @@ const CAT_LABEL: Record<string, string> = {
 
 export const Route = createFileRoute("/vendors/")({
   loader: async () => await listVendors(),
+  staleTime: 60_000,
   component: VendorsPage,
   head: () => ({ meta: [
     { title: "Nhà cung cấp dịch vụ cưới — Mariée" },
@@ -42,13 +43,13 @@ function VendorsPage() {
   });
   return (
     <>
-      <section className="py-20 text-center bg-secondary/40">
+      <section className="py-16 sm:py-20 text-center bg-secondary/40 px-4">
         <p className="font-script text-3xl text-primary">vendors</p>
-        <h1 className="font-display text-5xl mt-2">Nhà cung cấp dịch vụ cưới</h1>
-        <p className="mt-4 text-muted-foreground max-w-2xl mx-auto px-6">Tinh hoa của từng lĩnh vực — venue, nhiếp ảnh, makeup, hoa cưới và hơn thế nữa.</p>
+        <h1 className="font-display text-[clamp(2rem,5vw,3.5rem)] mt-2 leading-tight">Nhà cung cấp dịch vụ cưới</h1>
+        <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">Tinh hoa của từng lĩnh vực — venue, nhiếp ảnh, makeup, hoa cưới và hơn thế nữa.</p>
       </section>
-      <section className="max-w-7xl mx-auto px-6 py-12">
-        <div className="grid md:grid-cols-3 gap-3 mb-10">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8 sm:mb-10">
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="Tìm theo tên, mô tả…" className="px-4 py-3 border border-input rounded-md bg-background" />
           <select value={cat} onChange={e => setCat(e.target.value)} className="px-4 py-3 border border-input rounded-md bg-background">
             <option value="all">Tất cả lĩnh vực</option>
@@ -60,25 +61,9 @@ function VendorsPage() {
           </select>
         </div>
         <p className="text-sm text-muted-foreground mb-6">{filtered.length} nhà cung cấp</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filtered.map((v: any) => (
-            <Link key={v.id} to="/vendors/$slug" params={{ slug: v.slug }} className="group bg-card rounded-lg overflow-hidden shadow-soft hover:shadow-elegant transition">
-              <div className="aspect-[4/3] overflow-hidden">
-                <img src={resolveImg(v.cover_image)} alt={v.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-xs uppercase tracking-[0.2em] text-primary">{CAT_LABEL[v.category] ?? v.category}</p>
-                  {v.is_featured && <span className="text-[10px] uppercase tracking-wider bg-gold/15 text-gold px-2 py-0.5 rounded">Featured</span>}
-                </div>
-                <h3 className="font-display text-2xl mt-1">{v.name}</h3>
-                <p className="text-sm text-muted-foreground mt-2">{v.tagline}</p>
-                <div className="flex items-center justify-between mt-3 text-sm text-foreground/70">
-                  {v.price_range && <span>{v.price_range}</span>}
-                  {v.city && <span className="text-muted-foreground">{v.city}</span>}
-                </div>
-              </div>
-            </Link>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+          {filtered.map((v: any, i: number) => (
+            <VendorCard key={v.id} v={v} eager={i < 3} />
           ))}
           {filtered.length === 0 && <p className="col-span-full text-center text-muted-foreground py-12">Không tìm thấy nhà cung cấp phù hợp.</p>}
         </div>
