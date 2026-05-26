@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { listBlogPosts, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
-import { resolveImg } from "@/lib/image-map";
+import { SmartImage } from "@/components/SmartImage";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1).catch(1),
@@ -143,8 +143,15 @@ function BlogPage() {
                 <div className="grid md:grid-cols-2">
                   <div className="aspect-[16/10] md:aspect-auto md:h-full overflow-hidden bg-secondary">
                     {hero.cover_image ? (
-                      <img src={resolveImg(hero.cover_image)} alt={hero.title} loading="eager"
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                      <SmartImage
+                        src={hero.cover_image}
+                        alt={hero.title}
+                        width={1080}
+                        widths={[640, 800, 1080, 1440]}
+                        sizes="(min-width: 768px) 50vw, 100vw"
+                        priority
+                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
                     ) : <div className="w-full h-full bg-gradient-to-br from-secondary to-secondary/40" />}
                   </div>
                   <div className="p-7 md:p-10 flex flex-col justify-center">
@@ -193,8 +200,14 @@ function BlogPage() {
                   >
                     <div className="aspect-[16/10] overflow-hidden bg-secondary">
                       {p.cover_image ? (
-                        <img src={resolveImg(p.cover_image)} alt={p.title} loading="lazy"
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                        <SmartImage
+                          src={p.cover_image}
+                          alt={p.title}
+                          width={720}
+                          widths={[400, 640, 800, 1080]}
+                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
                       ) : <div className="w-full h-full bg-gradient-to-br from-secondary to-secondary/40" />}
                     </div>
                     <div className="p-5 flex-1 flex flex-col">
@@ -254,8 +267,14 @@ function BlogPage() {
                     <Link to="/blog/$slug" params={{ slug: p.slug }} className="group flex gap-3">
                       <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-secondary">
                         {p.cover_image && (
-                          <img src={resolveImg(p.cover_image)} alt="" loading="lazy"
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <SmartImage
+                            src={p.cover_image}
+                            alt=""
+                            width={160}
+                            widths={[128, 160, 240]}
+                            sizes="64px"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
                         )}
                       </div>
                       <div className="min-w-0">

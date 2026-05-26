@@ -3,9 +3,9 @@ import { listCouples } from "@/lib/couples.functions";
 import { listVendors } from "@/lib/vendors.functions";
 import { getSiteSettings } from "@/lib/plans.functions";
 import { listBlogPosts } from "@/lib/blog.functions";
-import { resolveImg } from "@/lib/image-map";
 import { HomeHero } from "@/components/HomeHero";
 import { VendorCard } from "@/components/VendorCard";
+import { SmartImage } from "@/components/SmartImage";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -46,7 +46,14 @@ function Home() {
           {couples.map((c: any) => (
             <Link key={c.id} to="/couples/$slug" params={{ slug: c.slug }} className="group block">
               <div className="relative aspect-[4/5] overflow-hidden rounded-2xl shadow-soft hover:shadow-elegant transition-shadow duration-500">
-                <img src={resolveImg(c.cover_image)} alt={`${c.bride_name} & ${c.groom_name}`} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" loading="lazy" decoding="async" />
+                <SmartImage
+                  src={c.cover_image}
+                  alt={`${c.bride_name} & ${c.groom_name}`}
+                  width={1080}
+                  widths={[640, 800, 1080, 1440]}
+                  sizes="(min-width: 640px) 50vw, 100vw"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white">
                   <p className="font-script text-2xl text-blush">the wedding of</p>
@@ -100,8 +107,14 @@ function Home() {
               >
                 <div className="aspect-[16/10] overflow-hidden bg-secondary">
                   {p.cover_image ? (
-                    <img src={resolveImg(p.cover_image)} alt={p.title} loading="lazy" decoding="async"
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <SmartImage
+                      src={p.cover_image}
+                      alt={p.title}
+                      width={800}
+                      widths={[400, 640, 800, 1080]}
+                      sizes="(min-width: 768px) 33vw, 100vw"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
                   ) : <div className="w-full h-full bg-gradient-to-br from-secondary to-accent/40" />}
                 </div>
                 <div className="p-5 sm:p-6 flex-1 flex flex-col">

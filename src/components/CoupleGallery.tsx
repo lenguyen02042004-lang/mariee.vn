@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { resolveImg } from "@/lib/image-map";
+import { SmartImage } from "@/components/SmartImage";
+import { cdnSrc } from "@/lib/cdn-image";
 
 export function CoupleGallery({ items }: { items: Array<{ id: string; image_url: string; caption?: string | null }> }) {
   const [active, setActive] = useState<number | null>(null);
@@ -26,10 +28,12 @@ export function CoupleGallery({ items }: { items: Array<{ id: string; image_url:
             className="group relative mb-3 md:mb-4 block w-full overflow-hidden rounded-lg shadow-soft break-inside-avoid animate-in fade-in duration-700"
             style={{ animationDelay: `${(i % 8) * 60}ms`, animationFillMode: "both" }}
           >
-            <img
-              src={resolveImg(g.image_url)}
+            <SmartImage
+              src={g.image_url}
               alt={g.caption ?? ""}
-              loading="lazy"
+              width={800}
+              widths={[400, 640, 800, 1080]}
+              sizes="(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw"
               className="w-full h-auto object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.06]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -45,7 +49,12 @@ export function CoupleGallery({ items }: { items: Array<{ id: string; image_url:
           <button onClick={(e) => { e.stopPropagation(); setActive(null); }} aria-label="Đóng" className="absolute top-4 right-4 text-white/80 hover:text-white text-3xl">×</button>
           <button onClick={(e) => { e.stopPropagation(); setActive((active - 1 + items.length) % items.length); }} className="absolute left-2 md:left-6 text-white/70 hover:text-white text-4xl px-3">‹</button>
           <button onClick={(e) => { e.stopPropagation(); setActive((active + 1) % items.length); }} className="absolute right-2 md:right-6 text-white/70 hover:text-white text-4xl px-3">›</button>
-          <img src={resolveImg(items[active].image_url)} alt="" className="max-h-full max-w-full object-contain rounded shadow-2xl" onClick={(e) => e.stopPropagation()} />
+          <img
+            src={cdnSrc(resolveImg(items[active].image_url), { width: 1920, quality: 85, fit: "scale-down" })}
+            alt=""
+            className="max-h-full max-w-full object-contain rounded shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
           <div className="absolute bottom-4 left-0 right-0 text-center text-white/70 text-sm">
             {active + 1} / {items.length}{items[active].caption && ` — ${items[active].caption}`}
           </div>
