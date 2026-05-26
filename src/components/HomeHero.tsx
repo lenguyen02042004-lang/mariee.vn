@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { resolveImg } from "@/lib/image-map";
+import { cdnSrc, cdnSrcSet } from "@/lib/cdn-image";
 import heroFallback from "@/assets/hero-wedding-1.jpg";
 
 export type HeroSlide = {
@@ -69,14 +70,21 @@ export function HomeHero({
           key={i}
           className={`absolute inset-0 transition-opacity duration-1000 ${i === idx ? "opacity-100" : "opacity-0"}`}
         >
-          <img
-            src={s.image_url ? resolveImg(s.image_url) : heroFallback}
-            alt={s.title ?? "Wedding"}
-            loading={i === 0 ? "eager" : "lazy"}
-            decoding="async"
-            fetchPriority={i === 0 ? "high" : "auto"}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          {(() => {
+            const raw = s.image_url ? resolveImg(s.image_url) : heroFallback;
+            return (
+              <img
+                src={cdnSrc(raw, { width: 1920, quality: 80 })}
+                srcSet={cdnSrcSet(raw, [800, 1080, 1440, 1920, 2560], 80)}
+                sizes="100vw"
+                alt={s.title ?? "Wedding"}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={i === 0 ? "high" : "auto"}
+                className="absolute inset-0 w-full h-full object-cover"
+              />
+            );
+          })()}
           <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
         </div>
       ))}

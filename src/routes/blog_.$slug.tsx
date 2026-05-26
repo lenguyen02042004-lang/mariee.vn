@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { getBlogPostBySlug, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { resolveImg } from "@/lib/image-map";
+import { SmartImage } from "@/components/SmartImage";
 
 export const Route = createFileRoute("/blog_/$slug")({
   loader: async ({ params }) => {
@@ -91,7 +92,15 @@ function BlogPostPage() {
           {/* Cover */}
           {post.cover_image && (
             <div className="mt-8 rounded-2xl overflow-hidden bg-secondary aspect-[16/9] shadow-soft">
-              <img src={resolveImg(post.cover_image)} alt={post.title} className="w-full h-full object-cover" />
+              <SmartImage
+                src={post.cover_image}
+                alt={post.title}
+                width={1440}
+                widths={[640, 800, 1080, 1440, 1920]}
+                sizes="(min-width: 1024px) 900px, 100vw"
+                priority
+                className="w-full h-full object-cover"
+              />
             </div>
           )}
 
@@ -147,7 +156,14 @@ function BlogPostPage() {
                     <Link to="/blog/$slug" params={{ slug: r.slug }} className="group flex gap-3">
                       <div className="w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-secondary">
                         {r.cover_image && (
-                          <img src={resolveImg(r.cover_image)} alt="" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <SmartImage
+                            src={r.cover_image}
+                            alt=""
+                            width={160}
+                            widths={[128, 160, 240]}
+                            sizes="64px"
+                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
                         )}
                       </div>
                       <div className="min-w-0">

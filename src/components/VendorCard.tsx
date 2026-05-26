@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { resolveImg } from "@/lib/image-map";
+import { SmartImage } from "@/components/SmartImage";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới", photography: "Chụp ảnh cưới", videography: "Quay phim cưới",
@@ -30,12 +30,14 @@ export function VendorCard({ v, eager = false }: { v: VendorCardData; eager?: bo
       className="group relative flex flex-col bg-card rounded-2xl overflow-hidden border border-border/40 shadow-soft hover:shadow-elegant hover:border-gold/50 transition-all duration-500 hover:-translate-y-1"
     >
       <div className="relative aspect-[4/5] sm:aspect-[4/3] overflow-hidden bg-secondary">
-        <img
-          src={resolveImg(v.cover_image)}
+        <SmartImage
+          src={v.cover_image}
           alt={v.name}
-          loading={eager ? "eager" : "lazy"}
-          decoding="async"
-          fetchPriority={eager ? "high" : "auto"}
+          width={800}
+          widths={[400, 640, 800, 1080]}
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+          eager={eager}
+          priority={eager}
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
         />
         {/* gradient veil */}
