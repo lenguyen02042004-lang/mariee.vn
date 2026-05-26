@@ -6,6 +6,7 @@ import { listBlogPosts } from "@/lib/blog.functions";
 import { HomeHero } from "@/components/HomeHero";
 import { VendorCard } from "@/components/VendorCard";
 import { SmartImage } from "@/components/SmartImage";
+import { HomePageSkeleton } from "@/components/HomeSkeleton";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -24,6 +25,9 @@ export const Route = createFileRoute("/")({
   },
   staleTime: 60_000,
   component: Home,
+  pendingMs: 0,
+  pendingMinMs: 200,
+  pendingComponent: HomePageSkeleton,
   head: () => ({ meta: [
     { title: "Mariée — Landing page cưới sang trọng cho mọi cặp đôi" },
     { name: "description", content: "Tạo trang cưới sang trọng riêng cho cặp đôi của bạn. Khám phá những nhà cung cấp dịch vụ cưới hàng đầu." },
