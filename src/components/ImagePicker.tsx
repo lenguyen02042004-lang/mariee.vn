@@ -53,20 +53,28 @@ export function ImagePicker({
   return (
     <div className="space-y-2">
       {label && <p className="text-xs font-medium text-muted-foreground">{label}</p>}
-      <div className={`${aspect} relative rounded-md border border-dashed border-border bg-secondary/40 overflow-hidden flex items-center justify-center`}>
+      <label
+        htmlFor={inputId}
+        className={`${aspect} group relative rounded-md border border-dashed border-border bg-secondary/40 overflow-hidden flex items-center justify-center transition-all duration-200 hover:border-primary hover:bg-secondary/70 hover:shadow-sm ${busy ? "" : "cursor-pointer"}`}
+      >
         {shown
           ? <img src={shown} alt="" className="w-full h-full object-cover" />
-          : <span className="text-xs text-muted-foreground">Chưa có ảnh</span>}
+          : <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">Bấm để tải ảnh lên</span>}
+        {shown && !busy && (
+          <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors flex items-center justify-center">
+            <span className="text-xs font-medium text-background opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 rounded bg-foreground/70">Bấm để đổi ảnh</span>
+          </div>
+        )}
         {busy && (
           <div className="absolute inset-0 bg-background/70 backdrop-blur-sm flex items-center justify-center">
             <span className="text-xs font-medium text-foreground">Đang tải lên…</span>
           </div>
         )}
-      </div>
+      </label>
       <div className="flex flex-wrap items-center gap-2">
         <label
           htmlFor={inputId}
-          className={`cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 ${busy ? "opacity-50 pointer-events-none" : ""}`}
+          className={`cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 ${busy ? "opacity-50 pointer-events-none" : ""}`}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -76,7 +84,7 @@ export function ImagePicker({
           {buttonLabel ?? (value ? "Đổi ảnh" : "Tải ảnh lên")}
         </label>
         {value && !busy && (
-          <button type="button" onClick={() => { onChange(""); setErr(null); }} className="px-3 py-1.5 text-xs rounded-md border border-input bg-background hover:bg-secondary">
+          <button type="button" onClick={() => { onChange(""); setErr(null); }} className="cursor-pointer px-3 py-1.5 text-xs rounded-md border border-input bg-background transition-all duration-200 hover:bg-destructive/10 hover:border-destructive hover:text-destructive">
             Xoá
           </button>
         )}
@@ -125,7 +133,7 @@ export function ImageUploadButton({ onUpload, disabled, maxMB = DEFAULT_MAX_MB, 
       <div className="flex items-center gap-2">
         <label
           htmlFor={inputId}
-          className={`cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 ${(disabled || busy) ? "opacity-50 pointer-events-none" : ""}`}
+          className={`cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md bg-primary text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 ${(disabled || busy) ? "opacity-50 pointer-events-none" : ""}`}
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
