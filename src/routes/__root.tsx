@@ -4,6 +4,7 @@ import { Outlet, createRootRouteWithContext, useRouter, HeadContent, Scripts, Li
 import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { Header, Footer } from "@/components/SiteLayout";
+import { BackToTop } from "@/components/BackToTop";
 import { AuthProvider } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -81,6 +82,7 @@ function RootComponent() {
           <main className="flex-1"><Outlet /></main>
           <Footer />
         </div>
+        <BackToTop />
         <Toaster position="top-center" richColors />
       </AuthProvider>
     </QueryClientProvider>
