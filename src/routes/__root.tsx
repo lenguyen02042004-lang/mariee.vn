@@ -7,6 +7,7 @@ import { Header, Footer } from "@/components/SiteLayout";
 import { BackToTop } from "@/components/BackToTop";
 import { AuthProvider } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { assignSignupRole } from "@/lib/signup-role.functions";
 
 function NotFoundComponent() {
   return (
@@ -93,9 +94,25 @@ function AuthSync() {
   const router = useRouter();
   const qc = useQueryClient();
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       router.invalidate();
       qc.invalidateQueries();
+      // Gán role + tạo bản nháp couple/vendor khi user đăng nhập lần đầu sau khi chọn vai trò ở /register
+      if (session && (event === "SIGNED_IN" || event === "INITIAL_SESSION" || event === "TOKEN_REFRESHED")) {
+        try {
+          const role = localStorage.getItem("mariee.pendingSignupRole");
+          if (role === "couple" || role === "vendor") {
+            const display = localStorage.getItem("mariee.pendingDisplayName") || undefined;
+            assignSignupRole({ data: { role, display_name: display } })
+              .then(() => {
+                localStorage.removeItem("mariee.pendingSignupRole");
+                localStorage.removeItem("mariee.pendingDisplayName");
+                qc.invalidateQueries();
+              })
+              .catch(() => { /* user có thể đã tồn tại — bỏ qua */ });
+          }
+        } catch { /* localStorage không khả dụng */ }
+      }
     });
     return () => subscription.unsubscribe();
   }, [router, qc]);
