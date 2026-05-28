@@ -14,7 +14,7 @@ export const getMyVendor = createServerFn({ method: "GET" })
 const vendorSchema = z.object({
   name: z.string().trim().min(1).max(160),
   slug: z.string().trim().min(1).max(120).regex(/^[a-z0-9-]+$/),
-  category: z.enum(["venue","photography","videography","wedding_planner","makeup","attire","flowers","catering","music","decor","invitation","other"]),
+  category: z.string().trim().min(1).max(60).regex(/^[a-z0-9_-]+$/),
   tagline: z.string().max(240).optional().or(z.literal("")),
   description: z.string().max(4000).optional().or(z.literal("")),
   cover_image: z.string().max(800).optional().or(z.literal("")),
