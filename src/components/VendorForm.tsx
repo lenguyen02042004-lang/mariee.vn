@@ -1,32 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { adminUpsertVendor, adminPublishVendor } from "@/lib/admin.functions";
+import { adminUpsertVendor, adminPublishVendor, listActiveCategories } from "@/lib/admin.functions";
 import { uploadImage, validateImage } from "@/lib/upload";
 import { ImagePicker, ImageUploadButton } from "@/components/ImagePicker";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
-const CATS: { value: string; label: string }[] = [
-  { value: "venue", label: "Trung tâm tiệc cưới" },
-  { value: "photography", label: "Chụp ảnh cưới" },
-  { value: "videography", label: "Quay phim cưới" },
-  { value: "wedding_planner", label: "Wedding planner" },
-  { value: "makeup", label: "Trang điểm" },
-  { value: "attire", label: "Trang phục" },
-  { value: "flowers", label: "Hoa cưới" },
-  { value: "catering", label: "Ẩm thực" },
-  { value: "music", label: "Âm nhạc" },
-  { value: "decor", label: "Trang trí" },
-  { value: "invitation", label: "Thiệp cưới" },
-  { value: "other", label: "Khác" },
+const FALLBACK_CATS = [
+  { slug: "other", label: "Khác", sort_order: 999 },
 ];
 
 export function VendorForm({ initial }: { initial: any }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuth();
+  const fetchCats = useServerFn(listActiveCategories);
+  const { data: cats = FALLBACK_CATS } = useQuery({ queryKey: ["active-categories"], queryFn: () => fetchCats() });
   const [form, setForm] = useState<any>({
     category: "other",
     is_approved: false,
@@ -82,7 +73,7 @@ export function VendorForm({ initial }: { initial: any }) {
           <label className="text-sm">
             <span className="text-muted-foreground">Danh mục *</span>
             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-md border border-input bg-background">
-              {CATS.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+              {(cats as any[]).map((c) => <option key={c.slug} value={c.slug}>{c.label}</option>)}
             </select>
           </label>
           <Field label="Khoảng giá" value={form.price_range} onChange={v => setForm({ ...form, price_range: v })} placeholder="VD: từ 25 triệu" />
