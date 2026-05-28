@@ -158,7 +158,7 @@ const adminVendorSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().trim().min(1).max(160),
   slug: z.string().trim().min(1).max(120).regex(/^[a-z0-9-]+$/),
-  category: z.enum(["venue","photography","videography","wedding_planner","makeup","attire","flowers","catering","music","decor","invitation","other"]),
+  category: z.string().trim().min(1).max(60).regex(/^[a-z0-9_-]+$/),
   tagline: z.string().max(240).optional().or(z.literal("")),
   description: z.string().max(4000).optional().or(z.literal("")),
   cover_image: z.string().max(800).optional().or(z.literal("")),
@@ -316,6 +316,79 @@ export const adminUpdateLeadStatus = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { error } = await context.supabase.from("vendor_leads").update({ status: data.status }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// ===== Vendor categories =====
+const categorySchema = z.object({
+  id: z.string().uuid().optional(),
+  slug: z.string().trim().min(1).max(60).regex(/^[a-z0-9_-]+$/),
+  label: z.string().trim().min(1).max(120),
+  sort_order: z.number().int().min(0).max(9999).default(0),
+  is_active: z.boolean().default(true),
+});
+
+export const adminListCategories = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("vendor_categories").select("*").order("sort_order").order("label");
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+export const adminUpsertCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => categorySchema.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const payload: any = { ...data };
+    if (payload.id) {
+      const id = payload.id; delete payload.id;
+      const { error } = await context.supabase.from("vendor_categories").update(payload).eq("id", id);
+      if (error) throw new Error(error.message);
+      return { id };
+    }
+    delete payload.id;
+    const { data: row, error } = await context.supabase.from("vendor_categories").insert(payload).select("id").single();
+    if (error) throw new Error(error.message);
+    return { id: row!.id };
+  });
+
+export const adminDeleteCategory = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data: cat } = await context.supabase.from("vendor_categories").select("slug").eq("id", data.id).maybeSingle();
+    if (cat?.slug) {
+      const { count } = await context.supabase.from("vendors").select("id", { count: "exact", head: true }).eq("category", cat.slug);
+      if ((count ?? 0) > 0) throw new Error(`Không thể xoá: còn ${count} vendor đang dùng danh mục này`);
+    }
+    const { error } = await context.supabase.from("vendor_categories").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// Public read of active categories (for vendor form / filters when shown to owners)
+export const listActiveCategories = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data, error } = await supabaseAdmin
+      .from("vendor_categories").select("slug,label,sort_order").eq("is_active", true).order("sort_order").order("label");
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+// ===== Couple publish toggle =====
+export const adminSetCouplePublish = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), is_published: z.boolean() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase.from("couples").update({ is_published: data.is_published }).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

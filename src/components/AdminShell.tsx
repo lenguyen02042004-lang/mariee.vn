@@ -15,6 +15,7 @@ const groups = [
     items: [
       { to: "/admin/couples", label: "Cặp đôi", icon: Heart },
       { to: "/admin/vendors", label: "Nhà cung cấp", icon: Store },
+      { to: "/admin/categories", label: "Danh mục vendor", icon: Package },
       { to: "/admin/blog", label: "Blog & Danh mục", icon: FileText },
     ],
   },

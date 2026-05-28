@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListWishes, adminSetWishApproval, adminDeleteWish } from "@/lib/admin.functions";
@@ -14,12 +15,32 @@ function WishesAdmin() {
   const { data = [] } = useQuery({ queryKey: ["admin-wishes"], queryFn: () => fn() });
   const mApprove = useMutation({ mutationFn: (v: any) => approve({ data: v }), onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-wishes"] }) });
   const mDel = useMutation({ mutationFn: (id: string) => del({ data: { id } }), onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-wishes"] }); toast.success("Đã xoá"); } });
+  const [q, setQ] = useState("");
+  const [filter, setFilter] = useState<"all" | "pending" | "approved">("all");
+  const filtered = useMemo(() => {
+    const term = q.trim().toLowerCase();
+    return (data as any[]).filter((w) => {
+      if (filter === "pending" && w.is_approved) return false;
+      if (filter === "approved" && !w.is_approved) return false;
+      if (!term) return true;
+      return [w.guest_name, w.message, w.couples?.bride_name, w.couples?.groom_name].filter(Boolean).some((s: string) => s.toLowerCase().includes(term));
+    });
+  }, [data, q, filter]);
+  const pendingCount = (data as any[]).filter(w => !w.is_approved).length;
   return (
     <div>
       <h1 className="font-display text-3xl">Lời chúc khách mời</h1>
-      <p className="text-sm text-muted-foreground mt-1">Duyệt hoặc ẩn các lời chúc trước khi hiển thị công khai trên trang cặp đôi.</p>
+      <p className="text-sm text-muted-foreground mt-1">Duyệt hoặc ẩn các lời chúc trước khi hiển thị công khai. Đang chờ duyệt: <b className="text-amber-700">{pendingCount}</b>.</p>
+      <div className="mt-4 flex flex-wrap gap-2">
+        <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Tìm theo tên khách, nội dung, cặp đôi…" className="flex-1 min-w-[240px] px-3 py-2 rounded-md border border-input bg-background text-sm" />
+        <div className="inline-flex rounded-md border border-input overflow-hidden text-sm">
+          {([["all","Tất cả"],["pending","Chưa duyệt"],["approved","Đã duyệt"]] as const).map(([k,l]) => (
+            <button key={k} onClick={()=>setFilter(k)} className={`px-3 py-2 ${filter===k ? "bg-primary text-primary-foreground" : "hover:bg-secondary"}`}>{l}</button>
+          ))}
+        </div>
+      </div>
       <div className="mt-6 space-y-3">
-        {data.map((w: any) => (
+        {filtered.map((w: any) => (
           <div key={w.id} className="border border-border/60 rounded p-4 flex flex-col md:flex-row md:items-center gap-3">
             <div className="flex-1">
               <p className="text-sm"><b>{w.guest_name}</b> · {new Date(w.created_at).toLocaleString("vi-VN")}</p>
@@ -33,7 +54,7 @@ function WishesAdmin() {
             </div>
           </div>
         ))}
-        {data.length === 0 && <p className="text-sm text-muted-foreground">Chưa có lời chúc nào.</p>}
+        {filtered.length === 0 && <p className="text-sm text-muted-foreground">Không có lời chúc phù hợp.</p>}
       </div>
     </div>
   );

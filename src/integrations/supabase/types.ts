@@ -423,6 +423,36 @@ export type Database = {
         }
         Relationships: []
       }
+      vendor_categories: {
+        Row: {
+          created_at: string
+          id: string
+          is_active: boolean
+          label: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          label?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       vendor_leads: {
         Row: {
           created_at: string
@@ -678,7 +708,7 @@ export type Database = {
       vendors: {
         Row: {
           address: string | null
-          category: Database["public"]["Enums"]["vendor_category"]
+          category: string
           city: string | null
           cover_image: string | null
           created_at: string
@@ -705,7 +735,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
-          category?: Database["public"]["Enums"]["vendor_category"]
+          category?: string
           city?: string | null
           cover_image?: string | null
           created_at?: string
@@ -732,7 +762,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
-          category?: Database["public"]["Enums"]["vendor_category"]
+          category?: string
           city?: string | null
           cover_image?: string | null
           created_at?: string
