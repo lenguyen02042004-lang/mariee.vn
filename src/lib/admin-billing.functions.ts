@@ -26,6 +26,7 @@ const planSchema = z.object({
   features: z.array(z.string().max(200)).max(20),
   sort_order: z.number().int().min(0).max(999),
   is_active: z.boolean(),
+  audience: z.enum(["vendor", "couple"]).default("vendor"),
 });
 
 export const adminUpsertPlan = createServerFn({ method: "POST" })
