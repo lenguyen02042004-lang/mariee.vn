@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/vendor-venue.jpg";
+import { PricingSection } from "@/components/PricingSection";
 
 export const Route = createFileRoute("/for-vendors")({
   component: ForVendors,
@@ -34,7 +35,7 @@ function ForVendors() {
           <p className="mt-4 text-white/85 max-w-2xl">Tiếp cận hàng ngàn cặp đôi sắp cưới mỗi tháng. Tạo trang dịch vụ chuyên nghiệp trong 15 phút.</p>
           <div className="mt-8 flex gap-3 flex-wrap justify-center">
             <Link to="/register" className="px-8 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm shadow-elegant">Đăng ký vendor</Link>
-            <Link to="/pricing" className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm">Xem bảng giá</Link>
+            <a href="#pricing" className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm">Xem bảng giá</a>
           </div>
         </div>
       </section>
@@ -71,6 +72,13 @@ function ForVendors() {
           </div>
         </div>
       </section>
+
+      <PricingSection
+        audience="vendor"
+        title="Chọn gói phù hợp"
+        subtitle="Nâng cấp khi bạn sẵn sàng — gói thanh toán qua chuyển khoản, admin duyệt thủ công trong 24h."
+        ctaLabel="Đăng ký vendor"
+      />
     </>
   );
 }
