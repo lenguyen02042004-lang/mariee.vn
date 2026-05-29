@@ -18,7 +18,7 @@ function VendorBilling() {
   const qc = useQueryClient();
   const { user } = useAuth();
   const { data } = useQuery({ queryKey: ["my-billing"], queryFn: () => my() });
-  const { data: plans = [] } = useQuery({ queryKey: ["plans-pub"], queryFn: () => plansFn() });
+  const { data: plans = [] } = useQuery({ queryKey: ["plans-pub", "vendor"], queryFn: () => plansFn({ data: { audience: "vendor" } }) });
   const { data: settings } = useQuery({ queryKey: ["pay-settings-pub"], queryFn: () => settingsFn() });
   const [planId, setPlanId] = useState("");
   const [code, setCode] = useState("");
