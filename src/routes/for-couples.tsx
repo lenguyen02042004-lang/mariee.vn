@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-wedding-2.jpg";
+import { PricingSection } from "@/components/PricingSection";
 
 export const Route = createFileRoute("/for-couples")({
   component: ForCouples,
@@ -80,6 +81,13 @@ function ForCouples() {
           <Link to="/couples/$slug" params={{ slug: "minh-anh-quoc-bao" }} className="px-8 py-4 border border-white/60 rounded-md uppercase tracking-[0.2em] text-sm">Xem mẫu</Link>
         </div>
       </section>
+
+      <PricingSection
+        audience="couple"
+        title="Gói cho cặp đôi"
+        subtitle="Bản miễn phí đã đủ cho hầu hết đám cưới. Nâng cấp khi cần thêm tính năng cao cấp."
+        ctaLabel="Tạo trang ngay"
+      />
     </>
   );
 }
