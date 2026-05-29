@@ -134,6 +134,46 @@ export const deleteMyRsvp = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+export const toggleMyCouplePublish = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), is_published: z.boolean() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertOwner(context.supabase, data.id, context.userId);
+    const { error } = await context.supabase.from("couples").update({ is_published: data.is_published }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const listMyWishes = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { couple_id: string }) => z.object({ couple_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertOwner(context.supabase, data.couple_id, context.userId);
+    const { data: rows, error } = await context.supabase
+      .from("couple_wishes").select("*").eq("couple_id", data.couple_id)
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return rows ?? [];
+  });
+
+export const toggleMyWish = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid(), is_approved: z.boolean() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("couple_wishes").update({ is_approved: data.is_approved }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteMyWish = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { error } = await context.supabase.from("couple_wishes").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
 const createSchema = z.object({
   slug: z.string().trim().min(2).max(80).regex(/^[a-z0-9-]+$/, "Slug chỉ gồm chữ thường, số, dấu '-'"),
   bride_name: z.string().trim().min(1).max(120),

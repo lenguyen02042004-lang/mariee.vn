@@ -30,12 +30,15 @@ function PlansAdmin() {
           <h1 className="font-display text-3xl">Gói thành viên & Thanh toán</h1>
           <p className="text-sm text-muted-foreground mt-1">Tạo gói cho vendor và cấu hình thông tin nhận thanh toán.</p>
         </div>
-        <button onClick={() => setEditing({ name: "", slug: "", description: "", price_vnd: 0, billing_months: 1, features: [], sort_order: 99, is_active: true })} className="px-4 py-2 bg-primary text-primary-foreground rounded text-sm">+ Tạo gói</button>
+        <button onClick={() => setEditing({ name: "", slug: "", description: "", price_vnd: 0, billing_months: 1, features: [], sort_order: 99, is_active: true, audience: "vendor" })} className="px-4 py-2 bg-primary text-primary-foreground rounded text-sm">+ Tạo gói</button>
       </div>
       <div className="mt-6 grid gap-3">
         {plans.map((p: any) => (
           <div key={p.id} className="border border-border/60 rounded p-4 flex justify-between items-center">
-            <div><div className="font-medium">{p.name} <span className="text-xs text-muted-foreground">/{p.slug}</span></div><div className="text-sm text-muted-foreground">{p.price_vnd.toLocaleString("vi-VN")}đ / {p.billing_months}t — {p.is_active?"Đang bán":"Tạm ẩn"}</div></div>
+            <div>
+              <div className="font-medium">{p.name} <span className="text-xs text-muted-foreground">/{p.slug}</span> <span className={`ml-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded ${p.audience === "couple" ? "bg-blush/40 text-primary" : "bg-secondary text-muted-foreground"}`}>{p.audience === "couple" ? "Cặp đôi" : "Vendor"}</span></div>
+              <div className="text-sm text-muted-foreground">{p.price_vnd.toLocaleString("vi-VN")}đ / {p.billing_months}t — {p.is_active?"Đang bán":"Tạm ẩn"}</div>
+            </div>
             <div className="flex gap-2"><button onClick={() => setEditing(p)} className="text-sm text-primary">Sửa</button><button onClick={() => confirm("Xóa gói?") && dm.mutate(p.id)} className="text-sm text-destructive">Xóa</button></div>
           </div>
         ))}
@@ -49,6 +52,12 @@ function PlansAdmin() {
             <h2 className="font-display text-2xl">{editing.id?"Sửa gói":"Tạo gói"}</h2>
             <input required placeholder="Tên gói" value={editing.name} onChange={e=>setEditing({...editing,name:e.target.value})} className="w-full px-3 py-2 border border-input rounded" />
             <input required placeholder="slug (a-z, -)" value={editing.slug} onChange={e=>setEditing({...editing,slug:e.target.value})} className="w-full px-3 py-2 border border-input rounded" />
+            <label className="text-sm block">Đối tượng
+              <select value={editing.audience || "vendor"} onChange={e=>setEditing({...editing, audience: e.target.value})} className="mt-1 w-full px-3 py-2 border border-input rounded">
+                <option value="vendor">Nhà cung cấp (vendor)</option>
+                <option value="couple">Cặp đôi (couple)</option>
+              </select>
+            </label>
             <textarea placeholder="Mô tả" value={editing.description||""} onChange={e=>setEditing({...editing,description:e.target.value})} className="w-full px-3 py-2 border border-input rounded" />
             <div className="grid grid-cols-2 gap-2">
               <input required type="number" min={0} placeholder="Giá VND" value={editing.price_vnd} onChange={e=>setEditing({...editing,price_vnd:+e.target.value})} className="px-3 py-2 border border-input rounded" />

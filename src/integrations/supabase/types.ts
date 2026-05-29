@@ -551,6 +551,7 @@ export type Database = {
       }
       vendor_plans: {
         Row: {
+          audience: string
           billing_months: number
           created_at: string
           description: string | null
@@ -564,6 +565,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          audience?: string
           billing_months?: number
           created_at?: string
           description?: string | null
@@ -577,6 +579,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          audience?: string
           billing_months?: number
           created_at?: string
           description?: string | null
