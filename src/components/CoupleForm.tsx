@@ -8,6 +8,8 @@ import { uploadImage, validateImage } from "@/lib/upload";
 import { ImagePicker, ImageUploadButton } from "@/components/ImagePicker";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
+import { VN_BANKS } from "@/lib/form-presets";
 
 const MAX_MB = 10;
 const MAX_GALLERY = 30;
@@ -104,19 +106,33 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); save.mutate(); }} className="space-y-10">
-      <section>
-        <h3 className="font-display text-xl mb-3">Thông tin cơ bản</h3>
+      <FormSection
+        title="Thông tin cơ bản"
+        description="Đây là phần khách nhìn đầu tiên — tên, ngày cưới, và câu trích dẫn thường xuất hiện trên thiệp chia sẻ."
+        helper={
+          <>
+            <p><strong>Tên</strong>: viết hoa chữ cái đầu, không viết tắt. Khách hay tìm theo họ tên đầy đủ.</p>
+            {mode === "admin" && <p><strong>Slug</strong>: chỉ chữ thường + gạch ngang. VD <code className="text-primary">linh-minh-2026</code>.</p>}
+            <p><strong>Ngày cưới</strong>: chọn đúng để bộ đếm ngược hoạt động và Google hiển thị schema.</p>
+            <p><strong>Câu trích dẫn</strong>: 1 câu ngắn (≤ 80 ký tự), tránh dùng dấu ngoặc kép.</p>
+            <p><strong>Câu chuyện</strong>: 200–600 từ, viết ở ngôi "chúng mình" để gần gũi.</p>
+          </>
+        }
+      >
         <div className="grid sm:grid-cols-2 gap-4">
           {visibleFields.map(f => (
             <label key={f.k} className={`text-sm ${f.full ? "sm:col-span-2" : ""}`}>
-              <span className="text-muted-foreground">{f.label}</span>
+              <FieldLabel required={["bride_name", "groom_name", "slug"].includes(f.k)}>{f.label}</FieldLabel>
               {f.k === "story" || f.k === "quote" ? (
                 <textarea rows={f.k === "story" ? 6 : 2} value={form[f.k] ?? ""} onChange={e => setForm({ ...form, [f.k]: e.target.value })}
                   className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
               ) : (
                 <input type={f.type ?? "text"} placeholder={f.ph}
                   required={["bride_name", "groom_name", "slug"].includes(f.k)}
-                  value={form[f.k] ?? ""} onChange={e => setForm({ ...form, [f.k]: e.target.value })}
+                  value={form[f.k] ?? ""} onChange={e => {
+                    const v = f.k === "slug" ? e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-") : e.target.value;
+                    setForm({ ...form, [f.k]: v });
+                  }}
                   className="mt-1 w-full px-3 py-2 rounded border border-input bg-background" />
               )}
             </label>
@@ -127,17 +143,25 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
           </label>
           {mode === "admin" && (
             <label className="text-sm sm:col-span-2">
-              <span className="text-muted-foreground">Chủ trang (user ID — dán UUID của tài khoản cặp đôi để họ tự đăng nhập sửa)</span>
+              <FieldLabel>Chủ trang (UUID người dùng — dán để cặp đôi tự sửa)</FieldLabel>
               <input value={form.owner_id ?? ""} onChange={e => setForm({ ...form, owner_id: e.target.value || null })} placeholder="UUID người dùng" className="mt-1 w-full px-3 py-2 rounded border border-input bg-background font-mono text-xs" />
             </label>
           )}
         </div>
-      </section>
+      </FormSection>
 
-      <section>
-        <h3 className="font-display text-xl mb-1">Hình ảnh chính</h3>
-        <p className="text-xs text-muted-foreground mb-3">Mỗi ảnh tối đa <strong>{MAX_MB}MB</strong>, định dạng JPG/PNG/WEBP.</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <FormSection
+        title="Hình ảnh chính"
+        description={`Mỗi ảnh tối đa ${MAX_MB}MB, định dạng JPG/PNG/WEBP.`}
+        helper={
+          <>
+            <p><strong>Ảnh bìa</strong> hiển thị khi chia sẻ Facebook/Zalo (1200×630px là tỉ lệ tốt nhất).</p>
+            <p><strong>Hero 1–3</strong>: ngang 1920×1080, ảnh đẹp nhất nên đặt vào Hero 1 vì xuất hiện trước.</p>
+            <p>Tránh ảnh chụp bằng filter quá đậm — sẽ lệch tone so với template.</p>
+          </>
+        }
+      >
+        <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-4">
           {imageFields.map(f => (
             <div key={f.k} className="border border-border/60 rounded-md p-3 bg-card">
               <ImagePicker
@@ -150,11 +174,18 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
             </div>
           ))}
         </div>
-      </section>
+      </FormSection>
 
-      <section>
-        <h3 className="font-display text-xl mb-1">Thiệp cưới hai bên gia đình</h3>
-        <p className="text-xs text-muted-foreground mb-3">Tải lên ảnh thiệp (JPG/PNG, tối đa 15MB) để hai bên gia đình có thể xem &amp; tải về.</p>
+      <FormSection
+        title="Thiệp cưới hai bên gia đình"
+        description="Ảnh thiệp (JPG/PNG, tối đa 15MB) để hai bên gia đình có thể xem &amp; tải về."
+        helper={
+          <>
+            <p>Khuyến nghị tỉ lệ <strong>3:4</strong> hoặc <strong>4:5</strong> để khớp khung hiển thị.</p>
+            <p>Nếu chỉ có một thiệp chung, để cùng ảnh cho cả hai ô.</p>
+          </>
+        }
+      >
         <div className="grid sm:grid-cols-2 gap-4">
           {[
             { k: "invitation_bride_url", label: "Thiệp nhà cô dâu" },
@@ -172,17 +203,20 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
             </div>
           ))}
         </div>
-      </section>
+      </FormSection>
 
       {form.id && (
-        <section>
-          <div className="flex items-baseline justify-between mb-1">
-            <h3 className="font-display text-xl">Thư viện ảnh cưới</h3>
-            <span className="text-xs text-muted-foreground">{gallery.length}/{MAX_GALLERY}</span>
-          </div>
-          <p className="text-xs text-muted-foreground mb-3">
-            Tải lên tối đa <strong>{MAX_GALLERY} ảnh</strong>, mỗi ảnh ≤ <strong>{MAX_MB}MB</strong>. Có thể chọn nhiều ảnh cùng lúc.
-          </p>
+        <FormSection
+          title={`Thư viện ảnh cưới (${gallery.length}/${MAX_GALLERY})`}
+          description={`Tối đa ${MAX_GALLERY} ảnh, mỗi ảnh ≤ ${MAX_MB}MB.`}
+          helper={
+            <>
+              <p>Đa dạng góc chụp: chân dung, toàn cảnh, chi tiết hoa cưới, khoảnh khắc bất ngờ.</p>
+              <p>Xen kẽ ảnh ngang & dọc cho layout đẹp.</p>
+              <p>Hover ảnh để xoá. Có thể tải lại nếu nhầm.</p>
+            </>
+          }
+        >
           <ImageUploadButton
             disabled={uploading === "gallery" || gallery.length >= MAX_GALLERY}
             buttonLabel="+ Thêm ảnh vào thư viện"
@@ -206,12 +240,19 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
               </div>
             ))}
           </div>
-        </section>
+        </FormSection>
       )}
 
-      <section>
-        <h3 className="font-display text-xl mb-3">Tiệc cưới hai bên</h3>
-        <p className="text-xs text-muted-foreground mb-3">Điền riêng tiệc nhà cô dâu và nhà chú rể. Có thể để trống nếu không tổ chức riêng.</p>
+      <FormSection
+        title="Tiệc cưới hai bên"
+        description="Điền riêng tiệc nhà cô dâu và nhà chú rể. Có thể để trống nếu không tổ chức riêng."
+        helper={
+          <>
+            <p>Ghi giờ kèm thứ/ngày cho rõ. VD: <em>11:00 Thứ Bảy 12/10/2026</em>.</p>
+            <p>Địa chỉ đầy đủ tới tên đường — Google Maps sẽ tự liên kết.</p>
+          </>
+        }
+      >
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-secondary/40 p-4 rounded space-y-2">
             <p className="font-script text-2xl text-primary">Tiệc nhà cô dâu</p>
@@ -226,29 +267,46 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
             <input value={form.groom_party_address ?? ""} onChange={e => setForm({ ...form, groom_party_address: e.target.value })} placeholder="Địa chỉ" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
           </div>
         </div>
-      </section>
+      </FormSection>
 
-      <section>
-        <h3 className="font-display text-xl mb-3">Thông tin mừng cưới</h3>
+      <FormSection
+        title="Thông tin mừng cưới"
+        description="Khách có thể chuyển khoản mừng trực tiếp qua QR ngân hàng được tạo tự động từ thông tin này."
+        helper={
+          <>
+            <p><strong>Chủ tài khoản</strong>: ghi <em>không dấu, viết hoa</em> đúng như trên thẻ ngân hàng — nếu sai khách sẽ chuyển nhầm.</p>
+            <p><strong>Ngân hàng</strong>: chọn từ danh sách để hệ thống nhận diện và tạo QR.</p>
+            <p><strong>Số tài khoản</strong>: chỉ chữ số, không dấu cách.</p>
+          </>
+        }
+      >
         <div className="grid sm:grid-cols-2 gap-6">
           <div className="space-y-2 bg-secondary/40 p-4 rounded">
             <p className="font-script text-2xl text-primary">Cô dâu</p>
             <input value={form.gift_bride_holder ?? ""} onChange={e => setForm({ ...form, gift_bride_holder: e.target.value })} placeholder="Chủ tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
-            <input value={form.gift_bride_bank ?? ""} onChange={e => setForm({ ...form, gift_bride_bank: e.target.value })} placeholder="Ngân hàng" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
-            <input value={form.gift_bride_account ?? ""} onChange={e => setForm({ ...form, gift_bride_account: e.target.value })} placeholder="Số tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <SelectOrOther value={form.gift_bride_bank ?? ""} onChange={v => setForm({ ...form, gift_bride_bank: v })} options={VN_BANKS} placeholder="— Chọn ngân hàng —" inputPlaceholder="Tên ngân hàng khác" />
+            <input value={form.gift_bride_account ?? ""} onChange={e => setForm({ ...form, gift_bride_account: e.target.value.replace(/\D/g, "") })} placeholder="Số tài khoản" inputMode="numeric" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
           </div>
           <div className="space-y-2 bg-secondary/40 p-4 rounded">
             <p className="font-script text-2xl text-primary">Chú rể</p>
             <input value={form.gift_groom_holder ?? ""} onChange={e => setForm({ ...form, gift_groom_holder: e.target.value })} placeholder="Chủ tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
-            <input value={form.gift_groom_bank ?? ""} onChange={e => setForm({ ...form, gift_groom_bank: e.target.value })} placeholder="Ngân hàng" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
-            <input value={form.gift_groom_account ?? ""} onChange={e => setForm({ ...form, gift_groom_account: e.target.value })} placeholder="Số tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <SelectOrOther value={form.gift_groom_bank ?? ""} onChange={v => setForm({ ...form, gift_groom_bank: v })} options={VN_BANKS} placeholder="— Chọn ngân hàng —" inputPlaceholder="Tên ngân hàng khác" />
+            <input value={form.gift_groom_account ?? ""} onChange={e => setForm({ ...form, gift_groom_account: e.target.value.replace(/\D/g, "") })} placeholder="Số tài khoản" inputMode="numeric" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
           </div>
         </div>
-      </section>
+      </FormSection>
 
-      <section>
-        <h3 className="font-display text-xl mb-1">Chương trình lễ cưới</h3>
-        <p className="text-xs text-muted-foreground mb-3">Thêm bao nhiêu mục tuỳ ý (tối đa 40). Có thể sắp xếp theo thứ tự thời gian.</p>
+      <FormSection
+        title="Chương trình lễ cưới"
+        description="Thêm bao nhiêu mục tuỳ ý (tối đa 40). Sắp theo thứ tự thời gian."
+        helper={
+          <>
+            <p><strong>Giờ</strong>: định dạng <code>HH:MM</code> (VD <code>17:30</code>).</p>
+            <p><strong>Tiêu đề</strong>: ngắn gọn — VD "Đón khách", "Lễ rước dâu", "Cắt bánh".</p>
+            <p><strong>Mô tả</strong>: tuỳ chọn, dùng cho ghi chú đặc biệt (dress code, vị trí…).</p>
+          </>
+        }
+      >
         <div className="space-y-2">
           {(form.schedule ?? []).map((s: any, i: number) => (
             <div key={i} className="grid grid-cols-12 gap-2 items-center">
@@ -260,7 +318,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
           ))}
           <button type="button" onClick={() => setForm({ ...form, schedule: [...(form.schedule ?? []), { time: "", title: "", description: "" }] })} className="text-sm text-primary underline">+ Thêm mục</button>
         </div>
-      </section>
+      </FormSection>
 
       <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 -mx-6 px-6 border-t border-border/40 flex gap-3">
         <button disabled={save.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">
