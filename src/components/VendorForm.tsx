@@ -7,6 +7,8 @@ import { uploadImage, validateImage } from "@/lib/upload";
 import { ImagePicker, ImageUploadButton } from "@/components/ImagePicker";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
+import { VN_PROVINCES, VENDOR_PRICE_RANGES } from "@/lib/form-presets";
 
 const FALLBACK_CATS = [
   { slug: "other", label: "Khác", sort_order: 999 },
@@ -65,40 +67,69 @@ export function VendorForm({ initial }: { initial: any }) {
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); save.mutate(); }} className="space-y-8">
-      <section>
-        <h3 className="font-display text-xl mb-3">Thông tin chung</h3>
+      <FormSection
+        title="Thông tin chung"
+        description="Tên thương hiệu sẽ hiển thị nổi bật. Slug tạo nên URL công khai và không thể đổi sau khi nhiều người đã biết."
+        helper={
+          <>
+            <p><strong>Tên thương hiệu</strong>: viết hoa đầu mỗi từ, không thêm hậu tố "studio/photography" nếu không cần.</p>
+            <p><strong>Slug</strong>: chỉ dùng chữ thường, số, dấu gạch ngang. VD <code className="text-primary">lumiere-photography</code>.</p>
+            <p><strong>Tagline</strong>: 6–12 từ, nêu phong cách hoặc thế mạnh. VD "Phim cưới điện ảnh chuẩn Pháp".</p>
+            <p><strong>Mô tả</strong>: 150–400 từ. Tránh sao chép từ Facebook — kể câu chuyện thương hiệu.</p>
+          </>
+        }
+      >
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Tên thương hiệu *" value={form.name} onChange={v => setForm({ ...form, name: v })} required />
-          <Field label="Slug *" value={form.slug} onChange={v => setForm({ ...form, slug: v })} required placeholder="lumiere-photography" />
+          <Field label="Slug *" value={form.slug} onChange={v => setForm({ ...form, slug: v.toLowerCase().replace(/[^a-z0-9-]/g, "-").replace(/-+/g, "-") })} required placeholder="lumiere-photography" />
           <label className="text-sm">
-            <span className="text-muted-foreground">Danh mục *</span>
+            <FieldLabel required>Danh mục</FieldLabel>
             <select value={form.category} onChange={e => setForm({ ...form, category: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-md border border-input bg-background">
               {(cats as any[]).map((c) => <option key={c.slug} value={c.slug}>{c.label}</option>)}
             </select>
           </label>
-          <Field label="Khoảng giá" value={form.price_range} onChange={v => setForm({ ...form, price_range: v })} placeholder="VD: từ 25 triệu" />
+          <label className="text-sm">
+            <FieldLabel>Khoảng giá</FieldLabel>
+            <div className="mt-1">
+              <SelectOrOther value={form.price_range ?? ""} onChange={v => setForm({ ...form, price_range: v })} options={VENDOR_PRICE_RANGES} inputPlaceholder="VD: từ 25 triệu" />
+            </div>
+          </label>
           <Field label="Tagline" value={form.tagline} onChange={v => setForm({ ...form, tagline: v })} full />
           <label className="text-sm sm:col-span-2">
-            <span className="text-muted-foreground">Mô tả</span>
+            <FieldLabel>Mô tả</FieldLabel>
             <textarea rows={5} value={form.description ?? ""} onChange={e => setForm({ ...form, description: e.target.value })} className="mt-1 w-full px-3 py-2 rounded-md border border-input bg-background" />
+            <span className="text-[11px] text-muted-foreground">{(form.description ?? "").length} ký tự</span>
           </label>
-          <Field label="Điện thoại" value={form.phone} onChange={v => setForm({ ...form, phone: v })} />
-          <Field label="Email" value={form.email} onChange={v => setForm({ ...form, email: v })} />
+          <Field label="Điện thoại" value={form.phone} onChange={v => setForm({ ...form, phone: v })} placeholder="VD: 0901 234 567" />
+          <Field label="Email" value={form.email} onChange={v => setForm({ ...form, email: v })} placeholder="hello@studio.vn" type="email" />
           <Field label="Website" value={form.website} onChange={v => setForm({ ...form, website: v })} />
-          <Field label="Thành phố" value={form.city} onChange={v => setForm({ ...form, city: v })} />
+          <label className="text-sm">
+            <FieldLabel>Thành phố</FieldLabel>
+            <div className="mt-1">
+              <SelectOrOther value={form.city ?? ""} onChange={v => setForm({ ...form, city: v })} options={VN_PROVINCES} inputPlaceholder="Tên tỉnh/thành" />
+            </div>
+          </label>
           <Field label="Địa chỉ" value={form.address} onChange={v => setForm({ ...form, address: v })} full />
           <Field label="Link YouTube (embed)" value={form.youtube_url} onChange={v => setForm({ ...form, youtube_url: v })} full placeholder="https://www.youtube.com/embed/..." />
           <label className="text-sm sm:col-span-2">
-            <span className="text-muted-foreground">Owner ID (UUID người dùng — để trống nếu vendor chưa có tài khoản)</span>
+            <FieldLabel>Owner ID (UUID người dùng — để trống nếu vendor chưa có tài khoản)</FieldLabel>
             <input value={form.owner_id ?? ""} onChange={e => setForm({ ...form, owner_id: e.target.value || null })} placeholder="UUID người dùng" className="mt-1 w-full px-3 py-2 rounded-md border border-input bg-background font-mono text-xs" />
           </label>
           <label className="text-sm flex items-center gap-2"><input type="checkbox" checked={!!form.is_approved} onChange={e => setForm({ ...form, is_approved: e.target.checked })} /> Đã duyệt — hiển thị công khai</label>
           <label className="text-sm flex items-center gap-2"><input type="checkbox" checked={!!form.is_featured} onChange={e => setForm({ ...form, is_featured: e.target.checked })} /> Đánh dấu nổi bật</label>
         </div>
-      </section>
+      </FormSection>
 
-      <section>
-        <h3 className="font-display text-xl mb-3">Hình ảnh thương hiệu</h3>
+      <FormSection
+        title="Hình ảnh thương hiệu"
+        description="Ảnh bìa hiển thị trên thẻ vendor và đầu trang chi tiết. Logo dùng cho danh sách và trang chia sẻ."
+        helper={
+          <>
+            <p><strong>Ảnh bìa</strong>: ngang 1600×900px, ≤ 10MB. Ưu tiên ảnh thực tế đám cưới, tránh ảnh logo phóng to.</p>
+            <p><strong>Logo</strong>: vuông tối thiểu 512×512, nền trong hoặc trắng. PNG hoặc WEBP.</p>
+          </>
+        }
+      >
         <div className="grid sm:grid-cols-2 gap-4">
           <div className="border border-border/60 rounded-md p-3 bg-card">
             <ImagePicker label="Ảnh bìa" value={form.cover_image ?? ""} onChange={(url) => setForm({ ...form, cover_image: url })} folder="vendor" />
@@ -107,13 +138,19 @@ export function VendorForm({ initial }: { initial: any }) {
             <ImagePicker label="Logo" value={form.logo_url ?? ""} onChange={(url) => setForm({ ...form, logo_url: url })} folder="vendor" aspect="aspect-square" />
           </div>
         </div>
-      </section>
+      </FormSection>
 
-      <section>
-        <div className="flex items-baseline justify-between mb-2">
-          <h3 className="font-display text-xl">Thư viện ảnh</h3>
-          <span className="text-xs text-muted-foreground">{(form.gallery ?? []).length}/30</span>
-        </div>
+      <FormSection
+        title={`Thư viện ảnh (${(form.gallery ?? []).length}/30)`}
+        description="Hiển thị slideshow ở trang chi tiết. Khuyến nghị 12–20 ảnh chất lượng cao."
+        helper={
+          <>
+            <p>Sắp xếp theo thứ tự bạn muốn khách xem — ảnh đầu tiên là ấn tượng quan trọng nhất.</p>
+            <p>Tránh watermark lớn hoặc ảnh chèn logo nặng tay.</p>
+            <p>Mỗi ảnh ≤ 10MB, định dạng JPG/PNG/WEBP.</p>
+          </>
+        }
+      >
         <ImageUploadButton
           disabled={(form.gallery ?? []).length >= 30}
           buttonLabel="+ Thêm ảnh vào thư viện"
@@ -131,7 +168,7 @@ export function VendorForm({ initial }: { initial: any }) {
             </div>
           ))}
         </div>
-      </section>
+      </FormSection>
 
       <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 -mx-6 px-6 border-t border-border/40 flex flex-wrap gap-3">
         <button disabled={save.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm font-medium disabled:opacity-50 hover:bg-primary/90">
@@ -152,11 +189,11 @@ export function VendorForm({ initial }: { initial: any }) {
   );
 }
 
-function Field({ label, value, onChange, required, full, placeholder }: { label: string; value: any; onChange: (v: string) => void; required?: boolean; full?: boolean; placeholder?: string }) {
+function Field({ label, value, onChange, required, full, placeholder, type }: { label: string; value: any; onChange: (v: string) => void; required?: boolean; full?: boolean; placeholder?: string; type?: string }) {
   return (
     <label className={`text-sm ${full ? "sm:col-span-2" : ""}`}>
-      <span className="text-muted-foreground">{label}</span>
-      <input required={required} value={value ?? ""} placeholder={placeholder} onChange={e => onChange(e.target.value)} className="mt-1 w-full px-3 py-2 rounded-md border border-input bg-background" />
+      <FieldLabel required={required}>{label.replace(/\s*\*\s*$/, "")}</FieldLabel>
+      <input required={required} type={type ?? "text"} value={value ?? ""} placeholder={placeholder} onChange={e => onChange(e.target.value)} className="mt-1 w-full px-3 py-2 rounded-md border border-input bg-background" />
     </label>
   );
 }
