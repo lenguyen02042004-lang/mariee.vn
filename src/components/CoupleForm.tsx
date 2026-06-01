@@ -60,16 +60,21 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
   const delG = mode === "owner" ? ownerDelG : adminDelG;
 
   const save = useMutation({
-    mutationFn: () => {
-      const payload = { ...form };
+    mutationFn: (overrides?: Partial<any>) => {
+      const payload = { ...form, ...(overrides ?? {}) };
       if (mode === "owner") {
         // owner update doesn't touch slug/owner_id
         delete payload.slug; delete payload.owner_id;
       }
       return upsert({ data: payload } as any);
     },
-    onSuccess: (r: any) => {
-      toast.success("Đã lưu");
+    onSuccess: (r: any, vars: any) => {
+      if (vars && typeof vars.is_published === "boolean") {
+        setForm((f: any) => ({ ...f, is_published: vars.is_published }));
+        toast.success(vars.is_published ? "Đã lưu và công khai" : "Đã lưu và chuyển về bản nháp");
+      } else {
+        toast.success("Đã lưu");
+      }
       qc.invalidateQueries({ queryKey: ["a-couples"] });
       qc.invalidateQueries({ queryKey: ["my-couples"] });
       qc.invalidateQueries({ queryKey: ["my-couple", form.id] });
@@ -137,10 +142,12 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
               )}
             </label>
           ))}
-          <label className="text-sm sm:col-span-2 flex items-center gap-2">
-            <input type="checkbox" checked={!!form.is_published} onChange={e => setForm({ ...form, is_published: e.target.checked })} />
-            Xuất bản công khai
-          </label>
+          <div className="text-sm sm:col-span-2 flex items-center gap-2 text-muted-foreground">
+            <span className={`text-[10px] uppercase tracking-[0.18em] px-2 py-0.5 rounded ${form.is_published ? "bg-primary text-primary-foreground" : "bg-amber-200 text-amber-900"}`}>
+              {form.is_published ? "Đang công khai" : "Bản nháp"}
+            </span>
+            <span>Dùng nút bên dưới để vừa lưu vừa đổi trạng thái — tránh mất dữ liệu đang nhập.</span>
+          </div>
           {mode === "admin" && (
             <label className="text-sm sm:col-span-2">
               <FieldLabel>Chủ trang (UUID người dùng — dán để cặp đôi tự sửa)</FieldLabel>
@@ -320,10 +327,22 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
         </div>
       </FormSection>
 
-      <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 -mx-6 px-6 border-t border-border/40 flex gap-3">
-        <button disabled={save.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">
+      <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 -mx-6 px-6 border-t border-border/40 flex flex-wrap gap-3">
+        <button type="submit" disabled={save.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">
           {save.isPending ? "Đang lưu…" : "Lưu thay đổi"}
         </button>
+        {form.id && !form.is_published && (
+          <button type="button" disabled={save.isPending} onClick={() => save.mutate({ is_published: true })}
+            className="px-6 py-3 bg-primary/90 text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">
+            Lưu &amp; xuất bản
+          </button>
+        )}
+        {form.id && form.is_published && (
+          <button type="button" disabled={save.isPending} onClick={() => save.mutate({ is_published: false })}
+            className="px-6 py-3 border border-input bg-background hover:bg-secondary rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">
+            Lưu &amp; chuyển về nháp
+          </button>
+        )}
         {form.slug && (
           <a href={`/couples/${form.slug}`} target="_blank" rel="noopener" className="px-6 py-3 border border-input rounded uppercase tracking-[0.2em] text-sm">
             Xem trang
