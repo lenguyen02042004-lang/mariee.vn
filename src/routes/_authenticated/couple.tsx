@@ -6,7 +6,6 @@ import {
   myCouples,
   getMyCouple,
   createMyCouple,
-  toggleMyCouplePublish,
   listMyWishes,
   toggleMyWish,
   deleteMyWish,
