@@ -187,8 +187,8 @@ export function VendorForm({ initial }: { initial: any }) {
           {save.isPending ? "Đang lưu…" : (form.id ? "Lưu thay đổi" : "Tạo vendor")}
         </button>
         {form.id && (
-          <button type="button" disabled={publish.isPending} onClick={() => publish.mutate()} className="px-6 py-3 border border-primary text-primary rounded-md uppercase tracking-[0.2em] text-sm font-medium disabled:opacity-50 hover:bg-primary hover:text-primary-foreground">
-            {publish.isPending ? "Đang xuất bản…" : "Xuất bản công khai"}
+          <button type="button" disabled={publish.isPending || save.isPending} onClick={() => publish.mutate()} className="px-6 py-3 border border-primary text-primary rounded-md uppercase tracking-[0.2em] text-sm font-medium disabled:opacity-50 hover:bg-primary hover:text-primary-foreground">
+            {publish.isPending ? "Đang lưu & xuất bản…" : "Lưu & Xuất bản công khai"}
           </button>
         )}
         {form.slug && (
