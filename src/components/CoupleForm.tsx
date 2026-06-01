@@ -110,7 +110,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
   const visibleFields = mode === "owner" ? fields.filter(f => f.k !== "slug") : fields;
 
   return (
-    <form onSubmit={(e) => { e.preventDefault(); save.mutate(); }} className="space-y-10">
+    <form onSubmit={(e) => { e.preventDefault(); save.mutate(undefined); }} className="space-y-10">
       <FormSection
         title="Thông tin cơ bản"
         description="Đây là phần khách nhìn đầu tiên — tên, ngày cưới, và câu trích dẫn thường xuất hiện trên thiệp chia sẻ."
