@@ -58,8 +58,20 @@ function VendorPortal() {
   });
 
   const pub = useMutation({
-    mutationFn: () => publish(),
-    onSuccess: () => { toast.success("Đã xuất bản phiên bản hiển thị công khai."); qc.invalidateQueries({queryKey:["my-vendor"]}); },
+    mutationFn: async () => {
+      // Luôn lưu nháp trước khi xuất bản để không mất dữ liệu đang nhập
+      await save({ data: {
+        name: form.name, slug: form.slug, category: form.category,
+        tagline: form.tagline, description: form.description,
+        cover_image: form.cover_image, logo_url: form.logo_url,
+        phone: form.phone, email: form.email, address: form.address,
+        city: form.city, website: form.website, price_range: form.price_range,
+        youtube_url: form.youtube_url,
+        gallery: form.gallery ?? [],
+      }});
+      return publish();
+    },
+    onSuccess: () => { toast.success("Đã lưu và xuất bản bản công khai."); qc.invalidateQueries({queryKey:["my-vendor"]}); },
     onError: (e:any)=>toast.error(e.message),
   });
 
@@ -162,7 +174,7 @@ function VendorPortal() {
 
         <div className="flex flex-wrap gap-3">
           <button type="submit" disabled={m.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">{m.isPending?"Đang lưu…":"Lưu bản nháp"}</button>
-          <button type="button" onClick={()=>pub.mutate()} disabled={pub.isPending || !data || !(data as any).is_approved} title={!(data as any)?.is_approved ? "Cần admin duyệt trước" : ""} className="px-6 py-3 border border-primary text-primary rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">{pub.isPending?"Đang xuất bản…":"Xuất bản"}</button>
+          <button type="button" onClick={()=>pub.mutate()} disabled={pub.isPending || m.isPending || !data || !(data as any).is_approved} title={!(data as any)?.is_approved ? "Cần admin duyệt trước" : "Lưu nháp và xuất bản phiên bản công khai"} className="px-6 py-3 border border-primary text-primary rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">{pub.isPending?"Đang lưu & xuất bản…":"Lưu & Xuất bản"}</button>
         </div>
       </form>
 
