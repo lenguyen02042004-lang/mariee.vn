@@ -30,17 +30,20 @@ export function VendorForm({ initial }: { initial: any }) {
   const upsert = useServerFn(adminUpsertVendor);
   const pub = useServerFn(adminPublishVendor);
 
+  const buildPayload = (extra?: any) => ({
+    id: form.id, name: form.name, slug: form.slug, category: form.category,
+    tagline: form.tagline, description: form.description,
+    cover_image: form.cover_image, logo_url: form.logo_url,
+    phone: form.phone, email: form.email, address: form.address, city: form.city,
+    website: form.website, price_range: form.price_range, youtube_url: form.youtube_url,
+    gallery: form.gallery ?? [],
+    owner_id: form.owner_id || null,
+    is_approved: !!form.is_approved, is_featured: !!form.is_featured,
+    ...(extra ?? {}),
+  });
+
   const save = useMutation({
-    mutationFn: () => upsert({ data: {
-      id: form.id, name: form.name, slug: form.slug, category: form.category,
-      tagline: form.tagline, description: form.description,
-      cover_image: form.cover_image, logo_url: form.logo_url,
-      phone: form.phone, email: form.email, address: form.address, city: form.city,
-      website: form.website, price_range: form.price_range, youtube_url: form.youtube_url,
-      gallery: form.gallery ?? [],
-      owner_id: form.owner_id || null,
-      is_approved: !!form.is_approved, is_featured: !!form.is_featured,
-    }}),
+    mutationFn: () => upsert({ data: buildPayload() }),
     onSuccess: (r: any) => {
       toast.success("Đã lưu vendor");
       qc.invalidateQueries({ queryKey: ["a-vendors"] });
@@ -51,8 +54,17 @@ export function VendorForm({ initial }: { initial: any }) {
   });
 
   const publish = useMutation({
-    mutationFn: () => pub({ data: { id: form.id } }),
-    onSuccess: () => { toast.success("Đã xuất bản bản công khai"); qc.invalidateQueries({ queryKey: ["a-vendors"] }); },
+    mutationFn: async () => {
+      // Luôn lưu form trước rồi snapshot xuất bản — tránh mất dữ liệu đang nhập
+      await upsert({ data: buildPayload({ is_approved: true }) });
+      return pub({ data: { id: form.id } });
+    },
+    onSuccess: () => {
+      toast.success("Đã lưu và xuất bản bản công khai");
+      setForm((f: any) => ({ ...f, is_approved: true }));
+      qc.invalidateQueries({ queryKey: ["a-vendors"] });
+      qc.invalidateQueries({ queryKey: ["a-vendor", form.id] });
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
