@@ -144,17 +144,7 @@ function CouplePortal() {
 }
 
 function PublishCard({ coupleId, isPublished }: { coupleId: string; isPublished: boolean }) {
-  const qc = useQueryClient();
-  const fn = useServerFn(toggleMyCouplePublish);
-  const m = useMutation({
-    mutationFn: (next: boolean) => fn({ data: { id: coupleId, is_published: next } }),
-    onSuccess: (_, next) => {
-      toast.success(next ? "Đã công khai trang cưới" : "Đã chuyển về bản nháp");
-      qc.invalidateQueries({ queryKey: ["my-couple", coupleId] });
-      qc.invalidateQueries({ queryKey: ["my-couples"] });
-    },
-    onError: (e: any) => toast.error(e.message),
-  });
+  void coupleId;
   return (
     <div className={`mb-8 rounded-lg border p-5 flex items-center justify-between gap-4 ${isPublished ? "border-primary/40 bg-primary/5" : "border-amber-300/60 bg-amber-50/60"}`}>
       <div>
@@ -166,17 +156,10 @@ function PublishCard({ coupleId, isPublished }: { coupleId: string; isPublished:
         </div>
         <p className="text-sm text-muted-foreground mt-1">
           {isPublished
-            ? "Trang đang hiển thị công khai. Khách có thể truy cập, gửi RSVP và lời chúc."
-            : "Trang đang ở chế độ nháp — chỉ bạn xem được. Bật công khai khi đã sẵn sàng chia sẻ."}
+            ? "Trang đang hiển thị công khai. Khách có thể truy cập, gửi RSVP và lời chúc. Cuộn xuống cuối form và nhấn “Lưu & chuyển về nháp” nếu muốn tạm ẩn."
+            : "Trang đang ở chế độ nháp — chỉ bạn xem được. Cuộn xuống cuối form và nhấn “Lưu & xuất bản” khi sẵn sàng — dữ liệu đang nhập sẽ được lưu cùng lúc."}
         </p>
       </div>
-      <button
-        disabled={m.isPending}
-        onClick={() => m.mutate(!isPublished)}
-        className={`px-5 py-2.5 rounded uppercase tracking-[0.18em] text-xs disabled:opacity-50 ${isPublished ? "border border-input bg-background hover:bg-secondary" : "bg-primary text-primary-foreground hover:opacity-90"}`}
-      >
-        {m.isPending ? "Đang đổi…" : isPublished ? "Chuyển về nháp" : "Công khai ngay"}
-      </button>
     </div>
   );
 }
