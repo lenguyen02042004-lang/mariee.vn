@@ -1,53 +1,117 @@
+# Kế hoạch hoàn thiện 100% vận hành — chia 6 phase
 
-# Kế hoạch nâng cấp — chia 5 phase
-
-Mục tiêu: hoàn thành 10 yêu cầu mà không phá vỡ hệ màu/font hiện tại. Mỗi phase độc lập, có thể review sau khi xong.
-
----
-
-## Phase 1 — Nền tảng: hover UX + Back-to-top + gỡ Pricing khỏi header
-Phạm vi nhỏ, cải thiện cảm nhận ngay.
-
-- (#5) Chuẩn hoá tương tác hover cho **tất cả nút upload ảnh** (`ImagePicker`, `ImageUploadButton`) và các nút admin: thêm `cursor-pointer`, `hover:bg-*`, `hover:border-primary`, focus ring, transition. Tạo class util chung trong `styles.css` (`.btn-soft`, `.btn-upload`) để các form khác kế thừa.
-- (#9) Component `BackToTop` (fixed bottom-right, hiện sau khi scroll > 400px, smooth scroll), gắn trong `SiteLayout`.
-- (#6 — bước 1) Gỡ link **"Bảng giá"** khỏi header chính. Giữ route `/pricing` tạm thời nhưng redirect → `/for-couples#pricing` (xử lý đầy đủ ở Phase 4).
-
-## Phase 2 — Đăng ký tách vai trò + Admin auth UI
-- (#7) Trang `/register` thêm bước chọn vai trò: **Cặp đôi** hoặc **Nhà cung cấp** (radio card lớn). Sau khi đăng ký:
-  - Cặp đôi → tự tạo bản nháp `couples` (is_published=false) và redirect `/couple`.
-  - Vendor → tự tạo bản nháp `vendors` (is_approved=false) và redirect `/vendor`.
-  - Lưu role tương ứng vào `user_roles` (`couple` / `vendor`) — cần migration mở rộng enum `app_role`.
-- (#10) Cập nhật `AdminShell` (sidebar + topbar) đồng bộ token màu/font hiện tại — không đổi palette.
-
-## Phase 3 — Admin quản lý dữ liệu (danh mục, search, duyệt nội dung)
-- (#1) **Quản lý danh mục vendor**: hiện `vendor.category` là enum cứng. Migration: tạo bảng `vendor_categories (id, slug, label, sort_order, is_active)` + seed từ enum hiện tại; đổi cột `vendors.category` sang `text` tham chiếu `slug` (giữ data cũ). Trang `/admin/categories` CRUD đầy đủ. Cập nhật `VendorForm` & filter dùng bảng mới.
-- (#2) Thêm **search + filter** ở `/admin/vendors` (theo tên/slug/email/danh mục/trạng thái) và `/admin/couples` (theo tên cô dâu/chú rể/slug/ngày cưới). Debounced input, hoạt động client-side trên list hiện có; nếu dữ liệu lớn → thêm pagination server.
-- (#3) Cột/nút **Publish / Ẩn (draft)** ngay trong bảng admin cho cả couples và vendors (toggle `is_published` / `is_approved`).
-- (#4) Trang **`/admin/wishes`** đã có — bổ sung nút **duyệt/ẩn từng lời chúc** (toggle `is_approved`) + filter "chưa duyệt".
-
-## Phase 4 — Vai trò Couple & Vendor: tự quản lý publish + gói thành viên
-- (#3) Trong `/couple` và `/vendor`: thêm card trạng thái với toggle **"Công khai / Lưu nháp"** rõ ràng (badge màu + mô tả hệ quả). Couple đổi `is_published`; Vendor đổi `is_approved` chỉ khi đã được admin duyệt lần đầu — nếu chưa, hiển thị trạng thái "Chờ duyệt".
-- (#4) Couple có tab **"Lời chúc"** liệt kê wishes của mình và toggle duyệt/ẩn (RLS mới: couple owner có quyền update `is_approved` cho wishes thuộc couple của mình — cần policy mới).
-- (#6) **Gói thành viên tách 2 nhóm**:
-  - Migration: thêm cột `audience` ('couple' | 'vendor') vào `vendor_plans`, đổi tên hiển thị thành `membership_plans` (giữ table cũ, chỉ thêm cột). Seed lại plan cho cả 2 nhóm.
-  - Section "Bảng giá" ngay trong `/for-couples` và `/for-vendors` — hiển thị plan theo `audience`.
-  - Luồng thanh toán QR thủ công: tái sử dụng `vendor_payments` → mở rộng thành `membership_payments` (thêm `user_id`, `audience`). Hiển thị QR + thông tin chuyển khoản từ `payment_settings`, upload ảnh proof, admin duyệt ở `/admin/payments`.
-
-## Phase 5 — Refactor form Vendor & Couple theo chuẩn hiện đại
-- (#8) Layout 2 cột: **trái = field, phải = hướng dẫn/ví dụ** (sticky helper panel với mô tả, ví dụ tốt/xấu, gợi ý độ dài).
-- Chuẩn hoá các field free-text quan trọng thành **select có sẵn**: thành phố (danh sách tỉnh VN), khoảng giá (ranges), danh mục (từ bảng mới Phase 3), bank name (preset VN).
-- Validate inline (zod + react-hook-form) thay cho raw input hiện tại.
-- Áp dụng cho cả `VendorForm` và `CoupleForm`.
+Trạng thái: Phase 1–5 (roadmap cũ) đã hoàn tất. Roadmap mới này tập trung
+vào việc đưa app từ ~85% sẵn sàng → 100% production. Mỗi phase độc lập,
+có thể review giữa phiên. Khi mở phiên mới, đọc file này và tiếp tục từ
+phase chưa hoàn thành (đánh dấu ✅ khi xong).
 
 ---
 
-## Ghi chú kỹ thuật
+## Phase 6 — Auth Production Hardening (P0) ⏳
 
-- Migrations cần ở Phase 2 (enum role), 3 (vendor_categories), 4 (audience plans, wish update policy, membership_payments cols). Mỗi phase 1 migration riêng.
-- Không đổi token màu/font; chỉ thêm utility class mới trong `src/styles.css`.
-- Mọi form thanh toán QR dùng `payment_settings` hiện có.
-- RLS bổ sung: couple owner update `couple_wishes.is_approved`; vendor owner toggle `is_approved` (nếu cho phép tự ẩn sau khi đã duyệt) — sẽ thêm cột `is_hidden_by_owner` để không phá luồng duyệt admin.
+Mục tiêu: luồng đăng ký/đăng nhập sẵn sàng cho người dùng thật.
 
-## Đề xuất triển khai
+- [ ] **Trigger `on_auth_user_created`** gọi `handle_new_user()` trên
+      `auth.users` (hiện hàm có, trigger thiếu → user OAuth có thể không
+      có profile/role).
+- [ ] **Sửa `handle_new_user`**: bỏ logic "auto-admin nếu chưa có admin"
+      (rủi ro privilege escalation khi xoá hết admin).
+- [ ] **Bật Google OAuth** qua `configure_social_auth` (`providers:["google"]`,
+      KHÔNG disable email).
+- [ ] Thêm nút **"Đăng nhập với Google"** vào `/login` và `/register`
+      dùng `lovable.auth.signInWithOAuth("google", ...)`.
+- [ ] Sau khi Google OAuth callback về, gọi `assignSignupRole` với role
+      đã chọn (lưu role tạm trong `sessionStorage` trước khi redirect).
+- [ ] Kiểm tra `auto_confirm_email` = false (yêu cầu verify email).
+- [ ] Kiểm tra `password_hibp_enabled` = true (chặn password rò rỉ).
 
-Bắt đầu **Phase 1** ngay sau khi bạn duyệt (nhanh, ít rủi ro). Sau mỗi phase tôi dừng để bạn review trước khi vào phase kế tiếp. Bạn có muốn gộp/đổi thứ tự phase nào không?
+## Phase 7 — Email Domain + Auth Templates (P0)
+
+Mục tiêu: email xác minh/reset password gửi từ `mariee.vn`, không vào spam.
+
+- [ ] Cấu hình email domain `notify.mariee.vn` qua dialog email setup.
+- [ ] Sau khi DNS verify → `scaffold_auth_email_templates`.
+- [ ] Apply brand Mariée (font script primary, palette hiện tại) cho 6
+      template: signup, magic-link, recovery, invite, email-change,
+      reauthentication. Background body = #ffffff.
+- [ ] Test gửi email verify + reset password thật.
+
+## Phase 8 — Transactional Notifications (P1)
+
+Mục tiêu: admin/vendor/couple nhận thông báo khi có hoạt động mới.
+
+- [ ] `scaffold_transactional_email` (tái dùng email domain Phase 7).
+- [ ] Template + trigger gửi email cho các sự kiện:
+  - Vendor nhận **lead mới** (`vendor_leads` insert).
+  - Couple nhận **RSVP mới** và **lời chúc mới**.
+  - Admin nhận **payment mới chờ duyệt** (`vendor_payments`).
+  - Vendor/Couple nhận thông báo khi **payment được duyệt/từ chối**.
+- [ ] Trigger DB → enqueue qua server function (không gọi inline trong
+      RLS-public insert để tránh blocking).
+
+## Phase 9 — Anti-Spam & Rate Limiting (P1)
+
+Mục tiêu: bảo vệ form public khỏi spam/abuse.
+
+- [ ] Rate limit IP-based cho server functions xử lý RSVP, wishes, leads
+      (table `rate_limits` + check trong server fn, window 1 phút).
+- [ ] Honeypot field + min-time-to-submit cho form public.
+- [ ] Captcha (Cloudflare Turnstile) cho RSVP + lời chúc nếu lượng spam
+      vượt ngưỡng — chuẩn bị sẵn nhưng chỉ bật khi cần.
+- [ ] Validate Zod chặt chẽ độ dài/regex tất cả input public.
+
+## Phase 10 — SEO + Discoverability (P1)
+
+Mục tiêu: index tốt trên Google, share đẹp trên social.
+
+- [ ] Chạy `seo_chat--trigger_scan`, fix toàn bộ failing findings.
+- [ ] Verify `head()` riêng cho mỗi route: `/`, `/vendors`,
+      `/vendors/$slug`, `/couples/$slug`, `/blog`, `/blog/$slug`,
+      `/for-couples`, `/for-vendors`, `/about`.
+- [ ] og:image động từ loader cho route dynamic (cover_image vendor/couple,
+      cover_image blog post).
+- [ ] JSON-LD: `LocalBusiness` cho vendor, `Event` cho couple, `Article`
+      cho blog post.
+- [ ] Verify `sitemap.xml` sinh URL công khai đúng (couples/vendors/blog
+      published), `robots.txt` allow.
+- [ ] Canonical URL leaf-only (không ở `__root.tsx`).
+
+## Phase 11 — Vendor Approval Workflow Hoàn Thiện (P1)
+
+Mục tiêu: tách rõ "admin duyệt lần đầu" vs "vendor tự ẩn/hiện".
+
+- [ ] Migration: thêm cột `is_hidden_by_owner` (boolean default false)
+      vào `vendors`.
+- [ ] Sửa policy `vendors_public_read`: chỉ hiển thị khi
+      `is_approved AND NOT is_hidden_by_owner`.
+- [ ] UI vendor portal:
+  - Chưa duyệt → badge "Chờ admin duyệt", không cho toggle.
+  - Đã duyệt → toggle "Công khai / Tạm ẩn" đổi `is_hidden_by_owner`.
+- [ ] Vendor KHÔNG được tự sửa `is_approved` (giữ RLS update field-level
+      qua trigger nếu cần).
+
+## Phase 12 — Quality of Life & Observability (P2)
+
+- [ ] Analytics: Google Analytics 4 + Meta Pixel (tracking id qua
+      `site_settings`).
+- [ ] Image CDN transform cho upload `wedding-media` (resize/webp on the
+      fly qua `cdn-image.ts`).
+- [ ] Admin export CSV (couples, vendors, leads, payments).
+- [ ] Backup script tự động (pg_dump qua cron job public route).
+- [ ] Error monitoring: log lỗi server fn vào bảng `error_logs` + page
+      `/admin/logs`.
+- [ ] Skeleton/loading state đồng bộ cho mọi page chính.
+
+---
+
+## Quy ước cho phiên sau
+
+1. Đọc file này đầu phiên, xác định phase đang dở (item chưa `[x]`).
+2. Hoàn thành lần lượt từng item; tick `[x]` ngay khi xong.
+3. Mỗi phase 1 migration tối đa (gộp các thay đổi DB cùng phase).
+4. Không đổi design token/palette/font hiện tại.
+5. Sau khi xong 1 phase, tóm tắt ngắn + đề xuất phase kế tiếp.
+
+## Thứ tự ưu tiên đề xuất
+
+Phase 6 → 7 (mở khoá email) → 8 → 11 → 9 → 10 → 12.
