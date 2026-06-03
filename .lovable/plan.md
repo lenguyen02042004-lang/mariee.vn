@@ -7,23 +7,14 @@ phase chưa hoàn thành (đánh dấu ✅ khi xong).
 
 ---
 
-## Phase 6 — Auth Production Hardening (P0) ⏳
+## Phase 6 — Auth Production Hardening (P0) ✅
 
-Mục tiêu: luồng đăng ký/đăng nhập sẵn sàng cho người dùng thật.
-
-- [ ] **Trigger `on_auth_user_created`** gọi `handle_new_user()` trên
-      `auth.users` (hiện hàm có, trigger thiếu → user OAuth có thể không
-      có profile/role).
-- [ ] **Sửa `handle_new_user`**: bỏ logic "auto-admin nếu chưa có admin"
-      (rủi ro privilege escalation khi xoá hết admin).
-- [ ] **Bật Google OAuth** qua `configure_social_auth` (`providers:["google"]`,
-      KHÔNG disable email).
-- [ ] Thêm nút **"Đăng nhập với Google"** vào `/login` và `/register`
-      dùng `lovable.auth.signInWithOAuth("google", ...)`.
-- [ ] Sau khi Google OAuth callback về, gọi `assignSignupRole` với role
-      đã chọn (lưu role tạm trong `sessionStorage` trước khi redirect).
-- [ ] Kiểm tra `auto_confirm_email` = false (yêu cầu verify email).
-- [ ] Kiểm tra `password_hibp_enabled` = true (chặn password rò rỉ).
+- [x] Trigger `on_auth_user_created` → `handle_new_user()`.
+- [x] `handle_new_user`: bỏ auto-admin, honor `signup_role` metadata, chặn self-assign admin.
+- [x] Bật Google OAuth qua `configure_social_auth`.
+- [x] Nút Google ở `/login` và `/register`.
+- [x] `assignSignupRole` chạy lại sau OAuth callback (đã có trong `__root.tsx`).
+- [x] `auto_confirm_email=false`, `password_hibp_enabled=true`.
 
 ## Phase 7 — Email Domain + Auth Templates (P0)
 
