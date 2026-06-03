@@ -16,16 +16,16 @@ phase chưa hoàn thành (đánh dấu ✅ khi xong).
 - [x] `assignSignupRole` chạy lại sau OAuth callback (đã có trong `__root.tsx`).
 - [x] `auto_confirm_email=false`, `password_hibp_enabled=true`.
 
-## Phase 7 — Email Domain + Auth Templates (P0)
+## Phase 7 — Email Domain + Auth Templates (P0) ✅
 
-Mục tiêu: email xác minh/reset password gửi từ `mariee.vn`, không vào spam.
-
-- [ ] Cấu hình email domain `notify.mariee.vn` qua dialog email setup.
-- [ ] Sau khi DNS verify → `scaffold_auth_email_templates`.
-- [ ] Apply brand Mariée (font script primary, palette hiện tại) cho 6
-      template: signup, magic-link, recovery, invite, email-change,
-      reauthentication. Background body = #ffffff.
-- [ ] Test gửi email verify + reset password thật.
+- [x] Cấu hình email domain `notify.mariee.vn` (đang verify DNS).
+- [x] Scaffold 6 auth email templates + webhook + preview route.
+- [x] Brand Mariée: BrandLayout dùng chung (rose primary `#b8345a`, gold,
+      cream `#fdf8f6`, font Great Vibes + Georgia serif, Body `#ffffff`).
+- [x] Vite config: alias `entities` v4.5.0 + load serverEnv vào `process.env`.
+- [x] Cài `@lovable.dev/email-js`, `@lovable.dev/webhooks-js`,
+      `@react-email/components`, `react-email`.
+- [ ] Test gửi thật khi DNS verify xong (theo dõi ở Cloud → Emails).
 
 ## Phase 8 — Transactional Notifications (P1)
 

@@ -47,6 +47,8 @@ import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authenticated/admin.couples'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors_.new'
 import { Route as AuthenticatedAdminVendorsIdRouteImport } from './routes/_authenticated/admin.vendors_.$id'
 import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples_.new'
@@ -254,6 +256,16 @@ const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminVendorsNewRoute =
   AuthenticatedAdminVendorsNewRouteImport.update({
     id: '/vendors_/new',
@@ -335,6 +347,8 @@ export interface FileRoutesByFullPath {
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
   '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
   '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -378,6 +392,8 @@ export interface FileRoutesByTo {
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
   '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
   '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -425,6 +441,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/couples_/new': typeof AuthenticatedAdminCouplesNewRoute
   '/_authenticated/admin/vendors_/$id': typeof AuthenticatedAdminVendorsIdRoute
   '/_authenticated/admin/vendors_/new': typeof AuthenticatedAdminVendorsNewRoute
+  '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
+  '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -472,6 +490,8 @@ export interface FileRouteTypes {
     | '/admin/couples/new'
     | '/admin/vendors/$id'
     | '/admin/vendors/new'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -515,6 +535,8 @@ export interface FileRouteTypes {
     | '/admin/couples/new'
     | '/admin/vendors/$id'
     | '/admin/vendors/new'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
   id:
     | '__root__'
     | '/'
@@ -561,6 +583,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/couples_/new'
     | '/_authenticated/admin/vendors_/$id'
     | '/_authenticated/admin/vendors_/new'
+    | '/lovable/email/auth/preview'
+    | '/lovable/email/auth/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -581,6 +605,8 @@ export interface RootRouteChildren {
   CouplesSlugRoute: typeof CouplesSlugRoute
   VendorsSlugRoute: typeof VendorsSlugRoute
   VendorsIndexRoute: typeof VendorsIndexRoute
+  LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
+  LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -851,6 +877,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/lovable/email/auth/webhook': {
+      id: '/lovable/email/auth/webhook'
+      path: '/lovable/email/auth/webhook'
+      fullPath: '/lovable/email/auth/webhook'
+      preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin/vendors_/new': {
       id: '/_authenticated/admin/vendors_/new'
       path: '/vendors/new'
@@ -996,6 +1036,8 @@ const rootRouteChildren: RootRouteChildren = {
   CouplesSlugRoute: CouplesSlugRoute,
   VendorsSlugRoute: VendorsSlugRoute,
   VendorsIndexRoute: VendorsIndexRoute,
+  LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
+  LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
