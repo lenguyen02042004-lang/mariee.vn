@@ -3,6 +3,8 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import heroImg from "@/assets/hero-wedding-3.jpg";
+import { PageHero } from "@/components/PageHero";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -31,11 +33,12 @@ function LoginPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-6 py-16">
+    <>
+    <PageHero image={heroImg} script="welcome back" title="Đăng nhập tài khoản" subtitle="Tiếp tục hành trình chuẩn bị cho ngày trọng đại của bạn." size="sm" />
+    <div className="flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md bg-card rounded-lg shadow-elegant p-8 border border-border/60">
-        <p className="font-script text-3xl text-primary text-center">welcome back</p>
-        <h1 className="font-display text-3xl text-center mt-2">Đăng nhập</h1>
-        <form onSubmit={onSubmit} className="mt-8 space-y-4">
+        <h2 className="font-display text-2xl text-center">Chào mừng trở lại</h2>
+        <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <input required type="email" placeholder="Email" value={email} onChange={e=>setEmail(e.target.value)} className="w-full px-4 py-3 rounded-md border border-input bg-background" />
           <input required type="password" placeholder="Mật khẩu" value={password} onChange={e=>setPassword(e.target.value)} className="w-full px-4 py-3 rounded-md border border-input bg-background" />
           <button disabled={loading} className="w-full py-3 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm hover:opacity-90 disabled:opacity-50">{loading?"Đang xử lý…":"Đăng nhập"}</button>
@@ -47,5 +50,6 @@ function LoginPage() {
         <p className="mt-6 text-sm text-center text-muted-foreground">Chưa có tài khoản? <Link to="/register" className="text-primary underline">Đăng ký</Link></p>
       </div>
     </div>
+    </>
   );
 }
