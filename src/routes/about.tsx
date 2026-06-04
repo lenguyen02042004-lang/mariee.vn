@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import hero from "@/assets/hero-wedding-1.jpg";
 
 export const Route = createFileRoute("/about")({
   component: About,
@@ -11,10 +12,14 @@ export const Route = createFileRoute("/about")({
 function About() {
   return (
     <>
-      <section className="py-20 md:py-28 text-center bg-secondary/40">
-        <p className="font-script text-3xl text-primary">about us</p>
-        <h1 className="font-display text-5xl md:text-6xl mt-2">Câu chuyện của Mariée</h1>
-        <p className="max-w-2xl mx-auto mt-5 px-6 text-muted-foreground">Một nền tảng dành riêng cho ngày trọng đại — nơi mỗi tình yêu được kể bằng ngôn ngữ thiết kế cao cấp.</p>
+      <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
+        <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
+          <p className="font-script text-3xl md:text-5xl text-blush">about us</p>
+          <h1 className="mt-4 font-display text-5xl md:text-6xl text-balance max-w-3xl">Câu chuyện của Mariée</h1>
+          <p className="mt-4 text-white/85 max-w-2xl">Một nền tảng dành riêng cho ngày trọng đại — nơi mỗi tình yêu được kể bằng ngôn ngữ thiết kế cao cấp.</p>
+        </div>
       </section>
       <section className="max-w-4xl mx-auto px-6 py-20 space-y-12">
         <div>

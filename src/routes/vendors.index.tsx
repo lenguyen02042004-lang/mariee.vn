@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { listVendors } from "@/lib/vendors.functions";
 import { VendorCard } from "@/components/VendorCard";
+import hero from "@/assets/vendor-photo.jpg";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới",
@@ -43,10 +44,14 @@ function VendorsPage() {
   });
   return (
     <>
-      <section className="py-16 sm:py-20 text-center bg-secondary/40 px-4">
-        <p className="font-script text-3xl text-primary">vendors</p>
-        <h1 className="font-display text-[clamp(2rem,5vw,3.5rem)] mt-2 leading-tight">Nhà cung cấp dịch vụ cưới</h1>
-        <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">Tinh hoa của từng lĩnh vực — venue, nhiếp ảnh, makeup, hoa cưới và hơn thế nữa.</p>
+      <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
+        <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
+          <p className="font-script text-3xl md:text-5xl text-blush">vendors</p>
+          <h1 className="mt-4 font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight text-balance max-w-3xl">Nhà cung cấp dịch vụ cưới</h1>
+          <p className="mt-4 text-white/85 max-w-2xl">Tinh hoa của từng lĩnh vực — venue, nhiếp ảnh, makeup, hoa cưới và hơn thế nữa.</p>
+        </div>
       </section>
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8 sm:mb-10">
