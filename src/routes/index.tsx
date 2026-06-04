@@ -7,6 +7,7 @@ import { HomeHero } from "@/components/HomeHero";
 import { VendorCard } from "@/components/VendorCard";
 import { SmartImage } from "@/components/SmartImage";
 import { HomePageSkeleton } from "@/components/HomeSkeleton";
+import { VendorCategoryGrid } from "@/components/VendorCategoryIcons";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -77,6 +78,9 @@ function Home() {
             <p className="font-script text-3xl text-primary">our partners</p>
             <h2 className="font-display text-[clamp(1.875rem,4vw,3rem)] mt-2 leading-tight">Nhà cung cấp đẳng cấp</h2>
             <p className="mt-4 text-muted-foreground max-w-xl mx-auto">Đội ngũ chuyên gia hàng đầu cho mọi khía cạnh của ngày trọng đại.</p>
+          </div>
+          <div className="mb-12 sm:mb-16">
+            <VendorCategoryGrid />
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
             {vendors.map((v: any) => (
