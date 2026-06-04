@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { z } from "zod";
 import { listBlogPosts, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { SmartImage } from "@/components/SmartImage";
+import heroBg from "@/assets/hero-wedding-3.jpg";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1).catch(1),
@@ -80,13 +81,15 @@ function BlogPage() {
   return (
     <div className="bg-gradient-to-b from-secondary/30 via-background to-background">
       {/* Magazine header */}
-      <div className="border-b border-border/50">
-        <div className="max-w-7xl mx-auto px-6 py-14 md:py-20 text-center">
-          <p className="font-script text-3xl text-primary">journal</p>
-          <h1 className="font-display text-4xl md:text-6xl mt-2 tracking-tight">
+      <section className="relative min-h-[60vh] overflow-hidden">
+        <img src={heroBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/35 to-black/65" />
+        <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 md:py-28 text-center text-white">
+          <p className="font-script text-3xl md:text-5xl text-blush">journal</p>
+          <h1 className="font-display text-4xl md:text-6xl mt-3 tracking-tight">
             {activeCat ? activeCat.name : "Blog cưới"}
           </h1>
-          <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+          <p className="text-white/85 mt-4 max-w-2xl mx-auto">
             Mẹo lên kế hoạch, xu hướng mới và những câu chuyện thật từ các cặp đôi.
           </p>
           <div className="mt-8 max-w-xl mx-auto relative">
@@ -95,7 +98,7 @@ function BlogPage() {
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               placeholder="Tìm bài viết theo từ khoá..."
-              className="w-full h-12 pl-11 pr-10 rounded-full border border-border bg-background text-sm shadow-soft focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition"
+              className="w-full h-12 pl-11 pr-10 rounded-full border border-white/30 bg-white/95 text-foreground text-sm shadow-soft focus:outline-none focus:border-primary/60 focus:ring-2 focus:ring-primary/20 transition"
               aria-label="Tìm bài viết"
             />
             <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
@@ -105,7 +108,7 @@ function BlogPage() {
             )}
           </div>
         </div>
-      </div>
+      </section>
 
       <div className="max-w-7xl mx-auto px-6 py-10 md:py-14">
         {/* Mobile category chips */}
