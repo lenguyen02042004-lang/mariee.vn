@@ -1,8 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { z } from "zod";
 import { listVendors } from "@/lib/vendors.functions";
 import { VendorCard } from "@/components/VendorCard";
 import hero from "@/assets/vendor-photo.jpg";
+import { PageHero } from "@/components/PageHero";
+import { VendorCategoryChips } from "@/components/VendorCategoryIcons";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới",
@@ -20,6 +23,7 @@ const CAT_LABEL: Record<string, string> = {
 };
 
 export const Route = createFileRoute("/vendors/")({
+  validateSearch: z.object({ cat: z.string().min(1).max(40).optional().catch(undefined) }),
   loader: async () => await listVendors(),
   staleTime: 60_000,
   component: VendorsPage,
@@ -31,8 +35,10 @@ export const Route = createFileRoute("/vendors/")({
 
 function VendorsPage() {
   const vendors = Route.useLoaderData();
+  const { cat: catParam } = Route.useSearch();
   const [q, setQ] = useState("");
-  const [cat, setCat] = useState<string>("all");
+  const [cat, setCat] = useState<string>(catParam ?? "all");
+  useEffect(() => { if (catParam) setCat(catParam); }, [catParam]);
   const [city, setCity] = useState<string>("all");
   const cities = useMemo(() => Array.from(new Set(vendors.map((v: any) => v.city).filter(Boolean))) as string[], [vendors]);
   const cats = useMemo(() => Array.from(new Set(vendors.map((v: any) => v.category).filter(Boolean))) as string[], [vendors]);
@@ -44,16 +50,16 @@ function VendorsPage() {
   });
   return (
     <>
-      <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
-        <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
-          <p className="font-script text-3xl md:text-5xl text-blush">vendors</p>
-          <h1 className="mt-4 font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight text-balance max-w-3xl">Nhà cung cấp dịch vụ cưới</h1>
-          <p className="mt-4 text-white/85 max-w-2xl">Tinh hoa của từng lĩnh vực — venue, nhiếp ảnh, makeup, hoa cưới và hơn thế nữa.</p>
-        </div>
-      </section>
+      <PageHero
+        image={hero}
+        script="vendors"
+        title="Nhà cung cấp dịch vụ cưới"
+        subtitle="Tinh hoa của từng lĩnh vực — venue, nhiếp ảnh, makeup, hoa cưới và hơn thế nữa."
+      />
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+        <div className="mb-6 sm:mb-8">
+          <VendorCategoryChips value={cat} onChange={setCat} />
+        </div>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 mb-8 sm:mb-10">
           <input value={q} onChange={e => setQ(e.target.value)} placeholder="Tìm theo tên, mô tả…" className="px-4 py-3 border border-input rounded-md bg-background" />
           <select value={cat} onChange={e => setCat(e.target.value)} className="px-4 py-3 border border-input rounded-md bg-background">
