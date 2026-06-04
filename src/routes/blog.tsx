@@ -83,7 +83,7 @@ function BlogPage() {
       {/* Magazine header */}
       <section className="relative min-h-[60vh] overflow-hidden">
         <img src={heroBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/35 to-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/30 via-black/40 to-black/70" />
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-20 md:py-28 text-center text-white">
           <p className="font-script text-3xl md:text-5xl text-blush">journal</p>
           <h1 className="font-display text-4xl md:text-6xl mt-3 tracking-tight">
