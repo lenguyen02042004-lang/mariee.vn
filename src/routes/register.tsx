@@ -6,6 +6,8 @@ import { lovable } from "@/integrations/lovable";
 import { assignSignupRole } from "@/lib/signup-role.functions";
 import { Heart, Store } from "lucide-react";
 import { toast } from "sonner";
+import heroImg from "@/assets/hero-wedding-2.jpg";
+import { PageHero } from "@/components/PageHero";
 
 export const Route = createFileRoute("/register")({
   component: RegisterPage,
@@ -85,12 +87,12 @@ function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-6 py-16">
+    <>
+    <PageHero image={heroImg} script="join mariée" title="Tạo tài khoản miễn phí" subtitle="Bắt đầu hành trình cùng nền tảng cưới sang trọng nhất Việt Nam." size="sm" />
+    <div className="flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-xl bg-card rounded-lg shadow-elegant p-8 border border-border/60">
-        <p className="font-script text-3xl text-primary text-center">join mariée</p>
-        <h1 className="font-display text-3xl text-center mt-2">Tạo tài khoản</h1>
-
-        <div className="mt-8">
+        <h2 className="font-display text-2xl text-center">Bạn muốn tham gia với vai trò?</h2>
+        <div className="mt-6">
           <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3">Bạn là</p>
           <div className="grid sm:grid-cols-2 gap-3">
             <RoleCard role="couple" value={role} onChange={setRole} Icon={Heart}
@@ -113,5 +115,6 @@ function RegisterPage() {
         <p className="mt-6 text-sm text-center text-muted-foreground">Đã có tài khoản? <Link to="/login" className="text-primary underline">Đăng nhập</Link></p>
       </div>
     </div>
+    </>
   );
 }

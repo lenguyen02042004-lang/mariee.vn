@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-wedding-2.jpg";
 import { PricingSection } from "@/components/PricingSection";
+import { PageHero } from "@/components/PageHero";
 
 export const Route = createFileRoute("/for-couples")({
   component: ForCouples,
@@ -28,16 +29,14 @@ function ForCouples() {
   ];
   return (
     <>
-      <section className="relative h-[60vh] min-h-[420px] overflow-hidden">
-        <img src={hero} alt="" className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
-        <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
-          <p className="font-script text-3xl md:text-5xl text-blush">for couples</p>
-          <h1 className="mt-4 font-display text-5xl md:text-6xl text-balance max-w-3xl">Trang cưới đẹp riêng cho hai bạn</h1>
-          <p className="mt-4 text-white/85 max-w-2xl">Khách mời truy cập, gửi lời chúc và RSVP chỉ với một liên kết — bạn lưu giữ kỷ niệm trọn vẹn.</p>
-          <Link to="/register" className="mt-8 px-8 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm shadow-elegant">Tạo trang ngay</Link>
-        </div>
-      </section>
+      <PageHero
+        image={hero}
+        script="for couples"
+        title="Trang cưới đẹp riêng cho hai bạn"
+        subtitle="Khách mời truy cập, gửi lời chúc và RSVP chỉ với một liên kết — bạn lưu giữ kỷ niệm trọn vẹn."
+      >
+        <Link to="/register" className="mt-8 px-8 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm shadow-elegant">Tạo trang ngay</Link>
+      </PageHero>
 
       <section className="max-w-6xl mx-auto px-6 py-24">
         <div className="text-center mb-16">

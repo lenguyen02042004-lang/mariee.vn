@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import heroImg from "@/assets/hero-wedding-1.jpg";
+import { PageHero } from "@/components/PageHero";
 
 export const Route = createFileRoute("/forgot-password")({
   component: ForgotPage,
@@ -18,9 +20,11 @@ function ForgotPage() {
     setSent(true);
   };
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-6 py-16">
+    <>
+    <PageHero image={heroImg} script="forgot password" title="Khôi phục mật khẩu" subtitle="Chúng tôi sẽ gửi liên kết đặt lại mật khẩu đến email của bạn." size="sm" />
+    <div className="flex items-center justify-center px-6 py-16">
       <div className="w-full max-w-md bg-card rounded-lg shadow-elegant p-8 border border-border/60">
-        <h1 className="font-display text-3xl text-center">Quên mật khẩu</h1>
+        <h2 className="font-display text-2xl text-center">Nhập email của bạn</h2>
         {sent ? (
           <p className="mt-6 text-center text-muted-foreground">Nếu email tồn tại, chúng tôi đã gửi liên kết đặt lại mật khẩu.</p>
         ) : (
@@ -32,5 +36,6 @@ function ForgotPage() {
         <p className="mt-6 text-sm text-center"><Link to="/login" className="text-primary underline">← Đăng nhập</Link></p>
       </div>
     </div>
+    </>
   );
 }
