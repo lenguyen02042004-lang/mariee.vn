@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { PageHero } from "@/components/PageHero";
+import heroImg from "@/assets/hero-wedding-1.jpg";
 
 export const Route = createFileRoute("/unsubscribe")({
   component: UnsubscribePage,
@@ -60,6 +61,8 @@ function UnsubscribePage() {
   return (
     <div>
       <PageHero
+        image={heroImg}
+        script="unsubscribe"
         title="Huỷ nhận email"
         subtitle="Bạn có thể quay lại bất cứ lúc nào."
         size="sm"
