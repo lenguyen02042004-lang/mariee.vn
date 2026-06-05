@@ -62,7 +62,7 @@ function UnsubscribePage() {
       <PageHero
         title="Huỷ nhận email"
         subtitle="Bạn có thể quay lại bất cứ lúc nào."
-        size="small"
+        size="sm"
       />
       <div className="max-w-xl mx-auto px-6 py-16 text-center">
         {state.kind === "loading" && <p className="text-muted-foreground">Đang xác minh…</p>}
