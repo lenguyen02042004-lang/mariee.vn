@@ -31,14 +31,15 @@ phase chưa hoàn thành (đánh dấu ✅ khi xong).
 
 Mục tiêu: admin/vendor/couple nhận thông báo khi có hoạt động mới.
 
-- [ ] `scaffold_transactional_email` (tái dùng email domain Phase 7).
-- [ ] Template + trigger gửi email cho các sự kiện:
-  - Vendor nhận **lead mới** (`vendor_leads` insert).
-  - Couple nhận **RSVP mới** và **lời chúc mới**.
-  - Admin nhận **payment mới chờ duyệt** (`vendor_payments`).
-  - Vendor/Couple nhận thông báo khi **payment được duyệt/từ chối**.
-- [ ] Trigger DB → enqueue qua server function (không gọi inline trong
-      RLS-public insert để tránh blocking).
+- [x] `scaffold_transactional_email` (tái dùng email domain Phase 7).
+- [x] Template + trigger gửi email cho các sự kiện:
+  - [x] Vendor nhận **lead mới** (`vendor-new-lead`).
+  - [x] Couple nhận **RSVP mới** (`couple-new-rsvp`) và **lời chúc mới** (`couple-new-wish`).
+  - [x] Admin nhận **payment mới chờ duyệt** (`admin-new-payment`).
+  - [x] Vendor nhận thông báo khi **payment được duyệt/từ chối** (`vendor-payment-reviewed`).
+- [x] Helper `src/lib/email/send.server.ts` enqueue qua pgmq (suppression
+      + unsubscribe token), fire-and-forget trong server functions.
+- [x] Trang `/unsubscribe` cho footer email.
 
 ## Phase 9 — Anti-Spam & Rate Limiting (P1)
 

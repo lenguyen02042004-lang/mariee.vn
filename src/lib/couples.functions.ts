@@ -1,6 +1,26 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
+import { fireEmail, getUserEmailById } from "@/lib/email/send.server";
+
+async function notifyCoupleOwner(coupleId: string, template: string, data: Record<string, any>) {
+  const { data: couple } = await supabaseAdmin
+    .from("couples")
+    .select("owner_id, bride_name, groom_name")
+    .eq("id", coupleId)
+    .maybeSingle();
+  if (!couple?.owner_id) return;
+  const email = await getUserEmailById(couple.owner_id);
+  if (!email) return;
+  fireEmail({
+    templateName: template,
+    recipientEmail: email,
+    templateData: {
+      coupleName: `${couple.bride_name} & ${couple.groom_name}`,
+      ...data,
+    },
+  });
+}
 
 export const listCouples = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabaseAdmin
@@ -49,6 +69,13 @@ export const submitRsvp = createServerFn({ method: "POST" })
       side: data.side ?? null,
     });
     if (error) throw new Error(error.message);
+    notifyCoupleOwner(data.couple_id, "couple-new-rsvp", {
+      guestName: data.guest_name,
+      attending: data.attending,
+      numGuests: data.num_guests,
+      side: data.side,
+      message: data.message || undefined,
+    }).catch(() => {});
     return { ok: true };
   });
 
@@ -63,5 +90,9 @@ export const submitWish = createServerFn({ method: "POST" })
       couple_id: data.couple_id, guest_name: data.guest_name, message: data.message,
     });
     if (error) throw new Error(error.message);
+    notifyCoupleOwner(data.couple_id, "couple-new-wish", {
+      guestName: data.guest_name,
+      message: data.message,
+    }).catch(() => {});
     return { ok: true };
   });

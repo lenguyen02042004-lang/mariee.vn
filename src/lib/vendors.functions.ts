@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
+import { fireEmail } from "@/lib/email/send.server";
 
 export const listVendors = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabaseAdmin
@@ -44,5 +45,25 @@ export const submitVendorLead = createServerFn({ method: "POST" })
       message: data.message || null,
     });
     if (error) throw new Error(error.message);
+    // Notify vendor (fire-and-forget)
+    const { data: vendor } = await supabaseAdmin
+      .from("vendors")
+      .select("name, email")
+      .eq("id", data.vendor_id)
+      .maybeSingle();
+    if (vendor?.email) {
+      fireEmail({
+        templateName: "vendor-new-lead",
+        recipientEmail: vendor.email,
+        templateData: {
+          vendorName: vendor.name,
+          guestName: data.guest_name,
+          guestPhone: data.guest_phone || undefined,
+          guestEmail: data.guest_email || undefined,
+          eventDate: data.event_date || undefined,
+          message: data.message || undefined,
+        },
+      });
+    }
     return { ok: true };
   });

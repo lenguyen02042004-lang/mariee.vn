@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { fireEmail, getAdminEmails } from "@/lib/email/send.server";
 
 export const vendorListMyPayments = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -35,5 +37,31 @@ export const vendorSubmitPayment = createServerFn({ method: "POST" })
       status: "pending",
     });
     if (error) throw new Error(error.message);
+    // Notify admins (fire-and-forget)
+    (async () => {
+      const { data: v } = await supabaseAdmin
+        .from("vendors")
+        .select("name")
+        .eq("id", (vendor as any).id)
+        .maybeSingle();
+      const { data: p } = await supabaseAdmin
+        .from("vendor_plans" as any)
+        .select("name")
+        .eq("id", data.plan_id)
+        .maybeSingle();
+      const emails = await getAdminEmails();
+      for (const email of emails) {
+        fireEmail({
+          templateName: "admin-new-payment",
+          recipientEmail: email,
+          templateData: {
+            vendorName: (v as any)?.name ?? "Vendor",
+            planName: (p as any)?.name ?? "Gói",
+            amountVnd: (plan as any).price_vnd,
+            transferCode: data.transfer_code || undefined,
+          },
+        });
+      }
+    })().catch(() => {});
     return { ok: true };
   });

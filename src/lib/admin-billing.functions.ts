@@ -1,6 +1,8 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { fireEmail, getUserEmailById } from "@/lib/email/send.server";
 
 async function assertAdmin(supabase: any, userId: string) {
   const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
@@ -78,7 +80,7 @@ export const adminReviewPayment = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     const { data: pay, error: e0 } = await context.supabase
       .from("vendor_payments" as any)
-      .select("*, vendor_plans(billing_months)")
+      .select("*, vendor_plans(name, billing_months)")
       .eq("id", data.id).single();
     if (e0 || !pay) throw new Error(e0?.message ?? "Not found");
     const status = data.action === "approve" ? "approved" : "rejected";
@@ -96,6 +98,53 @@ export const adminReviewPayment = createServerFn({ method: "POST" })
       await context.supabase.from("vendors").update({
         plan_id: (pay as any).plan_id, plan_expires_at: expiresAt,
       } as any).eq("id", (pay as any).vendor_id);
+      // Notify vendor (approved)
+      (async () => {
+        const { data: v } = await supabaseAdmin
+          .from("vendors")
+          .select("name, owner_id, email")
+          .eq("id", (pay as any).vendor_id)
+          .maybeSingle();
+        const ownerEmail = v?.owner_id ? await getUserEmailById(v.owner_id) : null;
+        const to = ownerEmail || (v as any)?.email;
+        if (to) {
+          fireEmail({
+            templateName: "vendor-payment-reviewed",
+            recipientEmail: to,
+            templateData: {
+              vendorName: (v as any)?.name ?? "Vendor",
+              planName: (pay as any).vendor_plans?.name ?? "Gói",
+              amountVnd: (pay as any).amount_vnd,
+              approved: true,
+              expiresAt: new Date(expiresAt).toLocaleDateString("vi-VN"),
+            },
+          });
+        }
+      })().catch(() => {});
+    } else {
+      // Notify vendor (rejected)
+      (async () => {
+        const { data: v } = await supabaseAdmin
+          .from("vendors")
+          .select("name, owner_id, email")
+          .eq("id", (pay as any).vendor_id)
+          .maybeSingle();
+        const ownerEmail = v?.owner_id ? await getUserEmailById(v.owner_id) : null;
+        const to = ownerEmail || (v as any)?.email;
+        if (to) {
+          fireEmail({
+            templateName: "vendor-payment-reviewed",
+            recipientEmail: to,
+            templateData: {
+              vendorName: (v as any)?.name ?? "Vendor",
+              planName: (pay as any).vendor_plans?.name ?? "Gói",
+              amountVnd: (pay as any).amount_vnd,
+              approved: false,
+              adminNote: data.note,
+            },
+          });
+        }
+      })().catch(() => {});
     }
     return { ok: true };
   });
