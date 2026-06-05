@@ -24,6 +24,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VendorsIndexRouteImport } from './routes/vendors.index'
 import { Route as VendorsSlugRouteImport } from './routes/vendors.$slug'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CouplesSlugRouteImport } from './routes/couples.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
 import { Route as AuthenticatedVendorRouteImport } from './routes/_authenticated/vendor'
@@ -31,6 +32,7 @@ import { Route as AuthenticatedCoupleRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedVendorIndexRouteImport } from './routes/_authenticated/vendor.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_authenticated/vendor.testimonials'
 import { Route as AuthenticatedVendorProductsRouteImport } from './routes/_authenticated/vendor.products'
 import { Route as AuthenticatedVendorLeadsRouteImport } from './routes/_authenticated/vendor.leads'
@@ -47,6 +49,8 @@ import { Route as AuthenticatedAdminLeadsRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminCouplesRouteImport } from './routes/_authenticated/admin.couples'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated/admin.categories'
 import { Route as AuthenticatedAdminBlogRouteImport } from './routes/_authenticated/admin.blog'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors_.new'
@@ -130,6 +134,11 @@ const VendorsSlugRoute = VendorsSlugRouteImport.update({
   path: '/vendors/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CouplesSlugRoute = CouplesSlugRouteImport.update({
   id: '/couples/$slug',
   path: '/couples/$slug',
@@ -165,6 +174,11 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedVendorTestimonialsRoute =
   AuthenticatedVendorTestimonialsRouteImport.update({
@@ -256,6 +270,18 @@ const AuthenticatedAdminBlogRoute = AuthenticatedAdminBlogRouteImport.update({
   path: '/blog',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
   id: '/lovable/email/auth/webhook',
   path: '/lovable/email/auth/webhook',
@@ -321,6 +347,7 @@ export interface FileRoutesByFullPath {
   '/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
@@ -339,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/vendor/': typeof AuthenticatedVendorIndexRoute
   '/admin/blog/$id': typeof AuthenticatedAdminBlogIdRoute
@@ -349,6 +377,8 @@ export interface FileRoutesByFullPath {
   '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -366,6 +396,7 @@ export interface FileRoutesByTo {
   '/couple': typeof AuthenticatedCoupleRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors': typeof VendorsIndexRoute
   '/admin/blog': typeof AuthenticatedAdminBlogRoute
@@ -384,6 +415,7 @@ export interface FileRoutesByTo {
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/vendor': typeof AuthenticatedVendorIndexRoute
   '/admin/blog/$id': typeof AuthenticatedAdminBlogIdRoute
@@ -394,6 +426,8 @@ export interface FileRoutesByTo {
   '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -415,6 +449,7 @@ export interface FileRoutesById {
   '/_authenticated/vendor': typeof AuthenticatedVendorRouteWithChildren
   '/blog_/$slug': typeof BlogSlugRoute
   '/couples/$slug': typeof CouplesSlugRoute
+  '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/vendors/$slug': typeof VendorsSlugRoute
   '/vendors/': typeof VendorsIndexRoute
   '/_authenticated/admin/blog': typeof AuthenticatedAdminBlogRoute
@@ -433,6 +468,7 @@ export interface FileRoutesById {
   '/_authenticated/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/_authenticated/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/_authenticated/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
+  '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/vendor/': typeof AuthenticatedVendorIndexRoute
   '/_authenticated/admin/blog_/$id': typeof AuthenticatedAdminBlogIdRoute
@@ -443,6 +479,8 @@ export interface FileRoutesById {
   '/_authenticated/admin/vendors_/new': typeof AuthenticatedAdminVendorsNewRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/lovable/email/transactional/send': typeof LovableEmailTransactionalSendRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -464,6 +502,7 @@ export interface FileRouteTypes {
     | '/vendor'
     | '/blog/$slug'
     | '/couples/$slug'
+    | '/email/unsubscribe'
     | '/vendors/$slug'
     | '/vendors/'
     | '/admin/blog'
@@ -482,6 +521,7 @@ export interface FileRouteTypes {
     | '/vendor/leads'
     | '/vendor/products'
     | '/vendor/testimonials'
+    | '/lovable/email/suppression'
     | '/admin/'
     | '/vendor/'
     | '/admin/blog/$id'
@@ -492,6 +532,8 @@ export interface FileRouteTypes {
     | '/admin/vendors/new'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -509,6 +551,7 @@ export interface FileRouteTypes {
     | '/couple'
     | '/blog/$slug'
     | '/couples/$slug'
+    | '/email/unsubscribe'
     | '/vendors/$slug'
     | '/vendors'
     | '/admin/blog'
@@ -527,6 +570,7 @@ export interface FileRouteTypes {
     | '/vendor/leads'
     | '/vendor/products'
     | '/vendor/testimonials'
+    | '/lovable/email/suppression'
     | '/admin'
     | '/vendor'
     | '/admin/blog/$id'
@@ -537,6 +581,8 @@ export interface FileRouteTypes {
     | '/admin/vendors/new'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   id:
     | '__root__'
     | '/'
@@ -557,6 +603,7 @@ export interface FileRouteTypes {
     | '/_authenticated/vendor'
     | '/blog_/$slug'
     | '/couples/$slug'
+    | '/email/unsubscribe'
     | '/vendors/$slug'
     | '/vendors/'
     | '/_authenticated/admin/blog'
@@ -575,6 +622,7 @@ export interface FileRouteTypes {
     | '/_authenticated/vendor/leads'
     | '/_authenticated/vendor/products'
     | '/_authenticated/vendor/testimonials'
+    | '/lovable/email/suppression'
     | '/_authenticated/admin/'
     | '/_authenticated/vendor/'
     | '/_authenticated/admin/blog_/$id'
@@ -585,6 +633,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/vendors_/new'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
+    | '/lovable/email/transactional/preview'
+    | '/lovable/email/transactional/send'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -603,10 +653,14 @@ export interface RootRouteChildren {
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CouplesSlugRoute: typeof CouplesSlugRoute
+  EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   VendorsSlugRoute: typeof VendorsSlugRoute
   VendorsIndexRoute: typeof VendorsIndexRoute
+  LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  LovableEmailTransactionalSendRoute: typeof LovableEmailTransactionalSendRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -716,6 +770,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VendorsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/couples/$slug': {
       id: '/couples/$slug'
       path: '/couples/$slug'
@@ -764,6 +825,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/vendor/testimonials': {
       id: '/_authenticated/vendor/testimonials'
@@ -876,6 +944,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/blog'
       preLoaderRoute: typeof AuthenticatedAdminBlogRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/webhook': {
       id: '/lovable/email/auth/webhook'
@@ -1034,10 +1116,14 @@ const rootRouteChildren: RootRouteChildren = {
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   BlogSlugRoute: BlogSlugRoute,
   CouplesSlugRoute: CouplesSlugRoute,
+  EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   VendorsSlugRoute: VendorsSlugRoute,
   VendorsIndexRoute: VendorsIndexRoute,
+  LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  LovableEmailTransactionalSendRoute: LovableEmailTransactionalSendRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
