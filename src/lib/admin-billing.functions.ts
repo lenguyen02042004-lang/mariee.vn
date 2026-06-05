@@ -80,7 +80,7 @@ export const adminReviewPayment = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     const { data: pay, error: e0 } = await context.supabase
       .from("vendor_payments" as any)
-      .select("*, vendor_plans(billing_months)")
+      .select("*, vendor_plans(name, billing_months)")
       .eq("id", data.id).single();
     if (e0 || !pay) throw new Error(e0?.message ?? "Not found");
     const status = data.action === "approve" ? "approved" : "rejected";
