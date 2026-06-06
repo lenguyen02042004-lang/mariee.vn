@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { submitRsvp } from "@/lib/couples.functions";
 import { toast } from "sonner";
@@ -7,6 +7,7 @@ export function RsvpForm({ coupleId }: { coupleId: string }) {
   const submit = useServerFn(submitRsvp);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const startedAt = useRef(Date.now());
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,6 +23,8 @@ export function RsvpForm({ coupleId }: { coupleId: string }) {
         num_guests: Number(f.get("num_guests") || 1),
         message: String(f.get("message") || ""),
         side: (f.get("side") as "bride" | "groom" | "both") || "both",
+        _hp: String(f.get("website") || ""),
+        _ts: startedAt.current,
       }});
       setDone(true);
       toast.success("Cảm ơn bạn đã xác nhận!");
@@ -39,6 +42,7 @@ export function RsvpForm({ coupleId }: { coupleId: string }) {
 
   return (
     <form onSubmit={onSubmit} className="space-y-5 max-w-2xl mx-auto">
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
       <div className="grid md:grid-cols-2 gap-5">
         <input name="guest_name" required maxLength={120} placeholder="Họ và tên *" className="w-full px-5 py-3 bg-card border border-border rounded-md focus:ring-2 focus:ring-primary outline-none" />
         <input name="guest_phone" maxLength={30} placeholder="Số điện thoại" className="w-full px-5 py-3 bg-card border border-border rounded-md focus:ring-2 focus:ring-primary outline-none" />
