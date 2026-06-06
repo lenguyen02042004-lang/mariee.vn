@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { submitWish } from "@/lib/couples.functions";
 import { useRouter } from "@tanstack/react-router";
@@ -8,6 +8,7 @@ export function WishWall({ coupleId, wishes }: { coupleId: string; wishes: any[]
   const router = useRouter();
   const submit = useServerFn(submitWish);
   const [loading, setLoading] = useState(false);
+  const startedAt = useRef(Date.now());
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,6 +19,8 @@ export function WishWall({ coupleId, wishes }: { coupleId: string; wishes: any[]
         couple_id: coupleId,
         guest_name: String(f.get("guest_name") || ""),
         message: String(f.get("message") || ""),
+        _hp: String(f.get("website") || ""),
+        _ts: startedAt.current,
       }});
       toast.success("Cảm ơn lời chúc của bạn!");
       (e.target as HTMLFormElement).reset();
@@ -31,6 +34,7 @@ export function WishWall({ coupleId, wishes }: { coupleId: string; wishes: any[]
     <div className="grid md:grid-cols-2 gap-10">
       <form onSubmit={onSubmit} className="space-y-4 bg-card rounded-lg p-6 shadow-soft">
         <h3 className="font-display text-2xl">Gửi lời chúc</h3>
+        <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
         <input name="guest_name" required maxLength={120} placeholder="Tên của bạn *" className="w-full px-4 py-3 border border-border rounded-md outline-none focus:ring-2 focus:ring-primary" />
         <textarea name="message" required rows={5} maxLength={500} placeholder="Lời chúc của bạn..." className="w-full px-4 py-3 border border-border rounded-md outline-none focus:ring-2 focus:ring-primary resize-none" />
         <button disabled={loading} className="px-8 py-3 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-xs disabled:opacity-60">
