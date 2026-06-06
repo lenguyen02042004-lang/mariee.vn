@@ -95,6 +95,23 @@ const productSchema = z.object({
   is_active: z.boolean().optional(),
 });
 
+export const setMyVendorHidden = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({ hidden: z.boolean() }).parse(d))
+  .handler(async ({ data, context }) => {
+    const { data: vendor, error } = await context.supabase
+      .from("vendors").select("id, is_approved").eq("owner_id", context.userId).maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!vendor) throw new Error("Chưa có hồ sơ vendor");
+    if (!vendor.is_approved && data.hidden === false) {
+      throw new Error("Hồ sơ chưa được admin duyệt nên chưa thể hiển thị công khai.");
+    }
+    const { error: upErr } = await context.supabase
+      .from("vendors").update({ is_hidden_by_owner: data.hidden }).eq("id", vendor.id);
+    if (upErr) throw new Error(upErr.message);
+    return { ok: true };
+  });
+
 export const upsertMyProduct = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => productSchema.parse(d))

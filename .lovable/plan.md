@@ -71,19 +71,21 @@ Mục tiêu: index tốt trên Google, share đẹp trên social.
       published), `robots.txt` allow.
 - [ ] Canonical URL leaf-only (không ở `__root.tsx`).
 
-## Phase 11 — Vendor Approval Workflow Hoàn Thiện (P1)
+## Phase 11 — Vendor Approval Workflow Hoàn Thiện (P1) ✅
 
 Mục tiêu: tách rõ "admin duyệt lần đầu" vs "vendor tự ẩn/hiện".
 
-- [ ] Migration: thêm cột `is_hidden_by_owner` (boolean default false)
-      vào `vendors`.
-- [ ] Sửa policy `vendors_public_read`: chỉ hiển thị khi
-      `is_approved AND NOT is_hidden_by_owner`.
-- [ ] UI vendor portal:
-  - Chưa duyệt → badge "Chờ admin duyệt", không cho toggle.
-  - Đã duyệt → toggle "Công khai / Tạm ẩn" đổi `is_hidden_by_owner`.
-- [ ] Vendor KHÔNG được tự sửa `is_approved` (giữ RLS update field-level
-      qua trigger nếu cần).
+- [x] Migration: cột `is_hidden_by_owner` (boolean default false) vào `vendors`.
+- [x] Policy `vendors_public_read`: hiển thị khi
+      `is_approved AND NOT is_hidden_by_owner` (owner + admin vẫn xem được).
+- [x] `listVendors` / `getVendorBySlug` cũng filter `is_hidden_by_owner = false`
+      (do dùng `supabaseAdmin` bypass RLS).
+- [x] Server fn `setMyVendorHidden(hidden)` — chặn bật công khai khi
+      `is_approved = false`.
+- [x] UI vendor portal: badge trạng thái (Chờ duyệt / Tạm ẩn / Công khai)
+      + toggle "Công khai / Tạm ẩn" (chỉ active khi đã duyệt).
+- [x] Trigger `vendors_guard_update` vẫn chặn vendor sửa `is_approved`,
+      `is_featured`, `plan_id`, `plan_expires_at`, `owner_id`.
 
 ## Phase 12 — Quality of Life & Observability (P2)
 
