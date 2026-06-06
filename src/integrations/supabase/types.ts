@@ -742,6 +742,7 @@ export type Database = {
           id: string
           is_approved: boolean
           is_featured: boolean
+          is_hidden_by_owner: boolean
           logo_url: string | null
           name: string
           owner_id: string | null
@@ -769,6 +770,7 @@ export type Database = {
           id?: string
           is_approved?: boolean
           is_featured?: boolean
+          is_hidden_by_owner?: boolean
           logo_url?: string | null
           name: string
           owner_id?: string | null
@@ -796,6 +798,7 @@ export type Database = {
           id?: string
           is_approved?: boolean
           is_featured?: boolean
+          is_hidden_by_owner?: boolean
           logo_url?: string | null
           name?: string
           owner_id?: string | null
