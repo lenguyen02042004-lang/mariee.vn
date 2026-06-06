@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 import { fireEmail } from "@/lib/email/send.server";
+import { guardPublicSubmit } from "@/lib/anti-spam.server";
 
 export const listVendors = createServerFn({ method: "GET" }).handler(async () => {
   const { data, error } = await supabaseAdmin
@@ -34,8 +35,17 @@ export const submitVendorLead = createServerFn({ method: "POST" })
     guest_email: z.string().trim().email().max(160).optional().or(z.literal("")),
     event_date: z.string().optional().or(z.literal("")),
     message: z.string().trim().max(1000).optional().or(z.literal("")),
+    _hp: z.string().max(200).optional(),
+    _ts: z.number().int().nonnegative().optional(),
   }).parse(d))
   .handler(async ({ data }) => {
+    await guardPublicSubmit({
+      bucket: "lead",
+      scopeKey: data.vendor_id,
+      honeypot: { _hp: data._hp, _ts: data._ts },
+      limit: 5,
+      windowSeconds: 60,
+    });
     const { error } = await supabaseAdmin.from("vendor_leads").insert({
       vendor_id: data.vendor_id,
       guest_name: data.guest_name,

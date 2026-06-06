@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { submitVendorLead } from "@/lib/vendors.functions";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ export function VendorLeadForm({
   const submit = useServerFn(submitVendorLead);
   const [loading, setLoading] = useState(false);
   const [done, setDone] = useState(false);
+  const startedAt = useRef(Date.now());
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -32,6 +33,8 @@ export function VendorLeadForm({
         guest_email: String(f.get("guest_email") || ""),
         event_date: String(f.get("event_date") || ""),
           message,
+        _hp: String(f.get("website") || ""),
+        _ts: startedAt.current,
       }});
       setDone(true);
       toast.success("Đã gửi yêu cầu, vendor sẽ liên hệ lại sớm!");
@@ -50,6 +53,7 @@ export function VendorLeadForm({
 
   return (
     <form onSubmit={onSubmit} className="space-y-4">
+      <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
       <div className="grid md:grid-cols-2 gap-4">
         <input name="guest_name" required maxLength={120} placeholder="Họ tên *" className="w-full px-4 py-3 bg-background border border-border rounded-md outline-none focus:ring-2 focus:ring-primary" />
         <input name="guest_phone" maxLength={30} placeholder="Số điện thoại" className="w-full px-4 py-3 bg-background border border-border rounded-md outline-none focus:ring-2 focus:ring-primary" />
