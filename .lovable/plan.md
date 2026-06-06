@@ -41,16 +41,19 @@ Mục tiêu: admin/vendor/couple nhận thông báo khi có hoạt động mới
       + unsubscribe token), fire-and-forget trong server functions.
 - [x] Trang `/unsubscribe` cho footer email.
 
-## Phase 9 — Anti-Spam & Rate Limiting (P1)
+## Phase 9 — Anti-Spam & Rate Limiting (P1) ✅
 
 Mục tiêu: bảo vệ form public khỏi spam/abuse.
 
-- [ ] Rate limit IP-based cho server functions xử lý RSVP, wishes, leads
-      (table `rate_limits` + check trong server fn, window 1 phút).
-- [ ] Honeypot field + min-time-to-submit cho form public.
-- [ ] Captcha (Cloudflare Turnstile) cho RSVP + lời chúc nếu lượng spam
-      vượt ngưỡng — chuẩn bị sẵn nhưng chỉ bật khi cần.
-- [ ] Validate Zod chặt chẽ độ dài/regex tất cả input public.
+- [x] Rate limit IP-based (5 req / 60s / IP / scope) cho RSVP, wishes,
+      vendor leads — table `rate_limits` + RPC `rate_limit_check`
+      (SECURITY DEFINER, chỉ service_role gọi).
+- [x] Honeypot field `website` + min-time-to-submit 1.5s cho 3 form public.
+- [x] Helper `src/lib/anti-spam.server.ts` (`guardPublicSubmit`,
+      `getClientIp` từ `cf-connecting-ip` / `x-forwarded-for`).
+- [x] Validate Zod đã chặt chẽ độ dài cho tất cả input public.
+- [ ] (Tuỳ chọn) Cloudflare Turnstile — chuẩn bị sẵn nhưng chỉ bật khi
+      lượng spam vượt ngưỡng.
 
 ## Phase 10 — SEO + Discoverability (P1)
 
