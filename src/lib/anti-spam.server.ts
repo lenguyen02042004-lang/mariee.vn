@@ -1,12 +1,17 @@
-import { getRequestHeader } from "@tanstack/react-start/server";
+import { getRequest } from "@tanstack/react-start/server";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
 export function getClientIp(): string {
-  const xff = getRequestHeader("x-forwarded-for") || "";
-  const cf = getRequestHeader("cf-connecting-ip") || "";
-  const real = getRequestHeader("x-real-ip") || "";
-  const ip = (cf || xff.split(",")[0] || real || "").trim();
-  return ip || "unknown";
+  try {
+    const h = getRequest().headers;
+    const cf = h.get("cf-connecting-ip") || "";
+    const xff = h.get("x-forwarded-for") || "";
+    const real = h.get("x-real-ip") || "";
+    const ip = (cf || xff.split(",")[0] || real || "").trim();
+    return ip || "unknown";
+  } catch {
+    return "unknown";
+  }
 }
 
 export function verifyHoneypot(input: { _hp?: string; _ts?: number } | undefined) {
