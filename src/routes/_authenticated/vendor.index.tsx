@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getMyVendor, upsertMyVendor, publishMyVendor } from "@/lib/vendor-owner.functions";
+import { getMyVendor, upsertMyVendor, publishMyVendor, setMyVendorHidden } from "@/lib/vendor-owner.functions";
 import { listMyProducts } from "@/lib/vendor-owner.functions";
 import { uploadImage } from "@/lib/upload";
 import { ImagePicker, ImageUploadButton } from "@/components/ImagePicker";
@@ -35,6 +35,7 @@ function VendorPortal() {
   const fetchMine = useServerFn(getMyVendor);
   const save = useServerFn(upsertMyVendor);
   const publish = useServerFn(publishMyVendor);
+  const setHidden = useServerFn(setMyVendorHidden);
   const fetchProducts = useServerFn(listMyProducts);
   const { data, isLoading } = useQuery({ queryKey:["my-vendor"], queryFn:()=>fetchMine() });
   const { data: products } = useQuery({ queryKey:["my-products"], queryFn:()=>fetchProducts(), enabled: !!data });
@@ -73,6 +74,12 @@ function VendorPortal() {
     },
     onSuccess: () => { toast.success("Đã lưu và xuất bản bản công khai."); qc.invalidateQueries({queryKey:["my-vendor"]}); },
     onError: (e:any)=>toast.error(e.message),
+  });
+
+  const visibility = useMutation({
+    mutationFn: (hidden: boolean) => setHidden({ data: { hidden } }),
+    onSuccess: () => { toast.success("Đã cập nhật trạng thái hiển thị."); qc.invalidateQueries({ queryKey:["my-vendor"] }); },
+    onError: (e:any) => toast.error(e.message),
   });
 
   const onUpload = async (field: string, file: File) => {
@@ -117,13 +124,37 @@ function VendorPortal() {
           <Link to="/vendors/$slug" params={{ slug: (data as any).slug }} target="_blank" className="px-3 py-1.5 rounded border border-primary text-primary hover:bg-primary hover:text-primary-foreground">Xem trang công khai ↗</Link>
         )}
       </nav>
-      {data && !(data as any).is_approved && <p className="mt-4 p-3 bg-secondary/60 rounded text-sm">⏳ Đang chờ admin duyệt.</p>}
-      {data && (data as any).is_approved && (
-        <p className="mt-4 p-3 bg-secondary/60 rounded text-sm">
-          {(data as any).published_at
-            ? <>✓ Bản công khai cập nhật lần cuối: {new Date((data as any).published_at).toLocaleString("vi-VN")}</>
-            : "Chưa xuất bản — lưu trước rồi nhấn “Xuất bản” để hiển thị công khai."}
-        </p>
+      {data && (
+        <div className="mt-4 p-4 bg-secondary/60 rounded-md flex flex-wrap items-center justify-between gap-3 text-sm">
+          <div className="space-y-1">
+            {!(data as any).is_approved ? (
+              <p>⏳ <span className="font-medium">Chờ admin duyệt</span> — hồ sơ chưa hiển thị công khai.</p>
+            ) : (data as any).is_hidden_by_owner ? (
+              <p>🚫 Đã duyệt nhưng <span className="font-medium">đang tạm ẩn</span>. Bật công khai để khách hàng nhìn thấy.</p>
+            ) : (data as any).published_at ? (
+              <p>✓ Đang công khai — cập nhật lần cuối {new Date((data as any).published_at).toLocaleString("vi-VN")}</p>
+            ) : (
+              <p>✓ Đã duyệt — lưu rồi nhấn “Xuất bản” để hiển thị công khai.</p>
+            )}
+          </div>
+          {(data as any).is_approved && (
+            <label className="inline-flex items-center gap-2 cursor-pointer select-none">
+              <span className="text-xs uppercase tracking-wider text-muted-foreground">
+                {(data as any).is_hidden_by_owner ? "Tạm ẩn" : "Công khai"}
+              </span>
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={!(data as any).is_hidden_by_owner}
+                disabled={visibility.isPending}
+                onChange={(e) => visibility.mutate(!e.target.checked)}
+              />
+              <span className="w-10 h-6 bg-muted rounded-full relative peer-checked:bg-primary transition-colors">
+                <span className="absolute top-0.5 left-0.5 w-5 h-5 bg-background rounded-full shadow transition-transform peer-checked:translate-x-4" />
+              </span>
+            </label>
+          )}
+        </div>
       )}
 
       <form onSubmit={(e)=>{e.preventDefault(); m.mutate();}} className="mt-8 space-y-6">
