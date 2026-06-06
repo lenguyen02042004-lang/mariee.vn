@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 import { fireEmail, getUserEmailById } from "@/lib/email/send.server";
+import { guardPublicSubmit } from "@/lib/anti-spam.server";
 
 async function notifyCoupleOwner(coupleId: string, template: string, data: Record<string, any>) {
   const { data: couple } = await supabaseAdmin
@@ -56,8 +57,17 @@ export const submitRsvp = createServerFn({ method: "POST" })
     num_guests: z.number().int().min(1).max(20),
     message: z.string().trim().max(500).optional().or(z.literal("")),
     side: z.enum(["bride","groom","both"]).optional(),
+    _hp: z.string().max(200).optional(),
+    _ts: z.number().int().nonnegative().optional(),
   }).parse(d))
   .handler(async ({ data }) => {
+    await guardPublicSubmit({
+      bucket: "rsvp",
+      scopeKey: data.couple_id,
+      honeypot: { _hp: data._hp, _ts: data._ts },
+      limit: 5,
+      windowSeconds: 60,
+    });
     const { error } = await supabaseAdmin.from("rsvp").insert({
       couple_id: data.couple_id,
       guest_name: data.guest_name,
@@ -84,8 +94,17 @@ export const submitWish = createServerFn({ method: "POST" })
     couple_id: z.string().uuid(),
     guest_name: z.string().trim().min(1).max(120),
     message: z.string().trim().min(1).max(500),
+    _hp: z.string().max(200).optional(),
+    _ts: z.number().int().nonnegative().optional(),
   }).parse(d))
   .handler(async ({ data }) => {
+    await guardPublicSubmit({
+      bucket: "wish",
+      scopeKey: data.couple_id,
+      honeypot: { _hp: data._hp, _ts: data._ts },
+      limit: 5,
+      windowSeconds: 60,
+    });
     const { error } = await supabaseAdmin.from("couple_wishes").insert({
       couple_id: data.couple_id, guest_name: data.guest_name, message: data.message,
     });
