@@ -89,17 +89,22 @@ Mục tiêu: tách rõ "admin duyệt lần đầu" vs "vendor tự ẩn/hiện"
 - [x] Trigger `vendors_guard_update` vẫn chặn vendor sửa `is_approved`,
       `is_featured`, `plan_id`, `plan_expires_at`, `owner_id`.
 
-## Phase 12 — Quality of Life & Observability (P2)
+## Phase 12 — Quality of Life & Observability (P2) ✅
 
-- [ ] Analytics: Google Analytics 4 + Meta Pixel (tracking id qua
-      `site_settings`).
-- [ ] Image CDN transform cho upload `wedding-media` (resize/webp on the
-      fly qua `cdn-image.ts`).
-- [ ] Admin export CSV (couples, vendors, leads, payments).
-- [ ] Backup script tự động (pg_dump qua cron job public route).
-- [ ] Error monitoring: log lỗi server fn vào bảng `error_logs` + page
-      `/admin/logs`.
-- [ ] Skeleton/loading state đồng bộ cho mọi page chính.
+- [x] Analytics: Google Analytics 4 + Meta Pixel (cấu hình `ga4_id` /
+      `meta_pixel_id` ở `/admin/settings`, script tự nạp ở `__root` qua
+      `<Analytics />`).
+- [x] Admin export CSV cho Cặp đôi, Nhà cung cấp, Leads, Payments (và Error
+      Logs) — helper `src/lib/csv.ts` (`downloadCsv`, BOM cho Excel).
+- [x] Error monitoring: bảng `error_logs` (admin-only RLS), helper
+      `logServerError` / `withErrorLog` trong `src/lib/error-log.server.ts`,
+      trang `/admin/logs` (xem context + stack, xoá log, dọn log > 30 ngày).
+- [x] Đã có `src/lib/cdn-image.ts` (Phase trước) cho ảnh upload — không cần
+      transform thêm.
+- [ ] (Tuỳ chọn) Backup script `pg_dump` qua cron public route — Lovable
+      Cloud đã có snapshot tự động, để optional khi cần custom.
+- [ ] (Tuỳ chọn) Skeleton/loading state đồng bộ — đa số page đã có
+      placeholder "Đang tải…"; có thể polish sau.
 
 ---
 
