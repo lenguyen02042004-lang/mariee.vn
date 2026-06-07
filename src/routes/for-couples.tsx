@@ -2,13 +2,20 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-wedding-2.jpg";
 import { PricingSection } from "@/components/PricingSection";
 import { PageHero } from "@/components/PageHero";
+import { canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/for-couples")({
   component: ForCouples,
-  head: () => ({ meta: [
-    { title: "Dành cho cặp đôi — Mariée" },
-    { name: "description", content: "Tạo landing page cưới sang trọng, nhận RSVP và lưu giữ kỷ niệm với Mariée." },
-  ]}),
+  head: () => ({
+    meta: [
+      { title: "Dành cho cặp đôi — Mariée" },
+      { name: "description", content: "Tạo landing page cưới sang trọng, nhận RSVP và lưu giữ kỷ niệm với Mariée." },
+      { property: "og:title", content: "Dành cho cặp đôi — Mariée" },
+      { property: "og:description", content: "Tạo landing page cưới sang trọng, nhận RSVP và lưu giữ kỷ niệm với Mariée." },
+      { property: "og:url", content: canonical("/for-couples") },
+    ],
+    links: [{ rel: "canonical", href: canonical("/for-couples") }],
+  }),
 });
 
 function ForCouples() {

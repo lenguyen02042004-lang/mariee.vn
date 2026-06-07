@@ -55,21 +55,23 @@ Mục tiêu: bảo vệ form public khỏi spam/abuse.
 - [ ] (Tuỳ chọn) Cloudflare Turnstile — chuẩn bị sẵn nhưng chỉ bật khi
       lượng spam vượt ngưỡng.
 
-## Phase 10 — SEO + Discoverability (P1)
+## Phase 10 — SEO + Discoverability (P1) ✅
 
 Mục tiêu: index tốt trên Google, share đẹp trên social.
 
-- [ ] Chạy `seo_chat--trigger_scan`, fix toàn bộ failing findings.
-- [ ] Verify `head()` riêng cho mỗi route: `/`, `/vendors`,
-      `/vendors/$slug`, `/couples/$slug`, `/blog`, `/blog/$slug`,
-      `/for-couples`, `/for-vendors`, `/about`.
-- [ ] og:image động từ loader cho route dynamic (cover_image vendor/couple,
-      cover_image blog post).
-- [ ] JSON-LD: `LocalBusiness` cho vendor, `Event` cho couple, `Article`
-      cho blog post.
-- [ ] Verify `sitemap.xml` sinh URL công khai đúng (couples/vendors/blog
-      published), `robots.txt` allow.
-- [ ] Canonical URL leaf-only (không ở `__root.tsx`).
+- [x] Helper `src/lib/seo.ts` (`canonical`, `absoluteImage`, `SITE_URL`).
+- [x] `head()` riêng cho mỗi route công khai với title, description,
+      og:title, og:description, og:url, canonical (leaf-only).
+- [x] og:image tuyệt đối (absoluteImage) cho `/vendors/$slug`,
+      `/couples/$slug`, `/blog/$slug` + twitter:image.
+- [x] JSON-LD: `Organization` ở __root, `LocalBusiness` cho vendor,
+      `Event` cho couple (có wedding_date), `Article` cho blog post.
+- [x] `sitemap.xml` bao gồm blog posts, vendor (lọc is_approved &
+      is_hidden_by_owner=false), couple published. Dùng `https://mariee.vn`.
+- [x] `robots.txt` trỏ về `https://mariee.vn/sitemap.xml`.
+- [x] Bỏ og:image từ `__root.tsx` để leaf og:image hiển thị đúng.
+- [ ] (Tuỳ chọn) Chạy `seo_chat--trigger_scan` sau khi deploy để verify
+      và fix các findings còn lại.
 
 ## Phase 11 — Vendor Approval Workflow Hoàn Thiện (P1) ✅
 

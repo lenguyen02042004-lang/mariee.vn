@@ -2,13 +2,20 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/vendor-venue.jpg";
 import { PricingSection } from "@/components/PricingSection";
 import { PageHero } from "@/components/PageHero";
+import { canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/for-vendors")({
   component: ForVendors,
-  head: () => ({ meta: [
-    { title: "Dành cho vendor — Mariée" },
-    { name: "description", content: "Tiếp cận hàng ngàn cặp đôi sắp cưới. Đăng ký vendor trên Mariée." },
-  ]}),
+  head: () => ({
+    meta: [
+      { title: "Dành cho vendor — Mariée" },
+      { name: "description", content: "Tiếp cận hàng ngàn cặp đôi sắp cưới. Đăng ký vendor trên Mariée." },
+      { property: "og:title", content: "Dành cho vendor — Mariée" },
+      { property: "og:description", content: "Tiếp cận hàng ngàn cặp đôi sắp cưới. Đăng ký vendor trên Mariée." },
+      { property: "og:url", content: canonical("/for-vendors") },
+    ],
+    links: [{ rel: "canonical", href: canonical("/for-vendors") }],
+  }),
 });
 
 function ForVendors() {

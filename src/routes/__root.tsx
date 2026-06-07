@@ -45,10 +45,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:title", content: "Mariée — Trang lễ cưới sang trọng cho những cặp đôi" },
       { property: "og:description", content: "Mariée — Nền tảng cung cấp trang lễ cưới đẳng cấp cho từng cặp đôi và nhà cung cấp dịch vụ cưới hàng đầu Việt Nam." },
       { name: "twitter:description", content: "Mariée — Nền tảng cung cấp trang lễ cưới đẳng cấp cho từng cặp đôi và nhà cung cấp dịch vụ cưới hàng đầu Việt Nam." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/89e0542a-9cbe-482e-9a49-e6a0fdf4d1e7" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/89e0542a-9cbe-482e-9a49-e6a0fdf4d1e7" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Mariée" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -56,6 +55,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap" },
     ],
+    scripts: [{
+      type: "application/ld+json",
+      children: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "Mariée",
+        url: "https://mariee.vn",
+        logo: "https://mariee.vn/favicon.ico",
+      }),
+    }],
   }),
   shellComponent: RootShell,
   component: RootComponent,

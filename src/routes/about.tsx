@@ -1,13 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import hero from "@/assets/hero-wedding-1.jpg";
 import { PageHero } from "@/components/PageHero";
+import { canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/about")({
   component: About,
-  head: () => ({ meta: [
-    { title: "Giới thiệu — Mariée" },
-    { name: "description", content: "Mariée là nền tảng landing page cưới sang trọng kết nối cặp đôi với những vendor cưới hàng đầu Việt Nam." },
-  ]}),
+  head: () => ({
+    meta: [
+      { title: "Giới thiệu — Mariée" },
+      { name: "description", content: "Mariée là nền tảng landing page cưới sang trọng kết nối cặp đôi với những vendor cưới hàng đầu Việt Nam." },
+      { property: "og:title", content: "Giới thiệu — Mariée" },
+      { property: "og:description", content: "Mariée là nền tảng landing page cưới sang trọng kết nối cặp đôi với những vendor cưới hàng đầu Việt Nam." },
+      { property: "og:url", content: canonical("/about") },
+      { property: "og:type", content: "website" },
+    ],
+    links: [{ rel: "canonical", href: canonical("/about") }],
+  }),
 });
 
 function About() {

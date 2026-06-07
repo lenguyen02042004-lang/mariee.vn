@@ -2,6 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { useState } from "react";
 import { getCoupleBySlug } from "@/lib/couples.functions";
 import { resolveImg } from "@/lib/image-map";
+import { absoluteImage, canonical } from "@/lib/seo";
 import { HeroSlider } from "@/components/HeroSlider";
 import { RsvpForm } from "@/components/RsvpForm";
 import { Countdown } from "@/components/Countdown";
@@ -33,15 +34,45 @@ export const Route = createFileRoute("/couples/$slug")({
       <div><p className="text-muted-foreground">{error.message}</p></div>
     </div>
   ),
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [
-      { title: `${loaderData.couple.bride_name} & ${loaderData.couple.groom_name} — Mariée Wedding` },
-      { name: "description", content: loaderData.couple.quote ?? `Đám cưới của ${loaderData.couple.bride_name} & ${loaderData.couple.groom_name}` },
-      { property: "og:title", content: `${loaderData.couple.bride_name} & ${loaderData.couple.groom_name}` },
-      { property: "og:description", content: loaderData.couple.quote ?? "" },
-      { property: "og:image", content: resolveImg(loaderData.couple.cover_image) },
-    ] : [],
-  }),
+  head: ({ loaderData, params }) => {
+    if (!loaderData) return { meta: [] };
+    const c: any = loaderData.couple;
+    const url = canonical(`/couples/${params.slug}`);
+    const img = absoluteImage(resolveImg(c.cover_image));
+    const title = `${c.bride_name} & ${c.groom_name}`;
+    const desc = c.quote ?? `Đám cưới của ${title}`;
+    return {
+      meta: [
+        { title: `${title} — Mariée Wedding` },
+        { name: "description", content: desc },
+        { property: "og:title", content: title },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "website" },
+        ...(img ? [{ property: "og:image", content: img }, { name: "twitter:image", content: img }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: c.wedding_date ? [{
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Event",
+          name: `Lễ cưới ${title}`,
+          startDate: c.wedding_date,
+          eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+          eventStatus: "https://schema.org/EventScheduled",
+          image: img ? [img] : undefined,
+          description: desc,
+          url,
+          location: c.venue_name ? {
+            "@type": "Place",
+            name: c.venue_name,
+            address: c.venue_address ?? undefined,
+          } : undefined,
+        }),
+      }] : undefined,
+    };
+  },
 });
 
 function Section({ kicker, title, children, dark }: { kicker: string; title?: string; children: React.ReactNode; dark?: boolean }) {

@@ -6,6 +6,7 @@ import { z } from "zod";
 import { listBlogPosts, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { SmartImage } from "@/components/SmartImage";
 import heroBg from "@/assets/hero-wedding-3.jpg";
+import { canonical } from "@/lib/seo";
 
 const searchSchema = z.object({
   page: z.coerce.number().int().min(1).max(1000).default(1).catch(1),
@@ -24,7 +25,10 @@ export const Route = createFileRoute("/blog")({
       { name: "description", content: "Tin tức, mẹo cưới, câu chuyện thật và xu hướng cưới cập nhật mỗi tuần từ Mariée Wedding." },
       { property: "og:title", content: "Blog cưới — Mariée Wedding" },
       { property: "og:description", content: "Khám phá kho cảm hứng cưới, mẹo lên kế hoạch và những câu chuyện thật từ các cặp đôi." },
+      { property: "og:url", content: canonical("/blog") },
+      { property: "og:type", content: "website" },
     ],
+    links: [{ rel: "canonical", href: canonical("/blog") }],
   }),
 });
 
