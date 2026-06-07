@@ -8,6 +8,7 @@ import { VendorCard } from "@/components/VendorCard";
 import { SmartImage } from "@/components/SmartImage";
 import { HomePageSkeleton } from "@/components/HomeSkeleton";
 import { VendorCategoryGrid } from "@/components/VendorCategoryIcons";
+import { canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/")({
   loader: async () => {
@@ -32,7 +33,10 @@ export const Route = createFileRoute("/")({
   head: () => ({ meta: [
     { title: "Mariée — Landing page cưới sang trọng cho mọi cặp đôi" },
     { name: "description", content: "Tạo trang cưới sang trọng riêng cho cặp đôi của bạn. Khám phá những nhà cung cấp dịch vụ cưới hàng đầu." },
-  ]}),
+    { property: "og:title", content: "Mariée — Landing page cưới sang trọng cho mọi cặp đôi" },
+    { property: "og:description", content: "Tạo trang cưới sang trọng riêng cho cặp đôi của bạn. Khám phá những nhà cung cấp dịch vụ cưới hàng đầu." },
+    { property: "og:url", content: canonical("/") },
+  ], links: [{ rel: "canonical", href: canonical("/") }] }),
 });
 
 function Home() {
