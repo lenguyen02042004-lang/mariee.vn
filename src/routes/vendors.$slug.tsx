@@ -1,6 +1,7 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
 import { getVendorBySlug } from "@/lib/vendors.functions";
 import { resolveImg } from "@/lib/image-map";
+import { absoluteImage, canonical } from "@/lib/seo";
 import { useEffect, useState } from "react";
 import { VendorLeadForm } from "@/components/VendorLeadForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -26,15 +27,45 @@ export const Route = createFileRoute("/vendors/$slug")({
   errorComponent: ({ error }) => (
     <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground px-6 text-center">{error.message}</div>
   ),
-  head: ({ loaderData }) => ({
-    meta: loaderData ? [
-      { title: `${loaderData.name} — Mariée Wedding` },
-      { name: "description", content: loaderData.tagline ?? loaderData.description?.slice(0,160) ?? loaderData.name },
-      { property: "og:title", content: loaderData.name },
-      { property: "og:description", content: loaderData.tagline ?? "" },
-      { property: "og:image", content: resolveImg(loaderData.cover_image) },
-    ] : [],
-  }),
+  head: ({ loaderData, params }) => {
+    if (!loaderData) return { meta: [] };
+    const v: any = loaderData;
+    const url = canonical(`/vendors/${params.slug}`);
+    const img = absoluteImage(resolveImg(v.cover_image));
+    const desc = v.tagline ?? v.description?.slice(0, 160) ?? v.name;
+    return {
+      meta: [
+        { title: `${v.name} — Mariée Wedding` },
+        { name: "description", content: desc },
+        { property: "og:title", content: v.name },
+        { property: "og:description", content: desc },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "website" },
+        ...(img ? [{ property: "og:image", content: img }, { name: "twitter:image", content: img }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [{
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "LocalBusiness",
+          name: v.name,
+          description: v.description ?? v.tagline ?? undefined,
+          image: img ? [img] : undefined,
+          url,
+          telephone: v.phone ?? undefined,
+          email: v.email ?? undefined,
+          priceRange: v.price_range ?? undefined,
+          address: (v.address || v.city) ? {
+            "@type": "PostalAddress",
+            streetAddress: v.address ?? undefined,
+            addressLocality: v.city ?? undefined,
+            addressCountry: "VN",
+          } : undefined,
+        }),
+      }],
+    };
+  },
 });
 
 function VendorHero({ images, name, tagline }: { images: string[]; name: string; tagline?: string | null }) {
