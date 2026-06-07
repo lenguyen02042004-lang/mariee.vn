@@ -8,6 +8,9 @@ import { BackToTop } from "@/components/BackToTop";
 import { AuthProvider } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { assignSignupRole } from "@/lib/signup-role.functions";
+import { Analytics } from "@/components/Analytics";
+import { useQuery } from "@tanstack/react-query";
+import { getSiteSettings } from "@/lib/plans.functions";
 
 function NotFoundComponent() {
   return (
@@ -83,10 +86,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { data: site } = useQuery({ queryKey: ["site-settings"], queryFn: () => getSiteSettings(), staleTime: 5 * 60 * 1000 });
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AuthSync />
+        <Analytics ga4Id={(site as any)?.ga4_id} pixelId={(site as any)?.meta_pixel_id} />
         <div className="min-h-screen flex flex-col">
           <Header />
           <main className="flex-1"><Outlet /></main>
