@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import {
   LayoutDashboard, Heart, Store, FileText, ClipboardList, MessageSquareHeart,
-  Inbox, Package, Wallet, Users, Settings,
+  Inbox, Package, Wallet, Users, Settings, AlertTriangle,
 } from "lucide-react";
 
 const groups = [
@@ -38,6 +38,7 @@ const groups = [
     label: "Hệ thống",
     items: [
       { to: "/admin/users", label: "Người dùng", icon: Users },
+      { to: "/admin/logs", label: "Nhật ký lỗi", icon: AlertTriangle },
       { to: "/admin/settings", label: "Cài đặt ứng dụng", icon: Settings },
     ],
   },
