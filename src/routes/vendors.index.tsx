@@ -6,6 +6,7 @@ import { VendorCard } from "@/components/VendorCard";
 import hero from "@/assets/vendor-photo.jpg";
 import { PageHero } from "@/components/PageHero";
 import { VendorCategoryChips } from "@/components/VendorCategoryIcons";
+import { canonical } from "@/lib/seo";
 
 const CAT_LABEL: Record<string, string> = {
   venue: "Trung tâm tiệc cưới",
@@ -30,7 +31,10 @@ export const Route = createFileRoute("/vendors/")({
   head: () => ({ meta: [
     { title: "Nhà cung cấp dịch vụ cưới — Mariée" },
     { name: "description", content: "Danh sách các nhà cung cấp dịch vụ cưới uy tín và đẳng cấp." },
-  ]}),
+    { property: "og:title", content: "Nhà cung cấp dịch vụ cưới — Mariée" },
+    { property: "og:description", content: "Danh sách các nhà cung cấp dịch vụ cưới uy tín và đẳng cấp." },
+    { property: "og:url", content: canonical("/vendors") },
+  ], links: [{ rel: "canonical", href: canonical("/vendors") }] }),
 });
 
 function VendorsPage() {
