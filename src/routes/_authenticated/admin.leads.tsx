@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListLeads, adminUpdateLeadStatus } from "@/lib/admin.functions";
+import { downloadCsv } from "@/lib/csv";
 
 export const Route = createFileRoute("/_authenticated/admin/leads")({ component: LeadsAdmin });
 
@@ -43,6 +44,16 @@ function LeadsAdmin() {
           {Object.entries(STATUS_LABEL).map(([k,v]) => <option key={k} value={k}>{v} ({counts[k] ?? 0})</option>)}
         </select>
         <span className="text-xs text-muted-foreground">Hiện: {filtered.length}</span>
+        <button
+          type="button"
+          onClick={() => downloadCsv(`leads-${new Date().toISOString().slice(0,10)}`, filtered.map((l: any) => ({
+            id: l.id, created_at: l.created_at, guest_name: l.guest_name, guest_phone: l.guest_phone,
+            guest_email: l.guest_email, event_date: l.event_date, vendor: l.vendors?.name, vendor_slug: l.vendors?.slug,
+            status: l.status, message: l.message,
+          })))}
+          disabled={filtered.length === 0}
+          className="ml-auto px-3 py-1.5 text-xs border border-input rounded hover:bg-secondary disabled:opacity-50"
+        >Xuất CSV</button>
       </div>
       <div className="overflow-x-auto mt-6">
         <table className="w-full text-sm border border-border/60">
