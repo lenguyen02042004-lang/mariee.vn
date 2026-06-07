@@ -232,6 +232,21 @@ function SiteSettings() {
           </div>
         </section>
 
+        <section className="bg-card border border-border/60 rounded-lg p-6 space-y-4">
+          <h2 className="font-display text-xl">Analytics</h2>
+          <p className="text-xs text-muted-foreground">Dán ID đo lường — script sẽ được tự động nạp trên toàn site. Để trống nếu chưa dùng.</p>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Google Analytics 4 ID</label>
+              <input value={f.ga4_id ?? ""} onChange={e => setF({ ...f, ga4_id: e.target.value.trim() })} placeholder="G-XXXXXXXXXX" className="mt-1 w-full px-3 py-2 border border-input bg-background rounded font-mono text-sm" />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Meta (Facebook) Pixel ID</label>
+              <input value={f.meta_pixel_id ?? ""} onChange={e => setF({ ...f, meta_pixel_id: e.target.value.trim() })} placeholder="123456789012345" className="mt-1 w-full px-3 py-2 border border-input bg-background rounded font-mono text-sm" />
+            </div>
+          </div>
+        </section>
+
         <div className="flex justify-end">
           <button disabled={m.isPending} className="px-6 py-2.5 bg-primary text-primary-foreground rounded-md font-medium hover:bg-primary/90 disabled:opacity-60">Lưu cài đặt</button>
         </div>
