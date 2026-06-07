@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListCouples, adminDeleteCouple, adminSetCouplePublish } from "@/lib/admin.functions";
 import { toast } from "sonner";
+import { downloadCsv } from "@/lib/csv";
 
 export const Route = createFileRoute("/_authenticated/admin/couples")({ component: CouplesList });
 
@@ -34,6 +35,18 @@ function CouplesList() {
           <p className="text-sm text-muted-foreground mt-1">Hiển thị {filtered.length}/{(data ?? []).length}</p>
         </div>
         <Link to="/admin/couples/new" className="px-4 py-2 bg-primary text-primary-foreground rounded text-sm">+ Thêm</Link>
+      </div>
+      <div className="mt-3 flex justify-end">
+        <button
+          type="button"
+          onClick={() => downloadCsv(`couples-${new Date().toISOString().slice(0,10)}`, filtered.map((c: any) => ({
+            id: c.id, slug: c.slug, bride_name: c.bride_name, groom_name: c.groom_name,
+            wedding_date: c.wedding_date, venue_name: c.venue_name, is_published: c.is_published,
+            created_at: c.created_at,
+          })))}
+          disabled={filtered.length === 0}
+          className="px-3 py-1.5 text-xs border border-input rounded hover:bg-secondary disabled:opacity-50"
+        >Xuất CSV ({filtered.length})</button>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Tìm theo tên cô dâu, chú rể, slug…" className="flex-1 min-w-[240px] px-3 py-2 rounded-md border border-input bg-background text-sm" />

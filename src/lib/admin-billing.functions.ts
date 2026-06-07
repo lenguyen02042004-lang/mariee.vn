@@ -179,6 +179,8 @@ const siteSchema = z.object({
   contact_phone: z.string().max(60).nullish().or(z.literal("")),
   footer_text: z.string().max(500).nullish().or(z.literal("")),
   hero_youtube_url: z.string().max(500).nullish().or(z.literal("")),
+  ga4_id: z.string().max(40).regex(/^(G-[A-Z0-9]+)?$/i, "GA4 ID dạng G-XXXXXXX").nullish().or(z.literal("")),
+  meta_pixel_id: z.string().max(40).regex(/^[0-9]*$/, "Pixel ID chỉ gồm chữ số").nullish().or(z.literal("")),
   hero_slides: z.array(z.object({
     image_url: z.string().max(800).optional().or(z.literal("")),
     eyebrow: z.string().max(120).optional().or(z.literal("")),

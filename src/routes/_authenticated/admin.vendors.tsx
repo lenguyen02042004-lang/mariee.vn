@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { adminListVendors, adminSetVendorApproval, adminDeleteVendor, adminPublishVendor, listActiveCategories } from "@/lib/admin.functions";
 import { toast } from "sonner";
+import { downloadCsv } from "@/lib/csv";
 
 export const Route = createFileRoute("/_authenticated/admin/vendors")({ component: AdminVendors });
 
@@ -45,6 +46,18 @@ function AdminVendors() {
           <p className="text-sm text-muted-foreground mt-1">Tạo, sửa, duyệt và xuất bản vendor. Hiển thị {filtered.length}/{(data ?? []).length}.</p>
         </div>
         <Link to="/admin/vendors/new" className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90">+ Thêm vendor</Link>
+      </div>
+      <div className="mt-3 flex justify-end">
+        <button
+          type="button"
+          onClick={() => downloadCsv(`vendors-${new Date().toISOString().slice(0,10)}`, filtered.map((v: any) => ({
+            id: v.id, slug: v.slug, name: v.name, category: v.category, email: v.email, phone: v.phone,
+            city: v.city, is_approved: v.is_approved, is_featured: v.is_featured, is_hidden_by_owner: v.is_hidden_by_owner,
+            plan_id: v.plan_id, plan_expires_at: v.plan_expires_at, published_at: v.published_at, created_at: v.created_at,
+          })))}
+          disabled={filtered.length === 0}
+          className="px-3 py-1.5 text-xs border border-input rounded hover:bg-secondary disabled:opacity-50"
+        >Xuất CSV ({filtered.length})</button>
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         <input value={q} onChange={(e)=>setQ(e.target.value)} placeholder="Tìm theo tên, slug, email, SĐT, thành phố…" className="flex-1 min-w-[220px] px-3 py-2 rounded-md border border-input bg-background text-sm" />

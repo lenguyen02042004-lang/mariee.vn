@@ -8,6 +8,9 @@ import { BackToTop } from "@/components/BackToTop";
 import { AuthProvider } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { assignSignupRole } from "@/lib/signup-role.functions";
+import { Analytics } from "@/components/Analytics";
+import { useQuery } from "@tanstack/react-query";
+import { getSiteSettings } from "@/lib/plans.functions";
 
 function NotFoundComponent() {
   return (
@@ -87,6 +90,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <AuthSync />
+        <AnalyticsLoader />
         <div className="min-h-screen flex flex-col">
           <Header />
           <main className="flex-1"><Outlet /></main>
@@ -97,6 +101,11 @@ function RootComponent() {
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function AnalyticsLoader() {
+  const { data: site } = useQuery({ queryKey: ["site-settings"], queryFn: () => getSiteSettings(), staleTime: 5 * 60 * 1000 });
+  return <Analytics ga4Id={(site as any)?.ga4_id} pixelId={(site as any)?.meta_pixel_id} />;
 }
 
 function AuthSync() {
