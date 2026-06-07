@@ -262,6 +262,36 @@ export type Database = {
         }
         Relationships: []
       }
+      error_logs: {
+        Row: {
+          context: Json
+          created_at: string
+          id: string
+          message: string
+          source: string
+          stack: string | null
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json
+          created_at?: string
+          id?: string
+          message: string
+          source: string
+          stack?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json
+          created_at?: string
+          id?: string
+          message?: string
+          source?: string
+          stack?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       payment_settings: {
         Row: {
           bank_account_name: string | null
@@ -388,10 +418,12 @@ export type Database = {
           contact_phone: string | null
           favicon_url: string | null
           footer_text: string | null
+          ga4_id: string | null
           hero_slides: Json
           hero_youtube_url: string | null
           id: number
           logo_url: string | null
+          meta_pixel_id: string | null
           primary_color: string | null
           site_name: string | null
           updated_at: string
@@ -402,10 +434,12 @@ export type Database = {
           contact_phone?: string | null
           favicon_url?: string | null
           footer_text?: string | null
+          ga4_id?: string | null
           hero_slides?: Json
           hero_youtube_url?: string | null
           id?: number
           logo_url?: string | null
+          meta_pixel_id?: string | null
           primary_color?: string | null
           site_name?: string | null
           updated_at?: string
@@ -416,10 +450,12 @@ export type Database = {
           contact_phone?: string | null
           favicon_url?: string | null
           footer_text?: string | null
+          ga4_id?: string | null
           hero_slides?: Json
           hero_youtube_url?: string | null
           id?: number
           logo_url?: string | null
+          meta_pixel_id?: string | null
           primary_color?: string | null
           site_name?: string | null
           updated_at?: string
