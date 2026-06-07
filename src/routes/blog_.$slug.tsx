@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBlogPostBySlug, listBlogCategories, type BlogCategory } from "@/lib/blog.functions";
 import { resolveImg } from "@/lib/image-map";
 import { SmartImage } from "@/components/SmartImage";
+import { absoluteImage, canonical } from "@/lib/seo";
 
 export const Route = createFileRoute("/blog_/$slug")({
   loader: async ({ params }) => {
@@ -21,17 +22,38 @@ export const Route = createFileRoute("/blog_/$slug")({
   errorComponent: ({ error }) => (
     <div className="min-h-[60vh] flex items-center justify-center text-muted-foreground px-6 text-center">{error.message}</div>
   ),
-  head: ({ loaderData }) => ({
-    meta: loaderData
-      ? [
-          { title: `${loaderData.post.title} — Mariée Wedding` },
-          { name: "description", content: loaderData.post.excerpt ?? loaderData.post.title },
-          { property: "og:title", content: loaderData.post.title },
-          { property: "og:description", content: loaderData.post.excerpt ?? "" },
-          { property: "og:image", content: resolveImg(loaderData.post.cover_image) },
-        ]
-      : [],
-  }),
+  head: ({ loaderData, params }) => {
+    if (!loaderData) return { meta: [] };
+    const post = loaderData.post;
+    const url = canonical(`/blog/${params.slug}`);
+    const img = absoluteImage(resolveImg(post.cover_image));
+    return {
+      meta: [
+        { title: `${post.title} — Mariée Wedding` },
+        { name: "description", content: post.excerpt ?? post.title },
+        { property: "og:title", content: post.title },
+        { property: "og:description", content: post.excerpt ?? "" },
+        { property: "og:url", content: url },
+        { property: "og:type", content: "article" },
+        ...(img ? [{ property: "og:image", content: img }, { name: "twitter:image", content: img }] : []),
+      ],
+      links: [{ rel: "canonical", href: url }],
+      scripts: [{
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Article",
+          headline: post.title,
+          description: post.excerpt ?? undefined,
+          image: img ? [img] : undefined,
+          datePublished: post.published_at,
+          dateModified: post.updated_at ?? post.published_at,
+          author: post.author_name ? { "@type": "Person", name: post.author_name } : undefined,
+          mainEntityOfPage: url,
+        }),
+      }],
+    };
+  },
 });
 
 function BlogPostPage() {
