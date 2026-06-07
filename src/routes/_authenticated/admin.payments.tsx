@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { adminListPayments, adminReviewPayment } from "@/lib/admin-billing.functions";
 import { toast } from "sonner";
 import { useState } from "react";
+import { downloadCsv } from "@/lib/csv";
 
 export const Route = createFileRoute("/_authenticated/admin/payments")({ component: PaymentsAdmin });
 
@@ -20,6 +21,16 @@ function PaymentsAdmin() {
       <h1 className="font-display text-3xl">Thanh toán vendor</h1>
       <div className="mt-4 flex gap-2 text-sm">
         {["all","pending","approved","rejected"].map(s => <button key={s} onClick={()=>setFilter(s)} className={`px-3 py-1 rounded ${filter===s?"bg-primary text-primary-foreground":"border border-input"}`}>{s}</button>)}
+        <button
+          type="button"
+          onClick={() => downloadCsv(`payments-${new Date().toISOString().slice(0,10)}`, rows.map((p: any) => ({
+            id: p.id, created_at: p.created_at, vendor: p.vendors?.name, plan: p.vendor_plans?.name,
+            amount_vnd: p.amount_vnd, transfer_code: p.transfer_code, status: p.status,
+            reviewed_at: p.reviewed_at, admin_note: p.admin_note,
+          })))}
+          disabled={rows.length === 0}
+          className="ml-auto px-3 py-1 text-xs border border-input rounded hover:bg-secondary disabled:opacity-50"
+        >Xuất CSV ({rows.length})</button>
       </div>
       <div className="mt-6 grid gap-3">
         {rows.map((p: any) => (
