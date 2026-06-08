@@ -160,9 +160,11 @@ export type Database = {
           gift_bride_account: string | null
           gift_bride_bank: string | null
           gift_bride_holder: string | null
+          gift_bride_qr_url: string | null
           gift_groom_account: string | null
           gift_groom_bank: string | null
           gift_groom_holder: string | null
+          gift_groom_qr_url: string | null
           groom_name: string
           groom_party_address: string | null
           groom_party_time: string | null
@@ -197,9 +199,11 @@ export type Database = {
           gift_bride_account?: string | null
           gift_bride_bank?: string | null
           gift_bride_holder?: string | null
+          gift_bride_qr_url?: string | null
           gift_groom_account?: string | null
           gift_groom_bank?: string | null
           gift_groom_holder?: string | null
+          gift_groom_qr_url?: string | null
           groom_name: string
           groom_party_address?: string | null
           groom_party_time?: string | null
@@ -234,9 +238,11 @@ export type Database = {
           gift_bride_account?: string | null
           gift_bride_bank?: string | null
           gift_bride_holder?: string | null
+          gift_bride_qr_url?: string | null
           gift_groom_account?: string | null
           gift_groom_bank?: string | null
           gift_groom_holder?: string | null
+          gift_groom_qr_url?: string | null
           groom_name?: string
           groom_party_address?: string | null
           groom_party_time?: string | null

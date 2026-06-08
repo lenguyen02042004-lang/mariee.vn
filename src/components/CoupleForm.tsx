@@ -293,12 +293,32 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
             <input value={form.gift_bride_holder ?? ""} onChange={e => setForm({ ...form, gift_bride_holder: e.target.value })} placeholder="Chủ tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
             <SelectOrOther value={form.gift_bride_bank ?? ""} onChange={v => setForm({ ...form, gift_bride_bank: v })} options={VN_BANKS} placeholder="— Chọn ngân hàng —" inputPlaceholder="Tên ngân hàng khác" />
             <input value={form.gift_bride_account ?? ""} onChange={e => setForm({ ...form, gift_bride_account: e.target.value.replace(/\D/g, "") })} placeholder="Số tài khoản" inputMode="numeric" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <div className="pt-2">
+              <ImagePicker
+                label="Ảnh QR chuyển khoản (tuỳ chọn)"
+                value={form.gift_bride_qr_url ?? ""}
+                onChange={(url) => setForm({ ...form, gift_bride_qr_url: url })}
+                folder="gift-qr"
+                maxMB={5}
+                aspect="aspect-square"
+              />
+            </div>
           </div>
           <div className="space-y-2 bg-secondary/40 p-4 rounded">
             <p className="font-script text-2xl text-primary">Chú rể</p>
             <input value={form.gift_groom_holder ?? ""} onChange={e => setForm({ ...form, gift_groom_holder: e.target.value })} placeholder="Chủ tài khoản" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
             <SelectOrOther value={form.gift_groom_bank ?? ""} onChange={v => setForm({ ...form, gift_groom_bank: v })} options={VN_BANKS} placeholder="— Chọn ngân hàng —" inputPlaceholder="Tên ngân hàng khác" />
             <input value={form.gift_groom_account ?? ""} onChange={e => setForm({ ...form, gift_groom_account: e.target.value.replace(/\D/g, "") })} placeholder="Số tài khoản" inputMode="numeric" className="w-full px-3 py-2 rounded border border-input bg-background text-sm" />
+            <div className="pt-2">
+              <ImagePicker
+                label="Ảnh QR chuyển khoản (tuỳ chọn)"
+                value={form.gift_groom_qr_url ?? ""}
+                onChange={(url) => setForm({ ...form, gift_groom_qr_url: url })}
+                folder="gift-qr"
+                maxMB={5}
+                aspect="aspect-square"
+              />
+            </div>
           </div>
         </div>
       </FormSection>
