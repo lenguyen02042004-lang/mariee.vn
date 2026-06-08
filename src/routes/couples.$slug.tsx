@@ -8,6 +8,7 @@ import { RsvpForm } from "@/components/RsvpForm";
 import { Countdown } from "@/components/Countdown";
 import { WishWall } from "@/components/WishWall";
 import { WeddingShareCard } from "@/components/WeddingShareCard";
+import { GiftBoxes } from "@/components/GiftBox";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 function toYouTubeEmbed(url: string): string {
@@ -94,7 +95,9 @@ function CouplePage() {
   const heroImages = [couple.hero_image_1, couple.hero_image_2, couple.hero_image_3].filter(Boolean) as string[];
   const schedule: Array<{ time?: string; title: string; description?: string }> = Array.isArray((couple as any).schedule) ? (couple as any).schedule : [];
 
-  const hasGift = couple.gift_bride_account || couple.gift_groom_account;
+  const hasGift =
+    couple.gift_bride_account || couple.gift_groom_account ||
+    (couple as any).gift_bride_qr_url || (couple as any).gift_groom_qr_url;
   const weddingFuture = couple.wedding_date ? new Date(couple.wedding_date).getTime() > Date.now() : false;
   const hasInvitations = couple.invitation_bride_url || couple.invitation_groom_url;
   const hasParties = couple.bride_party_time || couple.bride_party_venue || couple.groom_party_time || couple.groom_party_venue;
@@ -264,25 +267,25 @@ function CouplePage() {
 
       {hasGift && (
         <Section kicker="wedding gift" title="Hộp mừng cưới">
-          <p className="text-center text-muted-foreground max-w-xl mx-auto -mt-6 mb-10">Sự hiện diện và lời chúc của bạn là món quà ý nghĩa nhất. Nếu muốn gửi mừng cưới, bạn có thể chuyển khoản:</p>
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {couple.gift_bride_account && (
-              <div className="bg-card rounded-lg p-6 shadow-soft border border-border/40 text-center">
-                <p className="font-script text-2xl text-primary">Cô dâu</p>
-                <p className="font-medium mt-2">{couple.gift_bride_holder ?? couple.bride_name}</p>
-                <p className="text-sm text-muted-foreground mt-1">{couple.gift_bride_bank}</p>
-                <p className="font-display text-xl mt-3 tabular-nums">{couple.gift_bride_account}</p>
-              </div>
-            )}
-            {couple.gift_groom_account && (
-              <div className="bg-card rounded-lg p-6 shadow-soft border border-border/40 text-center">
-                <p className="font-script text-2xl text-primary">Chú rể</p>
-                <p className="font-medium mt-2">{couple.gift_groom_holder ?? couple.groom_name}</p>
-                <p className="text-sm text-muted-foreground mt-1">{couple.gift_groom_bank}</p>
-                <p className="font-display text-xl mt-3 tabular-nums">{couple.gift_groom_account}</p>
-              </div>
-            )}
-          </div>
+          <p className="text-center text-muted-foreground max-w-xl mx-auto -mt-6 mb-10">
+            Sự hiện diện và lời chúc của bạn là món quà ý nghĩa nhất. Nếu muốn gửi mừng cưới, bạn có thể nhấn vào hộp quà bên dưới để xem thông tin chuyển khoản.
+          </p>
+          <GiftBoxes
+            bride={{
+              label: "Cô dâu",
+              holder: couple.gift_bride_holder ?? couple.bride_name,
+              bank: couple.gift_bride_bank,
+              account: couple.gift_bride_account,
+              qrUrl: (couple as any).gift_bride_qr_url,
+            }}
+            groom={{
+              label: "Chú rể",
+              holder: couple.gift_groom_holder ?? couple.groom_name,
+              bank: couple.gift_groom_bank,
+              account: couple.gift_groom_account,
+              qrUrl: (couple as any).gift_groom_qr_url,
+            }}
+          />
         </Section>
       )}
 
