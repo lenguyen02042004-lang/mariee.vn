@@ -1,15 +1,40 @@
 import { Link, Outlet } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { BackToTop } from "@/components/BackToTop";
+import { useQuery } from "@tanstack/react-query";
+import { getSiteSettings } from "@/lib/plans.functions";
+
+function useSite() {
+  const { data } = useQuery({
+    queryKey: ["site-settings"],
+    queryFn: () => getSiteSettings(),
+    staleTime: 5 * 60 * 1000,
+  });
+  return (data ?? {}) as {
+    site_name?: string | null;
+    logo_url?: string | null;
+    contact_email?: string | null;
+    contact_phone?: string | null;
+    footer_text?: string | null;
+  };
+}
 
 export function Header() {
   const { user, signOut } = useAuth();
+  const site = useSite();
+  const brand = site.site_name?.trim() || "Mariée";
   return (
     <header className="sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/60">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
-          <span className="font-script text-3xl text-primary leading-none">Mariée</span>
-          <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground hidden sm:inline">Wedding</span>
+          {site.logo_url ? (
+            <img src={site.logo_url} alt={brand} className="h-9 w-auto object-contain" />
+          ) : (
+            <>
+              <span className="font-script text-3xl text-primary leading-none">{brand}</span>
+              <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground hidden sm:inline">Wedding</span>
+            </>
+          )}
         </Link>
         <nav className="flex items-center gap-6 text-sm">
           <Link to="/" className="hover:text-primary transition hidden md:inline">Trang chủ</Link>
@@ -35,12 +60,22 @@ export function Header() {
 }
 
 export function Footer() {
+  const site = useSite();
+  const brand = site.site_name?.trim() || "Mariée";
+  const year = new Date().getFullYear();
+  const tagline = site.footer_text?.trim() || "Nền tảng landing page cưới sang trọng và đẳng cấp cho mọi cặp đôi Việt.";
+  const email = site.contact_email?.trim();
+  const phone = site.contact_phone?.trim();
   return (
     <footer className="mt-32 border-t border-border/60 bg-secondary/40">
       <div className="max-w-7xl mx-auto px-6 py-12 grid md:grid-cols-4 gap-8">
         <div>
-          <div className="font-script text-3xl text-primary">Mariée</div>
-          <p className="text-sm text-muted-foreground mt-3 max-w-xs">Nền tảng landing page cưới sang trọng và đẳng cấp cho mọi cặp đôi Việt.</p>
+          {site.logo_url ? (
+            <img src={site.logo_url} alt={brand} className="h-10 w-auto object-contain" />
+          ) : (
+            <div className="font-script text-3xl text-primary">{brand}</div>
+          )}
+          <p className="text-sm text-muted-foreground mt-3 max-w-xs whitespace-pre-line">{tagline}</p>
         </div>
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider mb-3">Khám phá</h4>
@@ -62,10 +97,14 @@ export function Footer() {
         </div>
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider mb-3">Liên hệ</h4>
-          <p className="text-sm text-muted-foreground">hello@mariee.vn<br/>+84 901 234 567</p>
+          <p className="text-sm text-muted-foreground">
+            {email ? <a href={`mailto:${email}`} className="hover:text-primary">{email}</a> : "—"}
+            <br />
+            {phone ? <a href={`tel:${phone.replace(/\s/g, "")}`} className="hover:text-primary">{phone}</a> : null}
+          </p>
         </div>
       </div>
-      <div className="text-center text-xs text-muted-foreground py-4 border-t border-border/40">© 2026 Mariée Wedding. All rights reserved.</div>
+      <div className="text-center text-xs text-muted-foreground py-4 border-t border-border/40">© {year} {brand}. All rights reserved.</div>
     </footer>
   );
 }
