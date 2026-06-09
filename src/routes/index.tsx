@@ -76,7 +76,7 @@ function Home() {
         </div>
       </section>
 
-      <section className="bg-secondary/50 py-16 sm:py-24">
+      <section className="py-16 sm:py-24 bg-[linear-gradient(180deg,#FFF9FA_0%,#F9ECEE_100%)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-12 sm:mb-16">
             <p className="font-script text-3xl text-primary">our partners</p>
@@ -86,13 +86,23 @@ function Home() {
           <div className="mb-12 sm:mb-16">
             <VendorCategoryGrid />
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6">
-            {vendors.map((v: any) => (
-              <VendorCard key={v.id} v={v} />
-            ))}
-          </div>
+          {vendors.length > 0 && (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6 auto-rows-auto">
+              {vendors.map((v: any, i: number) => (
+                <div key={v.id} className={i === 0 ? "col-span-2 lg:col-span-2 lg:row-span-2" : ""}>
+                  <VendorCard v={v} featured={i === 0} eager={i === 0} />
+                </div>
+              ))}
+            </div>
+          )}
           <div className="text-center mt-10 sm:mt-12">
-            <Link to="/vendors" className="inline-block px-8 py-3 border border-primary text-primary rounded-md uppercase tracking-[0.2em] text-sm hover:bg-primary hover:text-primary-foreground transition">Xem tất cả</Link>
+            <Link
+              to="/vendors"
+              className="group inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-primary to-rose-deep text-primary-foreground uppercase tracking-[0.18em] text-sm shadow-soft hover:shadow-elegant hover:-translate-y-0.5 transition-all"
+            >
+              Khám phá tất cả đối tác cưới
+              <span className="transition-transform group-hover:translate-x-1">→</span>
+            </Link>
           </div>
         </div>
       </section>
