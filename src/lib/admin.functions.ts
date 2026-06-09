@@ -50,8 +50,8 @@ const coupleSchema = z.object({
   gift_groom_bank: z.string().max(120).optional().or(z.literal("")),
   gift_groom_account: z.string().max(60).optional().or(z.literal("")),
   gift_groom_holder: z.string().max(120).optional().or(z.literal("")),
-  gift_bride_qr_url: z.string().max(800).optional().or(z.literal("")),
-  gift_groom_qr_url: z.string().max(800).optional().or(z.literal("")),
+  gift_bride_qr_url: z.string().max(800).nullable().optional().or(z.literal("")),
+  gift_groom_qr_url: z.string().max(800).nullable().optional().or(z.literal("")),
   schedule: z.array(z.object({
     time: z.string().max(40).optional().or(z.literal("")),
     title: z.string().max(200),

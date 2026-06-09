@@ -10,9 +10,15 @@ export const DEFAULT_WIDTHS = [400, 640, 800, 1080, 1440, 1920] as const;
 function isOptimizable(src: string): boolean {
   if (!src) return false;
   if (src.startsWith("data:") || src.startsWith("blob:")) return false;
-  // Local Vite-bundled assets are already optimized at build time; passing them
-  // through Cloudflare would create a same-origin loop. Only transform absolute http(s) URLs.
-  return /^https?:\/\//.test(src);
+  // Cloudflare image resizing on lovable.app only proxies same-origin assets.
+  // External URLs (e.g. Supabase storage) must be returned unchanged or they 404.
+  if (!/^https?:\/\//.test(src)) return false;
+  if (typeof window === "undefined") return false;
+  try {
+    return new URL(src).origin === window.location.origin;
+  } catch {
+    return false;
+  }
 }
 
 export type CdnOpts = { width: number; quality?: number; height?: number; fit?: "cover" | "contain" | "scale-down" };
