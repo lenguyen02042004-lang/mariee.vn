@@ -1,5 +1,6 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import { VendorShell } from "@/components/VendorShell";
 
 export const Route = createFileRoute("/_authenticated/vendor")({
-  component: () => <Outlet />,
+  component: VendorShell,
 });
