@@ -30,7 +30,7 @@ function TestiPage() {
   });
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-12">
+    <div className="space-y-6">
       <div className="flex items-center justify-between mb-6">
         <div>
           <p className="font-script text-3xl text-primary">testimonials</p>
