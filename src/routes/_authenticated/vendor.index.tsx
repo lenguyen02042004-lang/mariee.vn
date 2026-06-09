@@ -106,26 +106,18 @@ function VendorPortal() {
   if (isLoading) return <p className="text-center py-20 text-muted-foreground">Đang tải…</p>;
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-12">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6">
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-border/60 pb-4">
         <div>
-          <p className="font-script text-3xl text-primary">vendor portal</p>
-          <h1 className="font-display text-4xl">Hồ sơ dịch vụ</h1>
-          <p className="text-sm text-muted-foreground mt-1">{user?.email}</p>
+          <p className="font-script text-2xl text-primary leading-none">vendor portal</p>
+          <h1 className="font-display text-3xl mt-1">Hồ sơ dịch vụ</h1>
         </div>
-        <button onClick={signOut} className="text-sm text-primary underline">Đăng xuất</button>
-      </div>
-      <nav className="mt-4 flex flex-wrap gap-3 text-sm">
-        <Link to="/vendor/products" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Sản phẩm/Dịch vụ</Link>
-        <Link to="/vendor/testimonials" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Đánh giá</Link>
-        <Link to="/vendor/leads" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Yêu cầu tư vấn</Link>
-        <Link to="/vendor/billing" activeProps={{ className:"px-3 py-1.5 rounded bg-primary text-primary-foreground" }} inactiveProps={{ className:"px-3 py-1.5 rounded bg-secondary/60 hover:bg-secondary" }}>Gói thành viên</Link>
         {data && (data as any).slug && (
-          <Link to="/vendors/$slug" params={{ slug: (data as any).slug }} target="_blank" className="px-3 py-1.5 rounded border border-primary text-primary hover:bg-primary hover:text-primary-foreground">Xem trang công khai ↗</Link>
+          <Link to="/vendors/$slug" params={{ slug: (data as any).slug }} target="_blank" className="text-sm px-3 py-1.5 rounded border border-primary text-primary hover:bg-primary hover:text-primary-foreground">Xem trang công khai ↗</Link>
         )}
-      </nav>
+      </header>
       {data && (
-        <div className="mt-4 p-4 bg-secondary/60 rounded-md flex flex-wrap items-center justify-between gap-3 text-sm">
+        <div className="p-4 bg-secondary/60 rounded-md flex flex-wrap items-center justify-between gap-3 text-sm">
           <div className="space-y-1">
             {!(data as any).is_approved ? (
               <p>⏳ <span className="font-medium">Chờ admin duyệt</span> — hồ sơ chưa hiển thị công khai.</p>
@@ -157,7 +149,7 @@ function VendorPortal() {
         </div>
       )}
 
-      <form onSubmit={(e)=>{e.preventDefault(); m.mutate();}} className="mt-8 space-y-6">
+      <form onSubmit={(e)=>{e.preventDefault(); m.mutate();}} className="space-y-6">
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Tên thương hiệu" value={form.name} onChange={v=>setForm({...form,name:v})} required />
           <Field label="Slug" value={form.slug} onChange={v=>setForm({...form,slug:v})} required />
@@ -210,7 +202,7 @@ function VendorPortal() {
       </form>
 
       {data && (
-        <section className="mt-12">
+        <section className="pt-6 border-t border-border/60">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-2xl">Sản phẩm & Dịch vụ</h2>
             <Link to="/vendor/products" className="text-sm text-primary underline">Quản lý →</Link>
