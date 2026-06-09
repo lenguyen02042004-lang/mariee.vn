@@ -30,7 +30,7 @@ const CATS: { value: string; label: string }[] = [
 ];
 
 function VendorPortal() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const qc = useQueryClient();
   const fetchMine = useServerFn(getMyVendor);
   const save = useServerFn(upsertMyVendor);
