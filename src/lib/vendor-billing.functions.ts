@@ -10,7 +10,13 @@ export const vendorListMyPayments = createServerFn({ method: "GET" })
     const { supabase, userId } = context;
     const { data: vendor } = await supabase.from("vendors").select("id, name, plan_id, plan_expires_at").eq("owner_id", userId).maybeSingle();
     if (!vendor) return { vendor: null, payments: [], subscription: null };
-    const { data: payments } = await supabase.from("vendor_payments" as any).select("*, vendor_plans(name, price_vnd, billing_months)").eq("vendor_id", (vendor as any).id).order("created_at", { ascending: false });
+    // Use admin client with explicit safe-column allowlist so internal admin
+    // fields (admin_note, reviewed_by, reviewed_at) are never returned to vendor owners.
+    const { data: payments } = await supabaseAdmin
+      .from("vendor_payments" as any)
+      .select("id, vendor_id, plan_id, amount_vnd, status, transfer_code, proof_image_url, created_at, vendor_plans(name, price_vnd, billing_months)")
+      .eq("vendor_id", (vendor as any).id)
+      .order("created_at", { ascending: false });
     const { data: subs } = await supabase.from("vendor_subscriptions" as any).select("*, vendor_plans(name, billing_months)").eq("vendor_id", (vendor as any).id).eq("status", "active").order("expires_at", { ascending: false }).limit(1).maybeSingle();
     return { vendor, payments: payments ?? [], subscription: subs ?? null };
   });

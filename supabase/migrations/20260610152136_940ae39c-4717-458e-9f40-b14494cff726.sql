@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS pay_owner_read ON public.vendor_payments;
