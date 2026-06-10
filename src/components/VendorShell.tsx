@@ -174,36 +174,37 @@ export function VendorShell() {
       </Sidebar>
 
       <SidebarInset className="min-w-0 bg-transparent">
-        <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-border/60 bg-background/85 px-3 backdrop-blur-md sm:h-16 sm:gap-3 sm:px-6 md:px-8">
+        <header className="sticky top-0 z-20 grid h-14 grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2 border-b border-border/60 bg-background/85 px-3 backdrop-blur-md sm:h-16 sm:gap-3 sm:px-6 lg:px-8">
           <SidebarTrigger className="-ml-1 shrink-0" />
           <nav
             aria-label="Breadcrumb"
-            className="flex min-w-0 flex-1 items-center gap-1.5 text-sm"
+            className="flex min-w-0 items-center gap-1.5 text-sm"
           >
-            <span className="hidden sm:inline text-muted-foreground">Vendor portal</span>
+            <span className="hidden text-muted-foreground lg:inline">Vendor portal</span>
             {match ? (
               <>
-                <ChevronRight className="hidden sm:inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                <span className="hidden md:inline text-muted-foreground/80">{group}</span>
-                <ChevronRight className="hidden md:inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+                <ChevronRight className="hidden h-3.5 w-3.5 shrink-0 text-muted-foreground/60 lg:inline-block" />
+                <span className="hidden text-muted-foreground/80 xl:inline">{group}</span>
+                <ChevronRight className="hidden h-3.5 w-3.5 shrink-0 text-muted-foreground/60 xl:inline-block" />
                 <span className="truncate font-medium text-foreground">{match.label}</span>
               </>
             ) : (
-              <span className="sm:hidden truncate font-medium text-foreground">Vendor portal</span>
+              <span className="truncate font-medium text-foreground">Vendor portal</span>
             )}
           </nav>
           <a
             href="/vendors"
             target="_blank"
             rel="noreferrer"
-            className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1.5 text-xs text-foreground/80 hover:border-primary/40 hover:text-primary"
+            aria-label="Mở trang công khai"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1.5 text-xs text-foreground/80 hover:border-primary/40 hover:text-primary"
           >
             <ExternalLink className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Trang công khai</span>
+            <span className="hidden md:inline">Trang công khai</span>
           </a>
         </header>
 
-        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 md:px-8 md:py-10">
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
           <div className="mx-auto w-full max-w-6xl">
             <Outlet />
           </div>
