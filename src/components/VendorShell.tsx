@@ -82,8 +82,7 @@ export function VendorShell() {
 
   return (
     <SidebarProvider>
-      <div className="flex min-h-[calc(100vh-4rem)] w-full bg-[var(--gradient-soft)]">
-        <Sidebar collapsible="icon" className="border-r border-border/60">
+      <Sidebar collapsible="icon" className="border-r border-border/60">
           <SidebarHeader className="px-4 pt-4 pb-2">
             <Link
               to="/vendor"
@@ -172,46 +171,44 @@ export function VendorShell() {
               </div>
             </div>
           </SidebarFooter>
-        </Sidebar>
+      </Sidebar>
 
-        <SidebarInset className="bg-transparent">
-          <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-border/60 bg-background/80 px-4 backdrop-blur-md md:px-8">
-            <SidebarTrigger className="-ml-1" />
-            <nav
-              aria-label="Breadcrumb"
-              className="flex min-w-0 items-center gap-1.5 text-sm"
-            >
-              <span className="text-muted-foreground">Vendor portal</span>
-              {match && (
-                <>
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                  <span className="text-muted-foreground/80">{group}</span>
-                  <ChevronRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
-                  <span className="truncate font-medium text-foreground">
-                    {match.label}
-                  </span>
-                </>
-              )}
-            </nav>
-            <div className="ml-auto flex items-center gap-2">
-              <a
-                href="/vendors"
-                target="_blank"
-                rel="noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1.5 text-xs text-foreground/80 hover:border-primary/40 hover:text-primary"
-              >
-                <ExternalLink className="h-3.5 w-3.5" /> Trang công khai
-              </a>
-            </div>
-          </header>
+      <SidebarInset className="min-w-0 bg-transparent">
+        <header className="sticky top-0 z-20 flex h-14 items-center gap-2 border-b border-border/60 bg-background/85 px-3 backdrop-blur-md sm:h-16 sm:gap-3 sm:px-6 md:px-8">
+          <SidebarTrigger className="-ml-1 shrink-0" />
+          <nav
+            aria-label="Breadcrumb"
+            className="flex min-w-0 flex-1 items-center gap-1.5 text-sm"
+          >
+            <span className="hidden sm:inline text-muted-foreground">Vendor portal</span>
+            {match ? (
+              <>
+                <ChevronRight className="hidden sm:inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+                <span className="hidden md:inline text-muted-foreground/80">{group}</span>
+                <ChevronRight className="hidden md:inline-block h-3.5 w-3.5 shrink-0 text-muted-foreground/60" />
+                <span className="truncate font-medium text-foreground">{match.label}</span>
+              </>
+            ) : (
+              <span className="sm:hidden truncate font-medium text-foreground">Vendor portal</span>
+            )}
+          </nav>
+          <a
+            href="/vendors"
+            target="_blank"
+            rel="noreferrer"
+            className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border border-border bg-card px-2.5 py-1.5 text-xs text-foreground/80 hover:border-primary/40 hover:text-primary"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Trang công khai</span>
+          </a>
+        </header>
 
-          <main className="min-w-0 px-4 py-6 md:px-8 md:py-10">
-            <div className="mx-auto w-full max-w-6xl">
-              <Outlet />
-            </div>
-          </main>
-        </SidebarInset>
-      </div>
+        <main className="min-w-0 flex-1 px-4 py-6 sm:px-6 md:px-8 md:py-10">
+          <div className="mx-auto w-full max-w-6xl">
+            <Outlet />
+          </div>
+        </main>
+      </SidebarInset>
     </SidebarProvider>
   );
 }
