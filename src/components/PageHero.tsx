@@ -10,14 +10,14 @@ type Props = {
 };
 
 const SIZE = {
-  sm: "h-[32vh] min-h-[260px]",
-  md: "h-[48vh] min-h-[360px]",
-  lg: "h-[60vh] min-h-[420px]",
+  sm: "h-[32vh] min-h-[220px] sm:min-h-[260px]",
+  md: "h-[44vh] min-h-[300px] sm:min-h-[360px]",
+  lg: "h-[52vh] min-h-[340px] sm:min-h-[420px]",
 };
 
 export function PageHero({ image, script, title, subtitle, size = "lg", children }: Props) {
   return (
-    <section className={`relative ${SIZE[size]} overflow-hidden`}>
+    <section className={`relative ${SIZE[size]} w-full max-w-full overflow-hidden`}>
       <img src={image} alt="" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/30 via-black/40 to-black/70" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
