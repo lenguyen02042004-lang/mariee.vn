@@ -22,19 +22,19 @@ export function HeroSlider({ images, brideName, groomName, date }: { images: str
     ));
 
   return (
-    <section className="relative h-[92vh] min-h-[600px] w-full overflow-hidden">
+    <section className="relative h-[88vh] min-h-[480px] sm:min-h-[600px] w-full max-w-full overflow-hidden">
       {list.map((src, idx) => (
         <div key={idx} className={`absolute inset-0 transition-opacity duration-1000 ${idx === i ? "opacity-100" : "opacity-0"}`}>
           <img src={resolveImg(src)} alt="" className={`w-full h-full object-cover ${idx === i ? "hero-kenburns" : ""}`} />
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/60" />
         </div>
       ))}
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
-        <p className="font-script text-3xl md:text-5xl text-blush mb-4 hero-fade" style={{ animationDelay: "150ms" }}>the wedding of</p>
-        <h1 className="font-display text-5xl md:text-8xl text-balance leading-tight">
-          <span className="inline-block whitespace-nowrap">{renderName(brideName, 400)}</span>
-          <span className="font-script text-gold inline-block mx-3 md:mx-5 hero-amp" style={{ animationDelay: `${400 + brideName.length * 80 + 100}ms` }}>&amp;</span>
-          <span className="inline-block whitespace-nowrap">{renderName(groomName, 400 + brideName.length * 80 + 350)}</span>
+      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 sm:px-6 max-w-full">
+        <p className="font-script text-2xl sm:text-3xl md:text-5xl text-blush mb-3 sm:mb-4 hero-fade" style={{ animationDelay: "150ms" }}>the wedding of</p>
+        <h1 className="font-display text-balance leading-tight max-w-full break-words text-[clamp(2.25rem,11vw,6rem)] md:text-8xl">
+          <span className="inline-block">{renderName(brideName, 400)}</span>
+          <span className="font-script text-gold inline-block mx-2 sm:mx-3 md:mx-5 hero-amp" style={{ animationDelay: `${400 + brideName.length * 80 + 100}ms` }}>&amp;</span>
+          <span className="inline-block">{renderName(groomName, 400 + brideName.length * 80 + 350)}</span>
         </h1>
         <div className="mt-8 flex items-center gap-4 hero-fade" style={{ animationDelay: `${400 + (brideName.length + groomName.length) * 80 + 800}ms` }}>
           <span className="h-px w-12 bg-white/60" />
