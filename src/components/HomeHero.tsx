@@ -57,7 +57,7 @@ export function HomeHero({
           allow="autoplay; encrypted-media; picture-in-picture"
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.78vh] h-[56.25vw] min-w-full min-h-full pointer-events-none"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/40 to-black/70" />
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/45 via-primary/40 to-black/55" />
         <HeroOverlay slide={list[0]} />
       </section>
     );
@@ -85,10 +85,10 @@ export function HomeHero({
               />
             );
           })()}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/70" />
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/35 to-black/55" />
         </div>
       ))}
-      <div className="relative z-10 h-full flex items-center justify-center">
+      <div className="relative z-10 h-full flex flex-col items-center justify-end pb-20 md:pb-28">
         <HeroOverlay slide={list[idx]} />
       </div>
 
