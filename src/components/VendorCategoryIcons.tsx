@@ -48,41 +48,60 @@ export function VendorCategoryChips({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
-      <button
-        type="button"
-        onClick={() => onChange("all")}
-        className={`shrink-0 flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border min-w-[84px] transition cursor-pointer ${
-          value === "all"
-            ? "bg-primary text-primary-foreground border-primary shadow-soft"
-            : "bg-card border-border hover:border-primary/60"
-        }`}
-      >
-        <span className="h-8 w-8 rounded-full bg-background/20 flex items-center justify-center">
-          <Sparkles className="h-4 w-4" />
-        </span>
-        <span className="text-[11px]">Tất cả</span>
-      </button>
-      {VENDOR_CATEGORIES.map(({ slug, label, Icon }) => {
-        const active = value === slug;
-        return (
-          <button
-            key={slug}
-            type="button"
-            onClick={() => onChange(slug)}
-            className={`shrink-0 flex flex-col items-center gap-1.5 px-3 py-2.5 rounded-xl border min-w-[84px] transition cursor-pointer ${
-              active
-                ? "bg-primary text-primary-foreground border-primary shadow-soft"
-                : "bg-card border-border hover:border-primary/60"
-            }`}
-          >
-            <span className={`h-8 w-8 rounded-full flex items-center justify-center ${active ? "bg-background/20" : "bg-primary/10 text-primary"}`}>
-              <Icon className="h-4 w-4" />
-            </span>
-            <span className="text-[11px] text-center leading-tight">{label}</span>
-          </button>
-        );
-      })}
+    <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-3 -mx-1 px-1 scrollbar-thin">
+      <CategoryChip active={value === "all"} label="Tất cả" Icon={Sparkles} onClick={() => onChange("all")} />
+      {VENDOR_CATEGORIES.map(({ slug, label, Icon }) => (
+        <CategoryChip
+          key={slug}
+          active={value === slug}
+          label={label}
+          Icon={Icon}
+          onClick={() => onChange(slug)}
+        />
+      ))}
     </div>
+  );
+}
+
+function CategoryChip({
+  active,
+  label,
+  Icon,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  Icon: LucideIcon;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className="group shrink-0 flex flex-col items-center gap-2 min-w-[88px] cursor-pointer outline-none"
+    >
+      <span
+        className={[
+          "relative h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300",
+          active
+            ? "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.55)] scale-105"
+            : "bg-card text-primary ring-1 ring-border/70 group-hover:ring-primary/40 group-hover:-translate-y-0.5 group-hover:shadow-soft",
+        ].join(" ")}
+      >
+        <Icon className="h-5 w-5" strokeWidth={1.5} />
+        {active && (
+          <span className="pointer-events-none absolute inset-0 rounded-full ring-2 ring-primary/20 ring-offset-2 ring-offset-background" />
+        )}
+      </span>
+      <span
+        className={[
+          "text-[11px] text-center leading-tight tracking-wide transition-colors max-w-[88px] truncate",
+          active ? "text-primary font-medium" : "text-foreground/70 group-hover:text-primary",
+        ].join(" ")}
+      >
+        {label}
+      </span>
+    </button>
   );
 }
