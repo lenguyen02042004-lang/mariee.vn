@@ -4,6 +4,8 @@ import { getCoupleBySlug } from "@/lib/couples.functions";
 import { resolveImg } from "@/lib/image-map";
 import { absoluteImage, canonical } from "@/lib/seo";
 import { HeroSlider } from "@/components/HeroSlider";
+import { SmartImage } from "@/components/SmartImage";
+import { cdnSrc } from "@/lib/cdn-image";
 import { RsvpForm } from "@/components/RsvpForm";
 import { Countdown } from "@/components/Countdown";
 import { WishWall } from "@/components/WishWall";
@@ -208,7 +210,7 @@ function CouplePage() {
             {couple.invitation_bride_url && (
               <figure className="text-center">
                 <a href={resolveImg(couple.invitation_bride_url)} target="_blank" rel="noopener" className="block group">
-                  <img src={resolveImg(couple.invitation_bride_url)} alt="Thiệp nhà cô dâu" loading="lazy" className="w-full rounded-lg shadow-elegant group-hover:scale-[1.02] transition-transform duration-500" />
+                  <SmartImage src={couple.invitation_bride_url} alt="Thiệp nhà cô dâu" width={800} widths={[400,640,800,1080]} sizes="(min-width: 768px) 50vw, 100vw" className="w-full rounded-lg shadow-elegant group-hover:scale-[1.02] transition-transform duration-500" />
                 </a>
                 <figcaption className="font-script text-2xl text-primary mt-4">Thiệp nhà cô dâu</figcaption>
               </figure>
@@ -216,7 +218,7 @@ function CouplePage() {
             {couple.invitation_groom_url && (
               <figure className="text-center">
                 <a href={resolveImg(couple.invitation_groom_url)} target="_blank" rel="noopener" className="block group">
-                  <img src={resolveImg(couple.invitation_groom_url)} alt="Thiệp nhà chú rể" loading="lazy" className="w-full rounded-lg shadow-elegant group-hover:scale-[1.02] transition-transform duration-500" />
+                  <SmartImage src={couple.invitation_groom_url} alt="Thiệp nhà chú rể" width={800} widths={[400,640,800,1080]} sizes="(min-width: 768px) 50vw, 100vw" className="w-full rounded-lg shadow-elegant group-hover:scale-[1.02] transition-transform duration-500" />
                 </a>
                 <figcaption className="font-script text-2xl text-primary mt-4">Thiệp nhà chú rể</figcaption>
               </figure>
@@ -231,7 +233,7 @@ function CouplePage() {
             {gallery.map((g: any, idx: number) => (
               <button type="button" key={g.id} onClick={() => openLightbox(idx)}
                 className="group relative aspect-square overflow-hidden rounded-md shadow-soft cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-primary">
-                <img src={resolveImg(g.image_url)} alt={g.caption ?? ""} loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                <SmartImage src={g.image_url} alt={g.caption ?? ""} width={800} widths={[400,640,800,1080]} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                 <span className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
               </button>
             ))}
@@ -258,7 +260,7 @@ function CouplePage() {
             </>
           )}
           <figure className="max-w-[92vw] max-h-[88vh] flex flex-col items-center gap-4 animate-scale-in" onClick={(e) => e.stopPropagation()}>
-            <img src={resolveImg(gallery[lightbox].image_url)} alt={gallery[lightbox].caption ?? ""} className="max-w-full max-h-[80vh] object-contain rounded shadow-elegant" />
+            <img src={cdnSrc(resolveImg(gallery[lightbox].image_url), { width: 1920, quality: 85, fit: "scale-down" })} alt={gallery[lightbox].caption ?? ""} className="max-w-full max-h-[80vh] object-contain rounded shadow-elegant" />
             {gallery[lightbox].caption && <figcaption className="text-white/80 text-sm">{gallery[lightbox].caption}</figcaption>}
             <p className="text-white/50 text-xs">{lightbox + 1} / {gallery.length}</p>
           </figure>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { resolveImg } from "@/lib/image-map";
+import { cdnSrc, cdnSrcSet } from "@/lib/cdn-image";
 
 export function HeroSlider({ images, brideName, groomName, date }: { images: string[]; brideName: string; groomName: string; date?: string | null }) {
   const [i, setI] = useState(0);
@@ -25,7 +26,21 @@ export function HeroSlider({ images, brideName, groomName, date }: { images: str
     <section className="relative h-[88vh] min-h-[480px] sm:min-h-[600px] w-full max-w-full overflow-hidden">
       {list.map((src, idx) => (
         <div key={idx} className={`absolute inset-0 transition-opacity duration-1000 ${idx === i ? "opacity-100" : "opacity-0"}`}>
-          <img src={resolveImg(src)} alt="" className={`w-full h-full object-cover ${idx === i ? "hero-kenburns" : ""}`} />
+          {(() => {
+            const raw = resolveImg(src);
+            return (
+              <img
+                src={cdnSrc(raw, { width: 1920, quality: 80 })}
+                srcSet={cdnSrcSet(raw, [640, 800, 1080, 1440, 1920, 2560], 80)}
+                sizes="100vw"
+                alt=""
+                loading={idx === 0 ? "eager" : "lazy"}
+                decoding="async"
+                fetchPriority={idx === 0 ? "high" : "auto"}
+                className={`w-full h-full object-cover ${idx === i ? "hero-kenburns" : ""}`}
+              />
+            );
+          })()}
           <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/60" />
         </div>
       ))}
