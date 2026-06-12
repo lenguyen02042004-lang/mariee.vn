@@ -29,7 +29,7 @@ export function PageHero({ image, script, title, subtitle, size = "lg", children
         fetchPriority="high"
         className="absolute inset-0 w-full h-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/50 via-primary/40 to-black/55" />
+      <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/60 to-black/25" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-6">
         <p className="font-script text-3xl md:text-5xl text-blush">{script}</p>
         <h1 className="mt-3 font-display text-[clamp(2rem,5vw,3.5rem)] leading-tight text-balance max-w-3xl">{title}</h1>

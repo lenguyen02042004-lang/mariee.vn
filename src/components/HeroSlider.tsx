@@ -41,7 +41,7 @@ export function HeroSlider({ images, brideName, groomName, date }: { images: str
               />
             );
           })()}
-          <div className="absolute inset-0 bg-gradient-to-b from-primary/40 via-primary/35 to-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-primary/70 via-primary/60 to-black/25" />
         </div>
       ))}
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4 sm:px-6 max-w-full">
