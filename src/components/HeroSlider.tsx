@@ -23,7 +23,7 @@ export function HeroSlider({ images, brideName, groomName, date }: { images: str
     ));
 
   return (
-    <section className="relative h-[88vh] min-h-[480px] sm:min-h-[600px] w-full max-w-full overflow-hidden">
+    <section className="relative h-[72vh] min-h-[480px] sm:h-[88vh] sm:min-h-[600px] w-full max-w-full overflow-hidden">
       {list.map((src, idx) => (
         <div key={idx} className={`absolute inset-0 transition-opacity duration-1000 ${idx === i ? "opacity-100" : "opacity-0"}`}>
           {(() => {
@@ -37,7 +37,7 @@ export function HeroSlider({ images, brideName, groomName, date }: { images: str
                 loading={idx === 0 ? "eager" : "lazy"}
                 decoding="async"
                 fetchPriority={idx === 0 ? "high" : "auto"}
-                className={`w-full h-full object-cover ${idx === i ? "hero-kenburns" : ""}`}
+                className={`w-full h-full object-cover object-center ${idx === i ? "hero-kenburns" : ""}`}
               />
             );
           })()}
