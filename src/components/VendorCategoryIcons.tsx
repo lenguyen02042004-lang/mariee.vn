@@ -48,7 +48,7 @@ export function VendorCategoryChips({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-3 -mx-1 px-1 scrollbar-thin">
+    <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-[repeat(13,minmax(0,1fr))] gap-x-2 gap-y-4 sm:gap-x-3 sm:gap-y-5 pb-2">
       <CategoryChip active={value === "all"} label="Tất cả" Icon={Sparkles} onClick={() => onChange("all")} />
       {VENDOR_CATEGORIES.map(({ slug, label, Icon }) => (
         <CategoryChip
@@ -79,11 +79,11 @@ function CategoryChip({
       type="button"
       onClick={onClick}
       aria-pressed={active}
-      className="group shrink-0 flex flex-col items-center gap-2 min-w-[88px] cursor-pointer outline-none"
+      className="group flex flex-col items-center gap-2 cursor-pointer outline-none w-full"
     >
       <span
         className={[
-          "relative h-14 w-14 rounded-full flex items-center justify-center transition-all duration-300",
+          "relative h-12 w-12 sm:h-14 sm:w-14 rounded-full flex items-center justify-center transition-all duration-300",
           active
             ? "bg-gradient-to-br from-primary to-primary/70 text-primary-foreground shadow-[0_8px_24px_-8px_hsl(var(--primary)/0.55)] scale-105"
             : "bg-card text-primary ring-1 ring-border/70 group-hover:ring-primary/40 group-hover:-translate-y-0.5 group-hover:shadow-soft",
@@ -96,7 +96,7 @@ function CategoryChip({
       </span>
       <span
         className={[
-          "text-[11px] text-center leading-tight tracking-wide transition-colors max-w-[88px] truncate",
+          "text-[10.5px] sm:text-[11px] text-center leading-tight tracking-wide transition-colors w-full px-0.5 line-clamp-2",
           active ? "text-primary font-medium" : "text-foreground/70 group-hover:text-primary",
         ].join(" ")}
       >
