@@ -50,7 +50,7 @@ export function HomeHero({
 
   if (ytId) {
     return (
-      <section className="relative h-[88vh] min-h-[480px] sm:min-h-[600px] w-full max-w-full overflow-hidden bg-black">
+      <section className="relative h-[72vh] min-h-[480px] sm:h-[88vh] sm:min-h-[600px] w-full max-w-full overflow-hidden bg-black">
         <iframe
           src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&modestbranding=1&playsinline=1&rel=0`}
           title="Hero video"
@@ -64,7 +64,7 @@ export function HomeHero({
   }
 
   return (
-    <section className="relative h-[88vh] min-h-[480px] sm:min-h-[600px] w-full max-w-full overflow-hidden">
+    <section className="relative h-[72vh] min-h-[480px] sm:h-[88vh] sm:min-h-[600px] w-full max-w-full overflow-hidden">
       {list.map((s, i) => (
         <div
           key={i}
@@ -81,7 +81,7 @@ export function HomeHero({
                 loading={i === 0 ? "eager" : "lazy"}
                 decoding="async"
                 fetchPriority={i === 0 ? "high" : "auto"}
-                className="absolute inset-0 w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover object-center"
               />
             );
           })()}
