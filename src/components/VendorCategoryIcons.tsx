@@ -48,7 +48,7 @@ export function VendorCategoryChips({
   onChange: (v: string) => void;
 }) {
   return (
-    <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-13 gap-x-2 gap-y-4 sm:gap-x-3 sm:gap-y-5 pb-2">
+    <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-[repeat(13,minmax(0,1fr))] gap-x-2 gap-y-4 sm:gap-x-3 sm:gap-y-5 pb-2">
       <CategoryChip active={value === "all"} label="Tất cả" Icon={Sparkles} onClick={() => onChange("all")} />
       {VENDOR_CATEGORIES.map(({ slug, label, Icon }) => (
         <CategoryChip
