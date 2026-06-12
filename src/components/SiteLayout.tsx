@@ -30,10 +30,7 @@ export function Header() {
           {site.logo_url ? (
             <img src={site.logo_url} alt={brand} className="h-9 w-auto object-contain" />
           ) : (
-            <>
-              <span className="font-script text-3xl text-primary leading-none">{brand}</span>
-              <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground hidden sm:inline">Wedding</span>
-            </>
+            <span className="font-script text-3xl text-primary leading-none">{brand}</span>
           )}
         </Link>
         <nav className="flex items-center gap-6 text-sm">
