@@ -86,6 +86,48 @@ export type Database = {
         }
         Relationships: []
       }
+      couple_checklist: {
+        Row: {
+          category: string
+          created_at: string
+          due_date: string | null
+          id: string
+          is_completed: boolean
+          is_custom: boolean
+          notes: string | null
+          sort_order: number
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          is_completed?: boolean
+          is_custom?: boolean
+          notes?: string | null
+          sort_order?: number
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          due_date?: string | null
+          id?: string
+          is_completed?: boolean
+          is_custom?: boolean
+          notes?: string | null
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       couple_gallery: {
         Row: {
           caption: string | null
