@@ -12,6 +12,7 @@ import {
 } from "@/lib/couple-owner.functions";
 import { CoupleForm } from "@/components/CoupleForm";
 import { WeddingShareCard } from "@/components/WeddingShareCard";
+import { ChecklistPanel } from "@/components/ChecklistPanel";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 
@@ -135,6 +136,7 @@ function CouplePortal() {
             </div>
           )}
           <WishesPanel coupleId={detail.couple.id} />
+          <ChecklistPanel />
           <CoupleForm mode="owner" initial={detail.couple} gallery={detail.gallery} />
         </div>
       )}
