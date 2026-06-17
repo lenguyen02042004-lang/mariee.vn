@@ -45,7 +45,10 @@ function AdminVendors() {
           <h1 className="font-display text-3xl">Nhà cung cấp</h1>
           <p className="text-sm text-muted-foreground mt-1">Tạo, sửa, duyệt và xuất bản vendor. Hiển thị {filtered.length}/{(data ?? []).length}.</p>
         </div>
-        <Link to="/admin/vendors/new" className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90">+ Thêm vendor</Link>
+        <div className="flex gap-2">
+          <Link to="/admin/vendors/import" className="px-4 py-2 border border-input rounded-md text-sm font-medium hover:bg-secondary">⇪ Nhập hàng loạt</Link>
+          <Link to="/admin/vendors/new" className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm font-medium hover:bg-primary/90">+ Thêm vendor</Link>
+        </div>
       </div>
       <div className="mt-3 flex justify-end">
         <button
