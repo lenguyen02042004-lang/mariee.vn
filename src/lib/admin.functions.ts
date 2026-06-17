@@ -222,6 +222,134 @@ export const adminDeleteVendor = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// ===== Bulk import vendors =====
+// Permissive: only `name` is required. Missing fields are kept null so the
+// vendor/owner can fill them in later. Slug auto-generated when absent.
+const VALID_VENDOR_CATEGORIES = [
+  "venue","photography","videography","wedding_planner","makeup","attire",
+  "flowers","catering","music","decor","invitation","other",
+] as const;
+
+function slugify(input: string): string {
+  return input
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d").replace(/Đ/g, "d")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 100) || "vendor";
+}
+
+const bulkVendorItem = z.object({
+  name: z.string().trim().min(1).max(160),
+  slug: z.string().trim().max(120).optional().or(z.literal("")),
+  category: z.string().trim().max(60).optional().or(z.literal("")),
+  tagline: z.string().max(240).optional().or(z.literal("")),
+  description: z.string().max(6000).optional().or(z.literal("")),
+  cover_image: z.string().max(800).optional().or(z.literal("")),
+  logo_url: z.string().max(800).optional().or(z.literal("")),
+  phone: z.string().max(40).optional().or(z.literal("")),
+  email: z.string().max(160).optional().or(z.literal("")),
+  address: z.string().max(400).optional().or(z.literal("")),
+  city: z.string().max(120).optional().or(z.literal("")),
+  website: z.string().max(400).optional().or(z.literal("")),
+  price_range: z.string().max(80).optional().or(z.literal("")),
+  youtube_url: z.string().max(400).optional().or(z.literal("")),
+  gallery: z.array(z.string().max(800)).max(30).optional(),
+  products: z.array(z.object({
+    title: z.string().trim().min(1).max(200),
+    description: z.string().max(2000).optional().or(z.literal("")),
+    price_text: z.string().max(120).optional().or(z.literal("")),
+    image_url: z.string().max(800).optional().or(z.literal("")),
+    sort_order: z.number().int().min(0).max(9999).optional(),
+    is_active: z.boolean().optional(),
+  }).passthrough()).max(50).optional(),
+}).passthrough();
+
+export const adminBulkImportVendors = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => z.object({
+    items: z.array(bulkVendorItem).min(1).max(200),
+    auto_approve: z.boolean().optional(),
+  }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const results: Array<{ row: number; name: string; slug: string; action: "inserted" | "updated" | "error"; error?: string; id?: string }> = [];
+    for (let i = 0; i < data.items.length; i++) {
+      const raw = data.items[i] as any;
+      try {
+        const name = String(raw.name).trim();
+        let slug = (raw.slug || "").trim();
+        if (!slug) slug = slugify(name);
+        else slug = slugify(slug);
+        const category = VALID_VENDOR_CATEGORIES.includes(raw.category) ? raw.category : "other";
+        const payload: any = {
+          name,
+          slug,
+          category,
+          tagline: raw.tagline || null,
+          description: raw.description || null,
+          cover_image: raw.cover_image || null,
+          logo_url: raw.logo_url || null,
+          phone: raw.phone || null,
+          email: raw.email || null,
+          address: raw.address || null,
+          city: raw.city || null,
+          website: raw.website || null,
+          price_range: raw.price_range || null,
+          youtube_url: raw.youtube_url || null,
+          gallery: Array.isArray(raw.gallery) ? raw.gallery.filter(Boolean) : [],
+          is_approved: data.auto_approve === true,
+        };
+        // Upsert by slug
+        const { data: existing } = await context.supabase
+          .from("vendors").select("id").eq("slug", slug).maybeSingle();
+        let vendorId: string;
+        let action: "inserted" | "updated";
+        if (existing?.id) {
+          vendorId = existing.id;
+          const { error: upErr } = await context.supabase
+            .from("vendors").update(payload).eq("id", vendorId);
+          if (upErr) throw new Error(upErr.message);
+          action = "updated";
+        } else {
+          const { data: row, error: insErr } = await context.supabase
+            .from("vendors").insert(payload).select("id").single();
+          if (insErr) throw new Error(insErr.message);
+          vendorId = row!.id;
+          action = "inserted";
+        }
+        // Products (optional)
+        if (Array.isArray(raw.products) && raw.products.length > 0) {
+          const rows = raw.products
+            .filter((p: any) => p && typeof p.title === "string" && p.title.trim())
+            .map((p: any, idx: number) => ({
+              vendor_id: vendorId,
+              title: String(p.title).trim(),
+              description: p.description || null,
+              price_text: p.price_text || null,
+              image_url: p.image_url || null,
+              sort_order: typeof p.sort_order === "number" ? p.sort_order : idx,
+              is_active: p.is_active === false ? false : true,
+            }));
+          if (rows.length > 0) {
+            // Replace product set for predictability
+            await context.supabase.from("vendor_products").delete().eq("vendor_id", vendorId);
+            const { error: prodErr } = await context.supabase.from("vendor_products").insert(rows);
+            if (prodErr) throw new Error(`Products: ${prodErr.message}`);
+          }
+        }
+        results.push({ row: i + 1, name, slug, action, id: vendorId });
+      } catch (e: any) {
+        results.push({ row: i + 1, name: raw?.name || "", slug: raw?.slug || "", action: "error", error: String(e?.message || e) });
+      }
+    }
+    const inserted = results.filter(r => r.action === "inserted").length;
+    const updated = results.filter(r => r.action === "updated").length;
+    const errors = results.filter(r => r.action === "error").length;
+    return { results, summary: { total: results.length, inserted, updated, errors } };
+  });
+
 const VENDOR_PUBLISHABLE_FIELDS = [
   "name","slug","category","tagline","description","cover_image","logo_url",
   "phone","email","address","city","website","price_range","youtube_url","gallery",
