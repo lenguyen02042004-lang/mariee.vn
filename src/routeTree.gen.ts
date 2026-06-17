@@ -56,6 +56,7 @@ import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/l
 import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
 import { Route as AuthenticatedAdminVendorsNewRouteImport } from './routes/_authenticated/admin.vendors_.new'
+import { Route as AuthenticatedAdminVendorsImportRouteImport } from './routes/_authenticated/admin.vendors_.import'
 import { Route as AuthenticatedAdminVendorsIdRouteImport } from './routes/_authenticated/admin.vendors_.$id'
 import { Route as AuthenticatedAdminCouplesNewRouteImport } from './routes/_authenticated/admin.couples_.new'
 import { Route as AuthenticatedAdminCouplesIdRouteImport } from './routes/_authenticated/admin.couples_.$id'
@@ -310,6 +311,12 @@ const AuthenticatedAdminVendorsNewRoute =
     path: '/vendors/new',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminVendorsImportRoute =
+  AuthenticatedAdminVendorsImportRouteImport.update({
+    id: '/vendors_/import',
+    path: '/vendors/import',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminVendorsIdRoute =
   AuthenticatedAdminVendorsIdRouteImport.update({
     id: '/vendors_/$id',
@@ -388,6 +395,7 @@ export interface FileRoutesByFullPath {
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
   '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
+  '/admin/vendors/import': typeof AuthenticatedAdminVendorsImportRoute
   '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -439,6 +447,7 @@ export interface FileRoutesByTo {
   '/admin/couples/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/admin/couples/new': typeof AuthenticatedAdminCouplesNewRoute
   '/admin/vendors/$id': typeof AuthenticatedAdminVendorsIdRoute
+  '/admin/vendors/import': typeof AuthenticatedAdminVendorsImportRoute
   '/admin/vendors/new': typeof AuthenticatedAdminVendorsNewRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -494,6 +503,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/couples_/$id': typeof AuthenticatedAdminCouplesIdRoute
   '/_authenticated/admin/couples_/new': typeof AuthenticatedAdminCouplesNewRoute
   '/_authenticated/admin/vendors_/$id': typeof AuthenticatedAdminVendorsIdRoute
+  '/_authenticated/admin/vendors_/import': typeof AuthenticatedAdminVendorsImportRoute
   '/_authenticated/admin/vendors_/new': typeof AuthenticatedAdminVendorsNewRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -549,6 +559,7 @@ export interface FileRouteTypes {
     | '/admin/couples/$id'
     | '/admin/couples/new'
     | '/admin/vendors/$id'
+    | '/admin/vendors/import'
     | '/admin/vendors/new'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -600,6 +611,7 @@ export interface FileRouteTypes {
     | '/admin/couples/$id'
     | '/admin/couples/new'
     | '/admin/vendors/$id'
+    | '/admin/vendors/import'
     | '/admin/vendors/new'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -654,6 +666,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/couples_/$id'
     | '/_authenticated/admin/couples_/new'
     | '/_authenticated/admin/vendors_/$id'
+    | '/_authenticated/admin/vendors_/import'
     | '/_authenticated/admin/vendors_/new'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -1019,6 +1032,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVendorsNewRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/vendors_/import': {
+      id: '/_authenticated/admin/vendors_/import'
+      path: '/vendors/import'
+      fullPath: '/admin/vendors/import'
+      preLoaderRoute: typeof AuthenticatedAdminVendorsImportRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/vendors_/$id': {
       id: '/_authenticated/admin/vendors_/$id'
       path: '/vendors/$id'
@@ -1076,6 +1096,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCouplesIdRoute: typeof AuthenticatedAdminCouplesIdRoute
   AuthenticatedAdminCouplesNewRoute: typeof AuthenticatedAdminCouplesNewRoute
   AuthenticatedAdminVendorsIdRoute: typeof AuthenticatedAdminVendorsIdRoute
+  AuthenticatedAdminVendorsImportRoute: typeof AuthenticatedAdminVendorsImportRoute
   AuthenticatedAdminVendorsNewRoute: typeof AuthenticatedAdminVendorsNewRoute
 }
 
@@ -1098,6 +1119,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCouplesIdRoute: AuthenticatedAdminCouplesIdRoute,
   AuthenticatedAdminCouplesNewRoute: AuthenticatedAdminCouplesNewRoute,
   AuthenticatedAdminVendorsIdRoute: AuthenticatedAdminVendorsIdRoute,
+  AuthenticatedAdminVendorsImportRoute: AuthenticatedAdminVendorsImportRoute,
   AuthenticatedAdminVendorsNewRoute: AuthenticatedAdminVendorsNewRoute,
 }
 
