@@ -140,7 +140,12 @@ export const updateChecklistItem = createServerFn({ method: "POST" })
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    const patch: Record<string, unknown> = {};
+    const patch: {
+      title?: string;
+      category?: string;
+      due_date?: string | null;
+      notes?: string | null;
+    } = {};
     if (data.title !== undefined) patch.title = data.title;
     if (data.category !== undefined) patch.category = data.category || "Tự thêm";
     if (data.due_date !== undefined) patch.due_date = data.due_date ? data.due_date : null;
