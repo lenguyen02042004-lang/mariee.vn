@@ -7,6 +7,7 @@ import {
   toggleChecklistItem,
   deleteChecklistItem,
   resetChecklist,
+  updateChecklistItem,
 } from "@/lib/checklist.functions";
 import { toast } from "sonner";
 
@@ -17,6 +18,8 @@ type Item = {
   is_completed: boolean;
   is_custom: boolean;
   sort_order: number;
+  due_date: string | null;
+  notes: string | null;
 };
 
 export function ChecklistPanel() {
@@ -26,6 +29,7 @@ export function ChecklistPanel() {
   const toggleFn = useServerFn(toggleChecklistItem);
   const delFn = useServerFn(deleteChecklistItem);
   const resetFn = useServerFn(resetChecklist);
+  const updateFn = useServerFn(updateChecklistItem);
 
   const { data = [], isLoading } = useQuery<Item[]>({
     queryKey: ["my-checklist"],
@@ -34,12 +38,22 @@ export function ChecklistPanel() {
 
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [hideDone, setHideDone] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["my-checklist"] });
 
   const mAdd = useMutation({
-    mutationFn: () => addFn({ data: { title: title.trim(), category: category.trim() || undefined } }),
-    onSuccess: () => { setTitle(""); setCategory(""); invalidate(); toast.success("Đã thêm mục"); },
+    mutationFn: () =>
+      addFn({
+        data: {
+          title: title.trim(),
+          category: category.trim() || undefined,
+          due_date: dueDate || null,
+        },
+      }),
+    onSuccess: () => { setTitle(""); setCategory(""); setDueDate(""); invalidate(); toast.success("Đã thêm mục"); },
     onError: (e: any) => toast.error(e.message),
   });
   const mToggle = useMutation({
@@ -68,20 +82,31 @@ export function ChecklistPanel() {
     onSuccess: () => { invalidate(); toast.success("Đã khôi phục danh sách chuẩn"); },
     onError: (e: any) => toast.error(e.message),
   });
+  const mUpdate = useMutation({
+    mutationFn: (v: { id: string; title?: string; due_date?: string | null; notes?: string | null }) =>
+      updateFn({ data: v }),
+    onSuccess: () => { setEditingId(null); invalidate(); toast.success("Đã cập nhật"); },
+    onError: (e: any) => toast.error(e.message),
+  });
 
+  const filtered = useMemo(
+    () => (hideDone ? data.filter((i) => !i.is_completed) : data),
+    [data, hideDone],
+  );
   const grouped = useMemo(() => {
     const map = new Map<string, Item[]>();
-    for (const item of data) {
+    for (const item of filtered) {
       const arr = map.get(item.category) ?? [];
       arr.push(item);
       map.set(item.category, arr);
     }
     return Array.from(map.entries());
-  }, [data]);
+  }, [filtered]);
 
   const total = data.length;
   const done = data.filter((i) => i.is_completed).length;
   const percent = total ? Math.round((done / total) * 100) : 0;
+  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <section className="mb-10 border border-border/60 rounded-lg p-5 bg-card">
@@ -92,12 +117,18 @@ export function ChecklistPanel() {
             Bộ danh mục chuẩn theo từng giai đoạn — đánh dấu khi hoàn thành và bổ sung mục riêng của bạn.
           </p>
         </div>
-        <button
-          onClick={() => confirm("Khôi phục danh sách chuẩn? Tất cả mục hiện tại (kể cả tự thêm) sẽ bị xoá.") && mReset.mutate()}
-          className="text-xs px-3 py-1.5 rounded border border-input hover:bg-secondary"
-        >
-          Khôi phục danh sách chuẩn
-        </button>
+        <div className="flex items-center gap-2">
+          <label className="text-xs flex items-center gap-1.5 px-2 py-1 rounded border border-input cursor-pointer hover:bg-secondary">
+            <input type="checkbox" checked={hideDone} onChange={(e) => setHideDone(e.target.checked)} className="h-3.5 w-3.5 accent-primary" />
+            Ẩn mục đã hoàn thành
+          </label>
+          <button
+            onClick={() => confirm("Khôi phục danh sách chuẩn? Tất cả mục hiện tại (kể cả tự thêm) sẽ bị xoá.") && mReset.mutate()}
+            className="text-xs px-3 py-1.5 rounded border border-input hover:bg-secondary"
+          >
+            Khôi phục danh sách chuẩn
+          </button>
+        </div>
       </div>
 
       <div className="mt-4">
@@ -112,7 +143,7 @@ export function ChecklistPanel() {
 
       <form
         onSubmit={(e) => { e.preventDefault(); if (!title.trim()) return; mAdd.mutate(); }}
-        className="mt-5 grid grid-cols-1 sm:grid-cols-[1fr_180px_auto] gap-2"
+        className="mt-5 grid grid-cols-1 sm:grid-cols-[1fr_160px_150px_auto] gap-2"
       >
         <input
           value={title}
@@ -127,6 +158,12 @@ export function ChecklistPanel() {
           placeholder="Danh mục (tuỳ chọn)"
           className="px-3 py-2 rounded border border-input bg-background text-sm"
           maxLength={80}
+        />
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          className="px-3 py-2 rounded border border-input bg-background text-sm"
         />
         <button
           type="submit"
@@ -150,36 +187,114 @@ export function ChecklistPanel() {
                   <span className="text-xs text-muted-foreground">{catDone}/{items.length}</span>
                 </div>
                 <ul className="divide-y divide-border/40 border border-border/40 rounded-md overflow-hidden">
-                  {items.map((it) => (
-                    <li key={it.id} className="flex items-center gap-3 px-3 py-2.5 bg-background/40">
-                      <input
-                        type="checkbox"
-                        checked={it.is_completed}
-                        onChange={(e) => mToggle.mutate({ id: it.id, is_completed: e.target.checked })}
-                        className="h-4 w-4 accent-primary cursor-pointer shrink-0"
-                      />
-                      <span className={`flex-1 text-sm ${it.is_completed ? "line-through text-muted-foreground" : ""}`}>
-                        {it.title}
-                        {it.is_custom && (
-                          <span className="ml-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-secondary text-foreground/70">
-                            Tự thêm
-                          </span>
-                        )}
-                      </span>
-                      <button
-                        onClick={() => confirm("Xoá mục này?") && mDelete.mutate(it.id)}
-                        className="text-xs text-destructive hover:underline shrink-0"
-                      >
-                        Xoá
-                      </button>
-                    </li>
-                  ))}
+                  {items.map((it) => {
+                    const overdue = it.due_date && !it.is_completed && it.due_date < today;
+                    const isEditing = editingId === it.id;
+                    return (
+                      <li key={it.id} className="px-3 py-2.5 bg-background/40">
+                        <div className="flex items-start gap-3">
+                          <input
+                            type="checkbox"
+                            checked={it.is_completed}
+                            onChange={(e) => mToggle.mutate({ id: it.id, is_completed: e.target.checked })}
+                            className="h-4 w-4 mt-1 accent-primary cursor-pointer shrink-0"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className={`text-sm ${it.is_completed ? "line-through text-muted-foreground" : ""}`}>
+                              {it.title}
+                              {it.is_custom && (
+                                <span className="ml-2 text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-secondary text-foreground/70">
+                                  Tự thêm
+                                </span>
+                              )}
+                              {it.due_date && (
+                                <span className={`ml-2 text-[11px] px-1.5 py-0.5 rounded ${overdue ? "bg-destructive/15 text-destructive" : "bg-secondary text-foreground/70"}`}>
+                                  {overdue ? "Quá hạn: " : "Hạn: "}
+                                  {new Date(it.due_date).toLocaleDateString("vi-VN")}
+                                </span>
+                              )}
+                            </div>
+                            {it.notes && !isEditing && (
+                              <p className="text-xs text-muted-foreground mt-1 whitespace-pre-wrap">{it.notes}</p>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button
+                              onClick={() => setEditingId(isEditing ? null : it.id)}
+                              className="text-xs text-primary hover:underline"
+                            >
+                              {isEditing ? "Đóng" : "Sửa"}
+                            </button>
+                            <button
+                              onClick={() => confirm("Xoá mục này?") && mDelete.mutate(it.id)}
+                              className="text-xs text-destructive hover:underline"
+                            >
+                              Xoá
+                            </button>
+                          </div>
+                        </div>
+                        {isEditing && <EditRow item={it} onSave={(v) => mUpdate.mutate({ id: it.id, ...v })} saving={mUpdate.isPending} />}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             );
           })}
+          {grouped.length === 0 && (
+            <p className="text-sm text-muted-foreground">Không có mục nào phù hợp bộ lọc.</p>
+          )}
         </div>
       )}
     </section>
+  );
+}
+
+function EditRow({
+  item,
+  onSave,
+  saving,
+}: {
+  item: Item;
+  onSave: (v: { title: string; due_date: string | null; notes: string | null }) => void;
+  saving: boolean;
+}) {
+  const [title, setTitle] = useState(item.title);
+  const [due, setDue] = useState(item.due_date ?? "");
+  const [notes, setNotes] = useState(item.notes ?? "");
+  return (
+    <div className="mt-3 ml-7 grid gap-2">
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        className="px-3 py-2 rounded border border-input bg-background text-sm"
+        maxLength={200}
+      />
+      <div className="grid grid-cols-[150px_1fr] gap-2">
+        <input
+          type="date"
+          value={due}
+          onChange={(e) => setDue(e.target.value)}
+          className="px-3 py-2 rounded border border-input bg-background text-sm"
+        />
+        <textarea
+          value={notes}
+          onChange={(e) => setNotes(e.target.value)}
+          placeholder="Ghi chú (tuỳ chọn)"
+          rows={2}
+          className="px-3 py-2 rounded border border-input bg-background text-sm resize-y"
+          maxLength={2000}
+        />
+      </div>
+      <div>
+        <button
+          disabled={!title.trim() || saving}
+          onClick={() => onSave({ title: title.trim(), due_date: due || null, notes: notes.trim() || null })}
+          className="px-3 py-1.5 rounded bg-primary text-primary-foreground text-xs disabled:opacity-50"
+        >
+          {saving ? "Đang lưu…" : "Lưu thay đổi"}
+        </button>
+      </div>
+    </div>
   );
 }
