@@ -87,10 +87,12 @@ export const listChecklist = createServerFn({ method: "GET" })
 
 export const addChecklistItem = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { title: string; category?: string }) =>
+  .inputValidator((d: { title: string; category?: string; due_date?: string | null; notes?: string | null }) =>
     z.object({
       title: z.string().trim().min(1).max(200),
       category: z.string().trim().max(80).optional(),
+      due_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
+      notes: z.string().trim().max(2000).nullable().optional(),
     }).parse(d),
   )
   .handler(async ({ data, context }) => {
@@ -111,11 +113,51 @@ export const addChecklistItem = createServerFn({ method: "POST" })
         category: data.category?.trim() || "Tự thêm",
         is_custom: true,
         sort_order: nextOrder,
+        due_date: data.due_date || null,
+        notes: data.notes || null,
       })
       .select("*")
       .single();
     if (error) throw new Error(error.message);
     return row;
+  });
+
+export const updateChecklistItem = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: {
+    id: string;
+    title?: string;
+    category?: string;
+    due_date?: string | null;
+    notes?: string | null;
+  }) =>
+    z.object({
+      id: z.string().uuid(),
+      title: z.string().trim().min(1).max(200).optional(),
+      category: z.string().trim().max(80).optional(),
+      due_date: z.union([z.string().regex(/^\d{4}-\d{2}-\d{2}$/), z.literal("")]).nullable().optional(),
+      notes: z.string().trim().max(2000).nullable().optional(),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const patch: {
+      title?: string;
+      category?: string;
+      due_date?: string | null;
+      notes?: string | null;
+    } = {};
+    if (data.title !== undefined) patch.title = data.title;
+    if (data.category !== undefined) patch.category = data.category || "Tự thêm";
+    if (data.due_date !== undefined) patch.due_date = data.due_date ? data.due_date : null;
+    if (data.notes !== undefined) patch.notes = data.notes ? data.notes : null;
+    if (Object.keys(patch).length === 0) return { ok: true };
+    const { error } = await context.supabase
+      .from("couple_checklist")
+      .update(patch)
+      .eq("id", data.id)
+      .eq("user_id", context.userId);
+    if (error) throw new Error(error.message);
+    return { ok: true };
   });
 
 export const toggleChecklistItem = createServerFn({ method: "POST" })
