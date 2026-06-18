@@ -194,6 +194,45 @@ export function ChecklistPanel() {
         </button>
       </form>
 
+      <div className="mt-4 p-3 rounded-md border border-dashed border-border/60 bg-secondary/30">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium">Mẫu checklist theo giai đoạn:</span>
+          <select
+            value={tplId}
+            onChange={(e) => setTplId(e.target.value)}
+            className="px-2 py-1.5 rounded border border-input bg-background text-xs min-w-[220px]"
+          >
+            <option value="">— Chọn mẫu —</option>
+            {templates.map((t) => (
+              <option key={t.id} value={t.id}>{t.name} ({t.count})</option>
+            ))}
+          </select>
+          <label className="text-xs flex items-center gap-1">
+            <input type="radio" name="tpl-mode" checked={tplMode === "merge"} onChange={() => setTplMode("merge")} className="accent-primary" />
+            Bổ sung
+          </label>
+          <label className="text-xs flex items-center gap-1">
+            <input type="radio" name="tpl-mode" checked={tplMode === "replace"} onChange={() => setTplMode("replace")} className="accent-primary" />
+            Thay thế toàn bộ
+          </label>
+          <button
+            disabled={!tplId || mApplyTpl.isPending}
+            onClick={() => {
+              if (tplMode === "replace" && !confirm("Thay thế toàn bộ checklist hiện tại bằng mẫu này?")) return;
+              mApplyTpl.mutate();
+            }}
+            className="text-xs px-3 py-1.5 rounded bg-primary text-primary-foreground disabled:opacity-50"
+          >
+            {mApplyTpl.isPending ? "Đang áp dụng…" : "Áp dụng mẫu"}
+          </button>
+        </div>
+        {tplId && (
+          <p className="text-[11px] text-muted-foreground mt-2">
+            {templates.find((t) => t.id === tplId)?.description}
+          </p>
+        )}
+      </div>
+
       {isLoading ? (
         <p className="text-sm text-muted-foreground mt-6">Đang tải…</p>
       ) : (
