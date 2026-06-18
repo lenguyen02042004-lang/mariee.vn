@@ -55,6 +55,141 @@ export const DEFAULT_CHECKLIST: { category: string; title: string }[] = [
   { category: "Ngày cưới", title: "Tận hưởng ngày trọng đại!" },
 ];
 
+// ---- Mẫu checklist theo giai đoạn ----
+export type ChecklistTemplate = {
+  id: string;
+  name: string;
+  description: string;
+  items: { category: string; title: string }[];
+};
+
+export const CHECKLIST_TEMPLATES: ChecklistTemplate[] = [
+  {
+    id: "full",
+    name: "Lộ trình đầy đủ (9–12 tháng)",
+    description: "Bộ chuẩn từ 9–12 tháng trước cho tới ngày cưới — phù hợp khi bạn còn nhiều thời gian.",
+    items: DEFAULT_CHECKLIST,
+  },
+  {
+    id: "6m",
+    name: "Còn ~6 tháng",
+    description: "Rút gọn từ giai đoạn 6–9 tháng trở đi.",
+    items: DEFAULT_CHECKLIST.filter((i) =>
+      ["6–9 tháng trước", "3–6 tháng trước", "1–3 tháng trước", "2–4 tuần trước", "Tuần cưới", "Ngày cưới"].includes(i.category),
+    ),
+  },
+  {
+    id: "3m",
+    name: "Còn ~3 tháng",
+    description: "Tập trung những việc cần làm trong 3 tháng cuối.",
+    items: [
+      ...DEFAULT_CHECKLIST.filter((i) =>
+        ["3–6 tháng trước", "1–3 tháng trước", "2–4 tuần trước", "Tuần cưới", "Ngày cưới"].includes(i.category),
+      ),
+      { category: "3–6 tháng trước", title: "Rà soát lại ngân sách & các khoản đã đặt cọc" },
+    ],
+  },
+  {
+    id: "1m",
+    name: "Còn ~1 tháng",
+    description: "Việc gấp rút trong tháng cuối — chốt số khách, thanh toán, tổng duyệt.",
+    items: [
+      ...DEFAULT_CHECKLIST.filter((i) =>
+        ["1–3 tháng trước", "2–4 tuần trước", "Tuần cưới", "Ngày cưới"].includes(i.category),
+      ),
+      { category: "1–3 tháng trước", title: "Liên hệ xác nhận từng nhà cung cấp" },
+    ],
+  },
+  {
+    id: "week",
+    name: "Tuần lễ trước tiệc",
+    description: "Việc cần hoàn tất trong 7 ngày cuối và ngày cưới.",
+    items: [
+      ...DEFAULT_CHECKLIST.filter((i) => ["Tuần cưới", "Ngày cưới"].includes(i.category)),
+      { category: "Tuần cưới", title: "Xác nhận giờ đón dâu với ekip xe & quay phim" },
+      { category: "Tuần cưới", title: "Kiểm tra sơ đồ bàn & danh sách khách VIP" },
+      { category: "Tuần cưới", title: "Sạc pin điện thoại, máy ảnh, mic dự phòng" },
+    ],
+  },
+  {
+    id: "express",
+    name: "Cưới nhanh (rút gọn)",
+    description: "Danh sách rút gọn ~20 việc cốt lõi cho cặp đôi tổ chức gấp.",
+    items: [
+      { category: "Cần làm ngay", title: "Chốt ngày cưới & ngân sách tối đa" },
+      { category: "Cần làm ngay", title: "Đặt địa điểm tổ chức tiệc" },
+      { category: "Cần làm ngay", title: "Lên danh sách khách mời" },
+      { category: "Cần làm ngay", title: "Đặt nhiếp ảnh & quay phim" },
+      { category: "Cần làm ngay", title: "Đặt váy cưới & vest" },
+      { category: "Cần làm ngay", title: "Mua / đặt nhẫn cưới" },
+      { category: "Trước 2–4 tuần", title: "In & gửi thiệp (hoặc thiệp online)" },
+      { category: "Trước 2–4 tuần", title: "Chốt thực đơn & số bàn" },
+      { category: "Trước 2–4 tuần", title: "Đặt MC & nhạc / DJ" },
+      { category: "Trước 2–4 tuần", title: "Đặt makeup & làm tóc cô dâu" },
+      { category: "Trước 2–4 tuần", title: "Đặt xe hoa / xe đưa đón" },
+      { category: "Trước 2–4 tuần", title: "Đăng ký kết hôn" },
+      { category: "Tuần cưới", title: "Thanh toán phần còn lại các dịch vụ" },
+      { category: "Tuần cưới", title: "Tổng duyệt chương trình với MC & ekip" },
+      { category: "Tuần cưới", title: "Chuẩn bị phong bì lì xì cho ekip" },
+      { category: "Ngày cưới", title: "Mang theo nhẫn, giấy tờ, điện thoại sạc đầy" },
+      { category: "Ngày cưới", title: "Tận hưởng ngày trọng đại!" },
+    ],
+  },
+];
+
+export const listChecklistTemplates = createServerFn({ method: "GET" })
+  .handler(async () =>
+    CHECKLIST_TEMPLATES.map((t) => ({
+      id: t.id,
+      name: t.name,
+      description: t.description,
+      count: t.items.length,
+    })),
+  );
+
+export const applyChecklistTemplate = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { templateId: string; mode: "merge" | "replace" }) =>
+    z.object({
+      templateId: z.string().min(1),
+      mode: z.enum(["merge", "replace"]),
+    }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    const tpl = CHECKLIST_TEMPLATES.find((t) => t.id === data.templateId);
+    if (!tpl) throw new Error("Không tìm thấy mẫu checklist");
+    const { supabase, userId } = context;
+
+    let startOrder = 0;
+    let existingTitles = new Set<string>();
+    if (data.mode === "replace") {
+      await supabase.from("couple_checklist").delete().eq("user_id", userId);
+    } else {
+      const { data: existing } = await supabase
+        .from("couple_checklist")
+        .select("title, category, sort_order")
+        .eq("user_id", userId);
+      existingTitles = new Set((existing ?? []).map((r: any) => `${r.category}::${r.title}`));
+      startOrder = (existing ?? []).reduce((m: number, r: any) => Math.max(m, r.sort_order ?? 0), -1) + 1;
+    }
+
+    const rows = tpl.items
+      .filter((it) => !existingTitles.has(`${it.category}::${it.title}`))
+      .map((it, idx) => ({
+        user_id: userId,
+        title: it.title,
+        category: it.category,
+        sort_order: startOrder + idx,
+        is_custom: false,
+      }));
+
+    if (rows.length > 0) {
+      const { error } = await supabase.from("couple_checklist").insert(rows);
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true, inserted: rows.length, template: tpl.name };
+  });
+
 export const listChecklist = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
