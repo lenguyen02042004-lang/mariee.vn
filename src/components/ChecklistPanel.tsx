@@ -8,6 +8,8 @@ import {
   deleteChecklistItem,
   resetChecklist,
   updateChecklistItem,
+  listChecklistTemplates,
+  applyChecklistTemplate,
 } from "@/lib/checklist.functions";
 import { toast } from "sonner";
 
@@ -30,10 +32,18 @@ export function ChecklistPanel() {
   const delFn = useServerFn(deleteChecklistItem);
   const resetFn = useServerFn(resetChecklist);
   const updateFn = useServerFn(updateChecklistItem);
+  const tplListFn = useServerFn(listChecklistTemplates);
+  const tplApplyFn = useServerFn(applyChecklistTemplate);
 
   const { data = [], isLoading } = useQuery<Item[]>({
     queryKey: ["my-checklist"],
     queryFn: () => listFn() as Promise<Item[]>,
+  });
+
+  const { data: templates = [] } = useQuery<{ id: string; name: string; description: string; count: number }[]>({
+    queryKey: ["checklist-templates"],
+    queryFn: () => tplListFn() as Promise<any>,
+    staleTime: 60_000,
   });
 
   const [title, setTitle] = useState("");
@@ -41,6 +51,8 @@ export function ChecklistPanel() {
   const [dueDate, setDueDate] = useState("");
   const [hideDone, setHideDone] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [tplId, setTplId] = useState("");
+  const [tplMode, setTplMode] = useState<"merge" | "replace">("merge");
 
   const invalidate = () => qc.invalidateQueries({ queryKey: ["my-checklist"] });
 
@@ -86,6 +98,14 @@ export function ChecklistPanel() {
     mutationFn: (v: { id: string; title?: string; due_date?: string | null; notes?: string | null }) =>
       updateFn({ data: v }),
     onSuccess: () => { setEditingId(null); invalidate(); toast.success("Đã cập nhật"); },
+    onError: (e: any) => toast.error(e.message),
+  });
+  const mApplyTpl = useMutation({
+    mutationFn: () => tplApplyFn({ data: { templateId: tplId, mode: tplMode } }),
+    onSuccess: (r: any) => {
+      invalidate();
+      toast.success(`Đã áp dụng "${r.template}" — thêm ${r.inserted} mục`);
+    },
     onError: (e: any) => toast.error(e.message),
   });
 
