@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_authenticated/admin/vendors_/new")({
   component: () => (
     <div>
       <h1 className="font-display text-3xl">Thêm vendor</h1>
-      <div className="mt-6"><VendorForm initial={{}} /></div>
+      <div className="mt-6"><VendorForm initial={{}} wizard /></div>
     </div>
   ),
 });

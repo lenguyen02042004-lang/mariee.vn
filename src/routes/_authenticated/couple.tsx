@@ -137,7 +137,7 @@ function CouplePortal() {
           )}
           <WishesPanel coupleId={detail.couple.id} />
           <ChecklistPanel />
-          <CoupleForm mode="owner" initial={detail.couple} gallery={detail.gallery} />
+          <CoupleForm mode="owner" initial={detail.couple} gallery={detail.gallery} wizard />
         </div>
       )}
     </div>
