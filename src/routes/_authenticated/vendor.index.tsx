@@ -8,6 +8,7 @@ import { uploadImage } from "@/lib/upload";
 import { ImagePicker, ImageUploadButton } from "@/components/ImagePicker";
 import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
+import { WizardHeader, WizardFooter, useLocalDraft } from "@/components/FormWizard";
 
 export const Route = createFileRoute("/_authenticated/vendor/")({
   component: VendorPortal,
@@ -41,6 +42,14 @@ function VendorPortal() {
   const { data: products } = useQuery({ queryKey:["my-products"], queryFn:()=>fetchProducts(), enabled: !!data });
   const [form, setForm] = useState<any>({ category: "other", gallery: [] });
   const [uploading, setUploading] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
+  const stepTitles = ["Thông tin chung", "Hình ảnh thương hiệu", "Thư viện ảnh"];
+  const show = (n: number) => step === n;
+  const draftKey = `mariee:draft:vendor-owner:${user?.id ?? "anon"}`;
+  const draft = useLocalDraft<any>({
+    key: draftKey, value: form, enabled: !!user,
+    onRestore: (v) => setForm(v),
+  });
 
   useEffect(() => { if (data) setForm({ ...data, gallery: (data as any).gallery ?? [] }); }, [data]);
 
@@ -72,7 +81,7 @@ function VendorPortal() {
       }});
       return publish();
     },
-    onSuccess: () => { toast.success("Đã lưu và xuất bản bản công khai."); qc.invalidateQueries({queryKey:["my-vendor"]}); },
+    onSuccess: () => { toast.success("Đã lưu và xuất bản bản công khai."); draft.clear(); qc.invalidateQueries({queryKey:["my-vendor"]}); },
     onError: (e:any)=>toast.error(e.message),
   });
 
@@ -150,6 +159,9 @@ function VendorPortal() {
       )}
 
       <form onSubmit={(e)=>{e.preventDefault(); m.mutate();}} className="space-y-6">
+        {draft.RestoreBanner}
+        <WizardHeader titles={stepTitles} step={step} setStep={setStep} />
+        {show(0) && (
         <div className="grid sm:grid-cols-2 gap-4">
           <Field label="Tên thương hiệu" value={form.name} onChange={v=>setForm({...form,name:v})} required />
           <Field label="Slug" value={form.slug} onChange={v=>setForm({...form,slug:v})} required />
@@ -171,12 +183,16 @@ function VendorPortal() {
           <Field label="Link YouTube (embed)" value={form.youtube_url} onChange={v=>setForm({...form,youtube_url:v})} full />
           <label className="text-sm sm:col-span-2 text-xs text-muted-foreground -mt-2">Dùng dạng https://www.youtube.com/embed/VIDEO_ID</label>
         </div>
+        )}
 
+        {show(1) && (
         <div className="grid sm:grid-cols-2 gap-4">
           <ImagePicker label="Ảnh bìa" value={form.cover_image ?? ""} onChange={(url)=>setForm({...form, cover_image: url})} folder="vendor" />
           <ImagePicker label="Logo" value={form.logo_url ?? ""} onChange={(url)=>setForm({...form, logo_url: url})} folder="vendor" aspect="aspect-square" />
         </div>
+        )}
 
+        {show(2) && (
         <div>
           <h3 className="font-display text-xl mb-3">Thư viện</h3>
           <ImageUploadButton
@@ -194,11 +210,23 @@ function VendorPortal() {
             ))}
           </div>
         </div>
+        )}
 
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" disabled={m.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">{m.isPending?"Đang lưu…":"Lưu bản nháp"}</button>
-          <button type="button" onClick={()=>pub.mutate()} disabled={pub.isPending || m.isPending || !data || !(data as any).is_approved} title={!(data as any)?.is_approved ? "Cần admin duyệt trước" : "Lưu nháp và xuất bản phiên bản công khai"} className="px-6 py-3 border border-primary text-primary rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">{pub.isPending?"Đang lưu & xuất bản…":"Lưu & Xuất bản"}</button>
-        </div>
+        <WizardFooter
+          step={step} setStep={setStep} total={stepTitles.length}
+          onSubmit={() => m.mutate()}
+          submitLabel="Lưu bản nháp"
+          isSubmitting={m.isPending}
+          onSaveDraft={draft.saveNow}
+          onPreview={data && (data as any).slug ? () => window.open(`/vendors/${(data as any).slug}`, "_blank") : undefined}
+          previewLabel="Xem trang"
+          extra={data && (data as any).is_approved ? (
+            <button type="button" onClick={()=>pub.mutate()} disabled={pub.isPending || m.isPending}
+              className="px-3 py-2 rounded bg-primary/90 text-primary-foreground text-xs uppercase tracking-wider disabled:opacity-50">
+              {pub.isPending ? "Đang xuất bản…" : "Lưu & Xuất bản"}
+            </button>
+          ) : undefined}
+        />
       </form>
 
       {data && (
