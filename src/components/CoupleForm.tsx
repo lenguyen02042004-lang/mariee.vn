@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
 import { VN_BANKS } from "@/lib/form-presets";
+import { WizardHeader, WizardFooter, useLocalDraft } from "@/components/FormWizard";
 
 const MAX_MB = 10;
 const MAX_GALLERY = 30;
@@ -37,7 +38,7 @@ const imageFields = [
 
 type Mode = "admin" | "owner";
 
-export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial: any; gallery?: any[]; mode?: Mode }) {
+export function CoupleForm({ initial, gallery = [], mode = "admin", wizard = false }: { initial: any; gallery?: any[]; mode?: Mode; wizard?: boolean }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuth();
@@ -47,6 +48,31 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
     schedule: Array.isArray(initial?.schedule) ? initial.schedule : [],
   });
   const [uploading, setUploading] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
+  const stepTitles = [
+    "Thông tin cơ bản",
+    "Ảnh chính",
+    "Thiệp hai bên",
+    ...(form.id ? ["Thư viện ảnh"] : []),
+    "Tiệc hai bên",
+    "Mừng cưới",
+    "Chương trình",
+  ];
+  const stepMap = {
+    basic: 0,
+    hero: 1,
+    invite: 2,
+    gallery: form.id ? 3 : -1,
+    party: form.id ? 4 : 3,
+    gift: form.id ? 5 : 4,
+    schedule: form.id ? 6 : 5,
+  };
+  const show = (n: number) => !wizard || step === n;
+  const draftKey = wizard ? `mariee:draft:couple:${mode}:${form.id ?? initial?.slug ?? "new"}` : "noop";
+  const draft = useLocalDraft<any>({
+    key: draftKey, value: form, enabled: wizard,
+    onRestore: (v) => setForm(v),
+  });
 
   const adminUpsert = useServerFn(adminUpsertCouple);
   const ownerUpsert = useServerFn(updateMyCouple);
@@ -78,6 +104,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
       qc.invalidateQueries({ queryKey: ["a-couples"] });
       qc.invalidateQueries({ queryKey: ["my-couples"] });
       qc.invalidateQueries({ queryKey: ["my-couple", form.id] });
+      if (wizard) draft.clear();
       if (mode === "admin" && !form.id && r?.id) {
         navigate({ to: "/admin/couples/$id", params: { id: r.id } });
       }
