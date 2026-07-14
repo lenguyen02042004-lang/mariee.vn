@@ -9,12 +9,15 @@ export function FormSection({
   description,
   helper,
   children,
+  hidden,
 }: {
   title: string;
   description?: string;
   helper: ReactNode;
   children: ReactNode;
+  hidden?: boolean;
 }) {
+  if (hidden) return null;
   return (
     <section className="grid lg:grid-cols-[1fr_320px] gap-6 lg:gap-10 pb-8 border-b border-border/40 last:border-0">
       <div>
