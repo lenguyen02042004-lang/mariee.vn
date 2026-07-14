@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
 import { VN_BANKS } from "@/lib/form-presets";
+import { WizardHeader, WizardFooter, useLocalDraft } from "@/components/FormWizard";
 
 const MAX_MB = 10;
 const MAX_GALLERY = 30;
@@ -37,7 +38,7 @@ const imageFields = [
 
 type Mode = "admin" | "owner";
 
-export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial: any; gallery?: any[]; mode?: Mode }) {
+export function CoupleForm({ initial, gallery = [], mode = "admin", wizard = false }: { initial: any; gallery?: any[]; mode?: Mode; wizard?: boolean }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuth();
@@ -47,6 +48,31 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
     schedule: Array.isArray(initial?.schedule) ? initial.schedule : [],
   });
   const [uploading, setUploading] = useState<string | null>(null);
+  const [step, setStep] = useState(0);
+  const stepTitles = [
+    "Thông tin cơ bản",
+    "Ảnh chính",
+    "Thiệp hai bên",
+    ...(form.id ? ["Thư viện ảnh"] : []),
+    "Tiệc hai bên",
+    "Mừng cưới",
+    "Chương trình",
+  ];
+  const stepMap = {
+    basic: 0,
+    hero: 1,
+    invite: 2,
+    gallery: form.id ? 3 : -1,
+    party: form.id ? 4 : 3,
+    gift: form.id ? 5 : 4,
+    schedule: form.id ? 6 : 5,
+  };
+  const show = (n: number) => !wizard || step === n;
+  const draftKey = wizard ? `mariee:draft:couple:${mode}:${form.id ?? initial?.slug ?? "new"}` : "noop";
+  const draft = useLocalDraft<any>({
+    key: draftKey, value: form, enabled: wizard,
+    onRestore: (v) => setForm(v),
+  });
 
   const adminUpsert = useServerFn(adminUpsertCouple);
   const ownerUpsert = useServerFn(updateMyCouple);
@@ -78,6 +104,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
       qc.invalidateQueries({ queryKey: ["a-couples"] });
       qc.invalidateQueries({ queryKey: ["my-couples"] });
       qc.invalidateQueries({ queryKey: ["my-couple", form.id] });
+      if (wizard) draft.clear();
       if (mode === "admin" && !form.id && r?.id) {
         navigate({ to: "/admin/couples/$id", params: { id: r.id } });
       }
@@ -111,7 +138,10 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); save.mutate(undefined); }} className="space-y-10">
+      {wizard && draft.RestoreBanner}
+      {wizard && <WizardHeader titles={stepTitles} step={step} setStep={setStep} />}
       <FormSection
+        hidden={!show(stepMap.basic)}
         title="Thông tin cơ bản"
         description="Đây là phần khách nhìn đầu tiên — tên, ngày cưới, và câu trích dẫn thường xuất hiện trên thiệp chia sẻ."
         helper={
@@ -158,6 +188,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
       </FormSection>
 
       <FormSection
+        hidden={!show(stepMap.hero)}
         title="Hình ảnh chính"
         description={`Mỗi ảnh tối đa ${MAX_MB}MB, định dạng JPG/PNG/WEBP.`}
         helper={
@@ -184,6 +215,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
       </FormSection>
 
       <FormSection
+        hidden={!show(stepMap.invite)}
         title="Thiệp cưới hai bên gia đình"
         description="Ảnh thiệp (JPG/PNG, tối đa 15MB) để hai bên gia đình có thể xem &amp; tải về."
         helper={
@@ -212,7 +244,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
         </div>
       </FormSection>
 
-      {form.id && (
+      {form.id && show(stepMap.gallery) && (
         <FormSection
           title={`Thư viện ảnh cưới (${gallery.length}/${MAX_GALLERY})`}
           description={`Tối đa ${MAX_GALLERY} ảnh, mỗi ảnh ≤ ${MAX_MB}MB.`}
@@ -251,6 +283,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
       )}
 
       <FormSection
+        hidden={!show(stepMap.party)}
         title="Tiệc cưới hai bên"
         description="Điền riêng tiệc nhà cô dâu và nhà chú rể. Có thể để trống nếu không tổ chức riêng."
         helper={
@@ -277,6 +310,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
       </FormSection>
 
       <FormSection
+        hidden={!show(stepMap.gift)}
         title="Thông tin mừng cưới"
         description="Khách có thể chuyển khoản mừng trực tiếp qua QR ngân hàng được tạo tự động từ thông tin này."
         helper={
@@ -324,6 +358,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
       </FormSection>
 
       <FormSection
+        hidden={!show(stepMap.schedule)}
         title="Chương trình lễ cưới"
         description="Thêm bao nhiêu mục tuỳ ý (tối đa 40). Sắp theo thứ tự thời gian."
         helper={
@@ -347,6 +382,30 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
         </div>
       </FormSection>
 
+      {wizard ? (
+        <WizardFooter
+          step={step} setStep={setStep} total={stepTitles.length}
+          onSubmit={() => save.mutate(undefined)}
+          submitLabel={form.is_published ? "Lưu thay đổi" : "Lưu & xuất bản"}
+          isSubmitting={save.isPending}
+          onSaveDraft={draft.saveNow}
+          onPreview={form.slug ? () => window.open(`/couples/${form.slug}`, "_blank") : undefined}
+          previewLabel="Xem trang"
+          extra={form.id ? (
+            form.is_published ? (
+              <button type="button" disabled={save.isPending} onClick={() => save.mutate({ is_published: false })}
+                className="px-3 py-2 rounded border border-input bg-background hover:bg-secondary text-xs uppercase tracking-wider disabled:opacity-50">
+                Chuyển về nháp
+              </button>
+            ) : (
+              <button type="button" disabled={save.isPending} onClick={() => save.mutate({ is_published: true })}
+                className="px-3 py-2 rounded bg-primary/90 text-primary-foreground text-xs uppercase tracking-wider disabled:opacity-50">
+                Xuất bản ngay
+              </button>
+            )
+          ) : undefined}
+        />
+      ) : (
       <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 -mx-6 px-6 border-t border-border/40 flex flex-wrap gap-3">
         <button type="submit" disabled={save.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded uppercase tracking-[0.2em] text-sm disabled:opacity-50">
           {save.isPending ? "Đang lưu…" : "Lưu thay đổi"}
@@ -369,6 +428,7 @@ export function CoupleForm({ initial, gallery = [], mode = "admin" }: { initial:
           </a>
         )}
       </div>
+      )}
     </form>
   );
 }

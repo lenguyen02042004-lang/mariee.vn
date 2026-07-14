@@ -15,7 +15,7 @@ function EditCouple() {
   return (
     <div>
       <h1 className="font-display text-3xl">Sửa: {data.couple.bride_name} & {data.couple.groom_name}</h1>
-      <div className="mt-6"><CoupleForm initial={data.couple} gallery={data.gallery} /></div>
+      <div className="mt-6"><CoupleForm initial={data.couple} gallery={data.gallery} wizard /></div>
     </div>
   );
 }

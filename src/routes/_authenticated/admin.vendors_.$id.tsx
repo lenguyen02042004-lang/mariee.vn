@@ -18,7 +18,7 @@ function EditVendor() {
         <h1 className="font-display text-3xl">Sửa: {data.vendor.name}</h1>
         <Link to="/admin/vendors" className="text-sm text-primary underline">← Danh sách</Link>
       </div>
-      <div className="mt-6"><VendorForm initial={data.vendor} /></div>
+      <div className="mt-6"><VendorForm initial={data.vendor} wizard /></div>
     </div>
   );
 }

@@ -9,12 +9,13 @@ import { useAuth } from "@/hooks/use-auth";
 import { toast } from "sonner";
 import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
 import { VN_PROVINCES, VENDOR_PRICE_RANGES } from "@/lib/form-presets";
+import { WizardHeader, WizardFooter, useLocalDraft } from "@/components/FormWizard";
 
 const FALLBACK_CATS = [
   { slug: "other", label: "Khác", sort_order: 999 },
 ];
 
-export function VendorForm({ initial }: { initial: any }) {
+export function VendorForm({ initial, wizard = false }: { initial: any; wizard?: boolean }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { user } = useAuth();
@@ -26,6 +27,14 @@ export function VendorForm({ initial }: { initial: any }) {
     is_featured: false,
     ...initial,
     gallery: Array.isArray(initial?.gallery) ? initial.gallery : [],
+  });
+  const [step, setStep] = useState(0);
+  const stepTitles = ["Thông tin chung", "Hình ảnh thương hiệu", "Thư viện"];
+  const show = (n: number) => !wizard || step === n;
+  const draftKey = wizard ? `mariee:draft:vendor:${form.id ?? initial?.slug ?? "new"}` : "noop";
+  const draft = useLocalDraft<any>({
+    key: draftKey, value: form, enabled: wizard,
+    onRestore: (v) => setForm(v),
   });
   const upsert = useServerFn(adminUpsertVendor);
   const pub = useServerFn(adminPublishVendor);
@@ -48,6 +57,7 @@ export function VendorForm({ initial }: { initial: any }) {
       toast.success("Đã lưu vendor");
       qc.invalidateQueries({ queryKey: ["a-vendors"] });
       qc.invalidateQueries({ queryKey: ["a-vendor", form.id] });
+      if (wizard) draft.clear();
       if (!form.id && r?.id) navigate({ to: "/admin/vendors/$id", params: { id: r.id } });
     },
     onError: (e: any) => toast.error(e.message),
@@ -79,7 +89,10 @@ export function VendorForm({ initial }: { initial: any }) {
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); save.mutate(); }} className="space-y-8">
+      {wizard && draft.RestoreBanner}
+      {wizard && <WizardHeader titles={stepTitles} step={step} setStep={setStep} />}
       <FormSection
+        hidden={!show(0)}
         title="Thông tin chung"
         description="Tên thương hiệu sẽ hiển thị nổi bật. Slug tạo nên URL công khai và không thể đổi sau khi nhiều người đã biết."
         helper={
@@ -133,6 +146,7 @@ export function VendorForm({ initial }: { initial: any }) {
       </FormSection>
 
       <FormSection
+        hidden={!show(1)}
         title="Hình ảnh thương hiệu"
         description="Ảnh bìa hiển thị trên thẻ vendor và đầu trang chi tiết. Logo dùng cho danh sách và trang chia sẻ."
         helper={
@@ -153,6 +167,7 @@ export function VendorForm({ initial }: { initial: any }) {
       </FormSection>
 
       <FormSection
+        hidden={!show(2)}
         title={`Thư viện ảnh (${(form.gallery ?? []).length}/30)`}
         description="Hiển thị slideshow ở trang chi tiết. Khuyến nghị 12–20 ảnh chất lượng cao."
         helper={
@@ -182,6 +197,23 @@ export function VendorForm({ initial }: { initial: any }) {
         </div>
       </FormSection>
 
+      {wizard ? (
+        <WizardFooter
+          step={step} setStep={setStep} total={stepTitles.length}
+          onSubmit={() => save.mutate()}
+          submitLabel={form.id ? "Lưu thay đổi" : "Tạo vendor"}
+          isSubmitting={save.isPending}
+          onSaveDraft={draft.saveNow}
+          onPreview={form.slug ? () => window.open(`/vendors/${form.slug}`, "_blank") : undefined}
+          previewLabel="Xem trang"
+          extra={form.id ? (
+            <button type="button" disabled={publish.isPending || save.isPending} onClick={() => publish.mutate()}
+              className="px-3 py-2 rounded bg-primary/90 text-primary-foreground text-xs uppercase tracking-wider disabled:opacity-50">
+              {publish.isPending ? "Đang xuất bản…" : "Lưu & Xuất bản"}
+            </button>
+          ) : undefined}
+        />
+      ) : (
       <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 -mx-6 px-6 border-t border-border/40 flex flex-wrap gap-3">
         <button disabled={save.isPending} className="px-6 py-3 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm font-medium disabled:opacity-50 hover:bg-primary/90">
           {save.isPending ? "Đang lưu…" : (form.id ? "Lưu thay đổi" : "Tạo vendor")}
@@ -197,6 +229,7 @@ export function VendorForm({ initial }: { initial: any }) {
           </a>
         )}
       </div>
+      )}
     </form>
   );
 }
