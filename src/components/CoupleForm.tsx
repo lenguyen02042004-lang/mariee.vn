@@ -11,7 +11,7 @@ import { toast } from "sonner";
 import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
 import { VN_BANKS } from "@/lib/form-presets";
 import { WizardHeader, WizardFooter, useLocalDraft } from "@/components/FormWizard";
-import { GiftBox } from "@/components/GiftBox";
+import { GiftBoxes } from "@/components/GiftBox";
 
 const MAX_MB = 10;
 const MAX_GALLERY = 30;
