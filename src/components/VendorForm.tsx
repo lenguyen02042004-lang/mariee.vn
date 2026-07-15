@@ -205,7 +205,9 @@ export function VendorForm({ initial, wizard = false }: { initial: any; wizard?:
           isSubmitting={save.isPending}
           onSaveDraft={draft.saveNow}
           onPreview={form.slug ? () => window.open(`/vendors/${form.slug}`, "_blank") : undefined}
-          previewLabel="Xem trang"
+          previewLabel="Xem trang công khai"
+          stepPreview={renderVendorPreview(step, form)}
+          stepPreviewTitle={`Xem thử — ${stepTitles[step]}`}
           extra={form.id ? (
             <button type="button" disabled={publish.isPending || save.isPending} onClick={() => publish.mutate()}
               className="px-3 py-2 rounded bg-primary/90 text-primary-foreground text-xs uppercase tracking-wider disabled:opacity-50">
@@ -241,4 +243,71 @@ function Field({ label, value, onChange, required, full, placeholder, type }: { 
       <input required={required} type={type ?? "text"} value={value ?? ""} placeholder={placeholder} onChange={e => onChange(e.target.value)} className="mt-1 w-full px-3 py-2 rounded-md border border-input bg-background" />
     </label>
   );
+}
+
+function VRow({ label, value }: { label: string; value: any }) {
+  const empty = value === undefined || value === null || value === "";
+  return (
+    <div className="grid grid-cols-[130px_1fr] gap-3 py-1.5 border-b border-border/30 last:border-0 text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className={empty ? "text-muted-foreground/60 italic" : "text-foreground whitespace-pre-wrap break-words"}>
+        {empty ? "(chưa nhập)" : String(value)}
+      </span>
+    </div>
+  );
+}
+
+function renderVendorPreview(step: number, form: any) {
+  if (step === 0) {
+    return (
+      <div className="space-y-1">
+        <div className="text-center py-4 mb-2 rounded bg-primary/5 border border-primary/20">
+          <p className="font-display text-2xl">{form.name || "Tên thương hiệu"}</p>
+          {form.tagline && <p className="text-sm text-muted-foreground italic mt-1">{form.tagline}</p>}
+          <p className="text-xs text-primary mt-2 uppercase tracking-wider">{form.category || "chưa chọn danh mục"}{form.city ? ` · ${form.city}` : ""}</p>
+        </div>
+        <VRow label="Slug" value={form.slug} />
+        <VRow label="Khoảng giá" value={form.price_range} />
+        <VRow label="Điện thoại" value={form.phone} />
+        <VRow label="Email" value={form.email} />
+        <VRow label="Website" value={form.website} />
+        <VRow label="Địa chỉ" value={form.address} />
+        <VRow label="YouTube" value={form.youtube_url} />
+        <VRow label="Mô tả" value={form.description} />
+        <VRow label="Trạng thái" value={form.is_approved ? "Đã duyệt (công khai)" : "Chưa duyệt"} />
+        {form.is_featured && <VRow label="Nổi bật" value="Có" />}
+      </div>
+    );
+  }
+  if (step === 1) {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <p className="text-xs text-muted-foreground mb-1">Ảnh bìa</p>
+          {form.cover_image
+            ? <img src={form.cover_image} className="w-full aspect-video object-cover rounded border border-border/60" />
+            : <div className="w-full aspect-video rounded border border-dashed grid place-items-center text-xs text-muted-foreground/60">(chưa có)</div>}
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground mb-1">Logo</p>
+          {form.logo_url
+            ? <img src={form.logo_url} className="w-full aspect-square object-cover rounded border border-border/60" />
+            : <div className="w-full aspect-square rounded border border-dashed grid place-items-center text-xs text-muted-foreground/60">(chưa có)</div>}
+        </div>
+      </div>
+    );
+  }
+  if (step === 2) {
+    const g: string[] = form.gallery ?? [];
+    return g.length === 0 ? (
+      <p className="text-sm text-muted-foreground italic">Chưa có ảnh trong thư viện.</p>
+    ) : (
+      <div className="grid grid-cols-3 gap-2">
+        {g.map((url, i) => (
+          <img key={i} src={url} className="aspect-square object-cover rounded border border-border/60" />
+        ))}
+      </div>
+    );
+  }
+  return null;
 }

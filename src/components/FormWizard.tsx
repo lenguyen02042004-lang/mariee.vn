@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 /**
  * Step-by-step wizard shell used by CoupleForm & VendorForm.
@@ -17,7 +18,7 @@ export function WizardHeader({
           Bước {step + 1} / {titles.length}
         </p>
         <p className="text-xs text-muted-foreground">
-          Nháp được lưu tự động trên trình duyệt này
+          Bấm vào bất kỳ bước để nhảy tới · Nháp tự lưu trên trình duyệt
         </p>
       </div>
       <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
@@ -32,12 +33,13 @@ export function WizardHeader({
           return (
             <button
               key={i} type="button" onClick={() => setStep(i)}
+              title="Nhảy tới bước này — dữ liệu đã nhập được giữ nguyên"
               className={`text-xs px-3 py-1.5 rounded-full border transition-all ${
                 current
                   ? "bg-primary text-primary-foreground border-primary shadow-sm"
                   : done
                     ? "bg-primary/10 text-primary border-primary/30 hover:bg-primary/15"
-                    : "bg-background text-muted-foreground border-input hover:border-primary/40"
+                    : "bg-background text-muted-foreground border-input hover:border-primary/40 hover:text-primary"
               }`}
             >
               <span className="font-medium mr-1.5">{i + 1}.</span>{t}
@@ -54,6 +56,7 @@ export function WizardFooter({
   step, setStep, total,
   onSubmit, submitLabel = "Lưu thay đổi", isSubmitting,
   onPreview, previewLabel = "Xem thử",
+  stepPreview, stepPreviewTitle,
   onSaveDraft, extra,
 }: {
   step: number;
@@ -64,10 +67,13 @@ export function WizardFooter({
   isSubmitting?: boolean;
   onPreview?: () => void;
   previewLabel?: string;
+  stepPreview?: ReactNode;
+  stepPreviewTitle?: string;
   onSaveDraft?: () => void;
   extra?: ReactNode;
 }) {
   const isLast = step >= total - 1;
+  const [openPreview, setOpenPreview] = useState(false);
   return (
     <div className="sticky bottom-0 bg-background/95 backdrop-blur py-4 -mx-6 px-6 border-t border-border/40 flex flex-wrap gap-2 items-center">
       <button
@@ -97,13 +103,32 @@ export function WizardFooter({
           className="px-3 py-2 rounded-md text-sm text-primary hover:bg-primary/10"
         >💾 Lưu nháp</button>
       )}
+      {stepPreview && (
+        <button
+          type="button" onClick={() => setOpenPreview(true)}
+          className="px-4 py-2.5 rounded-md border border-primary/40 text-primary bg-primary/5 hover:bg-primary/10 text-sm"
+        >🔍 Xem thử bước này</button>
+      )}
       {onPreview && (
         <button
           type="button" onClick={onPreview}
           className="px-4 py-2.5 rounded-md border border-input bg-background hover:bg-secondary text-sm"
-        >👁 {previewLabel}</button>
+        >↗ {previewLabel}</button>
       )}
       {extra}
+      {stepPreview && (
+        <Dialog open={openPreview} onOpenChange={setOpenPreview}>
+          <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{stepPreviewTitle ?? "Xem thử bước hiện tại"}</DialogTitle>
+              <DialogDescription>
+                Bản xem trước cập nhật theo dữ liệu bạn vừa nhập — chưa được lưu.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="mt-2">{stepPreview}</div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }

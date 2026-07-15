@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
 import { VN_BANKS } from "@/lib/form-presets";
 import { WizardHeader, WizardFooter, useLocalDraft } from "@/components/FormWizard";
+import { GiftBoxes } from "@/components/GiftBox";
 
 const MAX_MB = 10;
 const MAX_GALLERY = 30;
@@ -390,7 +391,9 @@ export function CoupleForm({ initial, gallery = [], mode = "admin", wizard = fal
           isSubmitting={save.isPending}
           onSaveDraft={draft.saveNow}
           onPreview={form.slug ? () => window.open(`/couples/${form.slug}`, "_blank") : undefined}
-          previewLabel="Xem trang"
+          previewLabel="Xem trang công khai"
+          stepPreview={renderCouplePreview(step, stepMap, form, gallery)}
+          stepPreviewTitle={`Xem thử — ${stepTitles[step]}`}
           extra={form.id ? (
             form.is_published ? (
               <button type="button" disabled={save.isPending} onClick={() => save.mutate({ is_published: false })}
@@ -431,4 +434,126 @@ export function CoupleForm({ initial, gallery = [], mode = "admin", wizard = fal
       )}
     </form>
   );
+}
+
+function Row({ label, value }: { label: string; value: any }) {
+  const empty = value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0);
+  return (
+    <div className="grid grid-cols-[140px_1fr] gap-3 py-1.5 border-b border-border/30 last:border-0 text-sm">
+      <span className="text-muted-foreground">{label}</span>
+      <span className={empty ? "text-muted-foreground/60 italic" : "text-foreground whitespace-pre-wrap break-words"}>
+        {empty ? "(chưa nhập)" : String(value)}
+      </span>
+    </div>
+  );
+}
+
+function ImgTile({ label, url, className = "aspect-video" }: { label: string; url?: string | null; className?: string }) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      {url ? (
+        <img src={url} className={`w-full ${className} object-cover rounded border border-border/60`} />
+      ) : (
+        <div className={`w-full ${className} rounded border border-dashed border-border grid place-items-center text-xs text-muted-foreground/60`}>(chưa có ảnh)</div>
+      )}
+    </div>
+  );
+}
+
+function renderCouplePreview(step: number, map: Record<string, number>, form: any, gallery: any[]) {
+  if (step === map.basic) {
+    return (
+      <div className="space-y-1">
+        <div className="text-center py-4 mb-2 rounded bg-primary/5 border border-primary/20">
+          <p className="font-script text-3xl text-primary">{form.bride_name || "Cô dâu"} &amp; {form.groom_name || "Chú rể"}</p>
+          {form.wedding_date && <p className="text-sm text-muted-foreground mt-1">{new Date(form.wedding_date).toLocaleDateString("vi-VN", { weekday: "long", day: "2-digit", month: "long", year: "numeric" })}</p>}
+          {form.quote && <p className="italic text-sm mt-2">"{form.quote}"</p>}
+        </div>
+        <Row label="Slug" value={form.slug} />
+        <Row label="Giờ lễ" value={form.ceremony_time} />
+        <Row label="Giờ tiệc chung" value={form.reception_time} />
+        <Row label="Địa điểm" value={form.venue_name} />
+        <Row label="Địa chỉ" value={form.venue_address} />
+        <Row label="YouTube" value={form.youtube_url} />
+        <Row label="Câu chuyện" value={form.story} />
+        <Row label="Trạng thái" value={form.is_published ? "Công khai" : "Bản nháp"} />
+      </div>
+    );
+  }
+  if (step === map.hero) {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <ImgTile label="Ảnh bìa (OG)" url={form.cover_image} />
+        <ImgTile label="Hero 1" url={form.hero_image_1} />
+        <ImgTile label="Hero 2" url={form.hero_image_2} />
+        <ImgTile label="Hero 3" url={form.hero_image_3} />
+      </div>
+    );
+  }
+  if (step === map.invite) {
+    return (
+      <div className="grid grid-cols-2 gap-3">
+        <ImgTile label="Thiệp nhà cô dâu" url={form.invitation_bride_url} className="aspect-[3/4]" />
+        <ImgTile label="Thiệp nhà chú rể" url={form.invitation_groom_url} className="aspect-[3/4]" />
+      </div>
+    );
+  }
+  if (step === map.gallery) {
+    return gallery.length === 0 ? (
+      <p className="text-sm text-muted-foreground italic">Chưa có ảnh trong thư viện.</p>
+    ) : (
+      <div className="grid grid-cols-3 gap-2">
+        {gallery.map((g: any) => (
+          <img key={g.id} src={g.image_url} className="aspect-square object-cover rounded border border-border/60" />
+        ))}
+      </div>
+    );
+  }
+  if (step === map.party) {
+    return (
+      <div className="grid sm:grid-cols-2 gap-3">
+        <div className="p-3 rounded bg-secondary/40 space-y-1">
+          <p className="font-script text-xl text-primary">Nhà cô dâu</p>
+          <Row label="Thời gian" value={form.bride_party_time} />
+          <Row label="Địa điểm" value={form.bride_party_venue} />
+          <Row label="Địa chỉ" value={form.bride_party_address} />
+        </div>
+        <div className="p-3 rounded bg-secondary/40 space-y-1">
+          <p className="font-script text-xl text-primary">Nhà chú rể</p>
+          <Row label="Thời gian" value={form.groom_party_time} />
+          <Row label="Địa điểm" value={form.groom_party_venue} />
+          <Row label="Địa chỉ" value={form.groom_party_address} />
+        </div>
+      </div>
+    );
+  }
+  if (step === map.gift) {
+    return (
+      <div className="space-y-3">
+        <p className="text-xs text-muted-foreground">Hộp mừng cưới hiển thị đúng như trên trang công khai (bấm vào hộp để mở):</p>
+        <GiftBoxes
+          bride={{ label: "Cô dâu", holder: form.gift_bride_holder, bank: form.gift_bride_bank, account: form.gift_bride_account, qrUrl: form.gift_bride_qr_url }}
+          groom={{ label: "Chú rể", holder: form.gift_groom_holder, bank: form.gift_groom_bank, account: form.gift_groom_account, qrUrl: form.gift_groom_qr_url }}
+        />
+      </div>
+    );
+  }
+  if (step === map.schedule) {
+    const items: any[] = form.schedule ?? [];
+    return items.length === 0 ? (
+      <p className="text-sm text-muted-foreground italic">Chưa có mục nào trong chương trình.</p>
+    ) : (
+      <ol className="relative border-l border-primary/30 ml-3 space-y-3">
+        {items.map((s, i) => (
+          <li key={i} className="ml-4">
+            <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-primary" />
+            <p className="text-sm font-medium">{s.time || "--:--"} — {s.title || "(chưa có tiêu đề)"}</p>
+            {s.description && <p className="text-xs text-muted-foreground">{s.description}</p>}
+          </li>
+        ))}
+      </ol>
+    );
+  }
+  return <p className="text-sm text-muted-foreground italic">Chưa có nội dung để xem thử.</p>;
 }
