@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { FormSection, SelectOrOther, FieldLabel } from "@/components/FormSection";
 import { VN_BANKS } from "@/lib/form-presets";
 import { WizardHeader, WizardFooter, useLocalDraft } from "@/components/FormWizard";
+import { GiftBox } from "@/components/GiftBox";
 
 const MAX_MB = 10;
 const MAX_GALLERY = 30;
@@ -390,7 +391,9 @@ export function CoupleForm({ initial, gallery = [], mode = "admin", wizard = fal
           isSubmitting={save.isPending}
           onSaveDraft={draft.saveNow}
           onPreview={form.slug ? () => window.open(`/couples/${form.slug}`, "_blank") : undefined}
-          previewLabel="Xem trang"
+          previewLabel="Xem trang công khai"
+          stepPreview={renderCouplePreview(step, stepMap, form, gallery)}
+          stepPreviewTitle={`Xem thử — ${stepTitles[step]}`}
           extra={form.id ? (
             form.is_published ? (
               <button type="button" disabled={save.isPending} onClick={() => save.mutate({ is_published: false })}
