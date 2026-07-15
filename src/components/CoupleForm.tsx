@@ -533,8 +533,8 @@ function renderCouplePreview(step: number, map: Record<string, number>, form: an
       <div className="space-y-3">
         <p className="text-xs text-muted-foreground">Hộp mừng cưới hiển thị đúng như trên trang công khai (bấm vào hộp để mở):</p>
         <GiftBoxes
-          bride={{ holder: form.gift_bride_holder, bank: form.gift_bride_bank, account: form.gift_bride_account, qrUrl: form.gift_bride_qr_url }}
-          groom={{ holder: form.gift_groom_holder, bank: form.gift_groom_bank, account: form.gift_groom_account, qrUrl: form.gift_groom_qr_url }}
+          bride={{ label: "Cô dâu", holder: form.gift_bride_holder, bank: form.gift_bride_bank, account: form.gift_bride_account, qrUrl: form.gift_bride_qr_url }}
+          groom={{ label: "Chú rể", holder: form.gift_groom_holder, bank: form.gift_groom_bank, account: form.gift_groom_account, qrUrl: form.gift_groom_qr_url }}
         />
       </div>
     );
