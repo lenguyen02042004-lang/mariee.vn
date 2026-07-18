@@ -9,6 +9,7 @@ import {
   ExternalLink,
   LogOut,
   ChevronRight,
+  LayoutTemplate,
 } from "lucide-react";
 import {
   Sidebar,
@@ -44,6 +45,7 @@ const groups: { label: string; items: NavItem[] }[] = [
   {
     label: "Nội dung",
     items: [
+      { to: "/vendor/landing", label: "Trang giới thiệu", icon: LayoutTemplate },
       { to: "/vendor/products", label: "Sản phẩm / Dịch vụ", icon: Package },
       { to: "/vendor/testimonials", label: "Đánh giá khách", icon: Star },
     ],
