@@ -37,6 +37,7 @@ import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/em
 import { Route as AuthenticatedVendorTestimonialsRouteImport } from './routes/_authenticated/vendor.testimonials'
 import { Route as AuthenticatedVendorProductsRouteImport } from './routes/_authenticated/vendor.products'
 import { Route as AuthenticatedVendorLeadsRouteImport } from './routes/_authenticated/vendor.leads'
+import { Route as AuthenticatedVendorLandingRouteImport } from './routes/_authenticated/vendor.landing'
 import { Route as AuthenticatedVendorBillingRouteImport } from './routes/_authenticated/vendor.billing'
 import { Route as AuthenticatedCoupleRsvpRouteImport } from './routes/_authenticated/couple_.rsvp'
 import { Route as AuthenticatedAdminWishesRouteImport } from './routes/_authenticated/admin.wishes'
@@ -204,6 +205,12 @@ const AuthenticatedVendorLeadsRoute =
   AuthenticatedVendorLeadsRouteImport.update({
     id: '/leads',
     path: '/leads',
+    getParentRoute: () => AuthenticatedVendorRoute,
+  } as any)
+const AuthenticatedVendorLandingRoute =
+  AuthenticatedVendorLandingRouteImport.update({
+    id: '/landing',
+    path: '/landing',
     getParentRoute: () => AuthenticatedVendorRoute,
   } as any)
 const AuthenticatedVendorBillingRoute =
@@ -384,6 +391,7 @@ export interface FileRoutesByFullPath {
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/couple/rsvp': typeof AuthenticatedCoupleRsvpRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
+  '/vendor/landing': typeof AuthenticatedVendorLandingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
@@ -436,6 +444,7 @@ export interface FileRoutesByTo {
   '/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/couple/rsvp': typeof AuthenticatedCoupleRsvpRoute
   '/vendor/billing': typeof AuthenticatedVendorBillingRoute
+  '/vendor/landing': typeof AuthenticatedVendorLandingRoute
   '/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
@@ -492,6 +501,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/wishes': typeof AuthenticatedAdminWishesRoute
   '/_authenticated/couple_/rsvp': typeof AuthenticatedCoupleRsvpRoute
   '/_authenticated/vendor/billing': typeof AuthenticatedVendorBillingRoute
+  '/_authenticated/vendor/landing': typeof AuthenticatedVendorLandingRoute
   '/_authenticated/vendor/leads': typeof AuthenticatedVendorLeadsRoute
   '/_authenticated/vendor/products': typeof AuthenticatedVendorProductsRoute
   '/_authenticated/vendor/testimonials': typeof AuthenticatedVendorTestimonialsRoute
@@ -548,6 +558,7 @@ export interface FileRouteTypes {
     | '/admin/wishes'
     | '/couple/rsvp'
     | '/vendor/billing'
+    | '/vendor/landing'
     | '/vendor/leads'
     | '/vendor/products'
     | '/vendor/testimonials'
@@ -600,6 +611,7 @@ export interface FileRouteTypes {
     | '/admin/wishes'
     | '/couple/rsvp'
     | '/vendor/billing'
+    | '/vendor/landing'
     | '/vendor/leads'
     | '/vendor/products'
     | '/vendor/testimonials'
@@ -655,6 +667,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/wishes'
     | '/_authenticated/couple_/rsvp'
     | '/_authenticated/vendor/billing'
+    | '/_authenticated/vendor/landing'
     | '/_authenticated/vendor/leads'
     | '/_authenticated/vendor/products'
     | '/_authenticated/vendor/testimonials'
@@ -899,6 +912,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVendorLeadsRouteImport
       parentRoute: typeof AuthenticatedVendorRoute
     }
+    '/_authenticated/vendor/landing': {
+      id: '/_authenticated/vendor/landing'
+      path: '/landing'
+      fullPath: '/vendor/landing'
+      preLoaderRoute: typeof AuthenticatedVendorLandingRouteImport
+      parentRoute: typeof AuthenticatedVendorRoute
+    }
     '/_authenticated/vendor/billing': {
       id: '/_authenticated/vendor/billing'
       path: '/billing'
@@ -1128,6 +1148,7 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedVendorRouteChildren {
   AuthenticatedVendorBillingRoute: typeof AuthenticatedVendorBillingRoute
+  AuthenticatedVendorLandingRoute: typeof AuthenticatedVendorLandingRoute
   AuthenticatedVendorLeadsRoute: typeof AuthenticatedVendorLeadsRoute
   AuthenticatedVendorProductsRoute: typeof AuthenticatedVendorProductsRoute
   AuthenticatedVendorTestimonialsRoute: typeof AuthenticatedVendorTestimonialsRoute
@@ -1136,6 +1157,7 @@ interface AuthenticatedVendorRouteChildren {
 
 const AuthenticatedVendorRouteChildren: AuthenticatedVendorRouteChildren = {
   AuthenticatedVendorBillingRoute: AuthenticatedVendorBillingRoute,
+  AuthenticatedVendorLandingRoute: AuthenticatedVendorLandingRoute,
   AuthenticatedVendorLeadsRoute: AuthenticatedVendorLeadsRoute,
   AuthenticatedVendorProductsRoute: AuthenticatedVendorProductsRoute,
   AuthenticatedVendorTestimonialsRoute: AuthenticatedVendorTestimonialsRoute,
