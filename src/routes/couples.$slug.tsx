@@ -26,6 +26,8 @@ import { toast } from "sonner";
 import WeddingHero from "@/components/WeddingHero";
 import FallingPetals from "@/components/FallingPetals";
 import SectionDivider from "@/components/SectionDivider";
+import BackToTop from "@/components/BackToTop";
+import MarieeFooter from "@/components/MarieeFooter";
 import "../wedding-studio.css";
 
 const WEDDING_AUDIO_URL = "https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3?filename=wedding-piano-112191.mp3";
@@ -417,6 +419,9 @@ function CouplePage() {
     <div className="site" data-theme={theme} style={cssVars}>
       {/* FLOATING WATERCOLOR FALLING PETALS OVERLAY */}
       <FallingPetals theme={theme === "champagne" ? "champagne" : "blush"} />
+
+      {/* FLOATING BACK TO TOP BUTTON */}
+      <BackToTop theme={theme === "champagne" ? "champagne" : "blush"} />
 
       {/* BOTANICAL SIDE FRAMING FOR DESKTOP */}
       <img
@@ -1151,11 +1156,11 @@ function CouplePage() {
           </div>
         </section>
 
-        {/* BOTTOM FOOTER BAR */}
-        <div className="footer-bar">
-          <p>© 2026 {couple.bride_name} &amp; {couple.groom_name}. All rights reserved.</p>
-          <p>Cảm ơn bạn đã trở thành một phần trong hành trình của chúng mình! ♡</p>
-        </div>
+        {/* MARIEE FOOTER & TELEGRAM CONTACT */}
+        <MarieeFooter
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          coupleName={`${couple.bride_name} & ${couple.groom_name}`}
+        />
       </main>
 
       {/* FULLSCREEN LIGHTBOX MODAL */}

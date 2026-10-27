@@ -1,23 +1,79 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { ArrowUp } from "lucide-react";
 
-export function BackToTop() {
-  const [show, setShow] = useState(false);
+interface BackToTopProps {
+  theme?: "blush" | "champagne" | string;
+}
+
+export default function BackToTop({ theme = "blush" }: BackToTopProps) {
+  const [visible, setVisible] = useState(false);
+  const isChampagne = theme === "champagne";
+
   useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 400);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => {
+      setVisible(window.scrollY > 350);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  if (!visible) return null;
+
   return (
     <button
       type="button"
-      aria-label="Lên đầu trang"
-      onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      className={`fixed bottom-6 right-6 z-40 h-11 w-11 rounded-full bg-card/90 text-foreground border border-gold/40 shadow-elegant backdrop-blur-md transition-all duration-300 hover:bg-gold/15 hover:border-gold hover:-translate-y-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold cursor-pointer flex items-center justify-center ${show ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-2 pointer-events-none"}`}
+      onClick={scrollToTop}
+      aria-label="Cuộn về đầu trang"
+      title="Cuộn về đầu trang"
+      style={{
+        position: "fixed",
+        bottom: "22px",
+        right: "22px",
+        zIndex: 45,
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "6px",
+        padding: "9px 14px",
+        borderRadius: "999px",
+        border: isChampagne ? "1px solid rgba(201, 152, 62, 0.4)" : "1px solid rgba(226, 92, 128, 0.4)",
+        background: isChampagne
+          ? "rgba(255, 252, 245, 0.92)"
+          : "rgba(255, 250, 252, 0.92)",
+        backdropFilter: "blur(10px)",
+        color: isChampagne ? "#9e6f24" : "#c43d63",
+        fontSize: "11px",
+        fontWeight: 600,
+        fontFamily: "'Montserrat', sans-serif",
+        letterSpacing: "0.06em",
+        cursor: "pointer",
+        boxShadow: isChampagne
+          ? "0 6px 20px rgba(190, 139, 50, 0.22)"
+          : "0 6px 20px rgba(212, 76, 114, 0.22)",
+        transition: "transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s, background 0.25s",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = "translateY(-3px)";
+        e.currentTarget.style.boxShadow = isChampagne
+          ? "0 10px 26px rgba(190, 139, 50, 0.35)"
+          : "0 10px 26px rgba(212, 76, 114, 0.35)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = "translateY(0)";
+        e.currentTarget.style.boxShadow = isChampagne
+          ? "0 6px 20px rgba(190, 139, 50, 0.22)"
+          : "0 6px 20px rgba(212, 76, 114, 0.22)";
+      }}
     >
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className="text-gold" aria-hidden>
-        <polyline points="18 15 12 9 6 15" />
-      </svg>
+      <ArrowUp size={14} strokeWidth={2.5} />
+      <span>Đầu trang</span>
     </button>
   );
 }
