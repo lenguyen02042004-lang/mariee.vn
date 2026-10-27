@@ -45,20 +45,21 @@ export default function FallingPetals({ theme = "blush" }: FallingPetalsProps) {
     const isMobile = width < 768;
     const petalCount = isMobile ? 9 : 18;
 
-    // Palette shades
+    // Palette shades - fresh, vibrant & radiant (tươi tắn & không tối)
     const colors = isChampagne
       ? [
-          { fill: "rgba(232, 211, 182, 0.82)", stroke: "rgba(185, 152, 104, 0.4)" }, // Champagne
-          { fill: "rgba(247, 240, 229, 0.88)", stroke: "rgba(214, 191, 163, 0.35)" }, // Ivory
-          { fill: "rgba(214, 191, 163, 0.78)", stroke: "rgba(168, 131, 98, 0.4)" },  // Warm Beige
-          { fill: "rgba(242, 230, 210, 0.85)", stroke: "rgba(185, 152, 104, 0.3)" }, // Soft Gold
+          { fill: "rgba(255, 222, 145, 0.92)", stroke: "rgba(224, 172, 55, 0.60)" }, // Radiant Warm Gold
+          { fill: "rgba(255, 245, 212, 0.95)", stroke: "rgba(235, 195, 105, 0.50)" }, // Sparkling Champagne
+          { fill: "rgba(250, 212, 130, 0.90)", stroke: "rgba(215, 158, 40, 0.55)" },  // Sunlit Yellow Gold
+          { fill: "rgba(255, 252, 238, 0.96)", stroke: "rgba(240, 210, 130, 0.45)" }, // Luminous Ivory Gold
         ]
       : [
-          { fill: "rgba(233, 184, 190, 0.85)", stroke: "rgba(214, 154, 166, 0.45)" }, // Blush
-          { fill: "rgba(248, 216, 220, 0.88)", stroke: "rgba(224, 170, 180, 0.4)" },  // Soft Rose
-          { fill: "rgba(217, 166, 165, 0.80)", stroke: "rgba(180, 120, 130, 0.45)" }, // Dusty Rose
-          { fill: "rgba(255, 242, 244, 0.90)", stroke: "rgba(233, 184, 190, 0.35)" }, // Cream Petal
+          { fill: "rgba(255, 168, 192, 0.92)", stroke: "rgba(238, 98, 132, 0.60)" },  // Fresh Rose Petal (tươi tắn)
+          { fill: "rgba(255, 202, 218, 0.95)", stroke: "rgba(245, 142, 168, 0.50)" }, // Sweet Sakura Pink
+          { fill: "rgba(255, 140, 172, 0.88)", stroke: "rgba(228, 72, 112, 0.60)" },  // Vibrant Blooming Pink
+          { fill: "rgba(255, 238, 244, 0.96)", stroke: "rgba(255, 175, 195, 0.45)" }, // Dewy Petal White-Pink
         ];
+
 
     const petals: Petal[] = [];
     for (let i = 0; i < petalCount; i++) {

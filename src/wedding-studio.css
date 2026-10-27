@@ -5,18 +5,26 @@
 }
 
 .site {
-  background: var(--bg, #fff8f4);
-  color: var(--ink, #683c42);
+  background-color: var(--bg, #fff7f8);
+  color: var(--ink, #3b1d25);
   min-height: 100vh;
   overflow-x: hidden;
   position: relative;
-  background-image: url('/assets/visual/pink-paper.webp');
-  background-repeat: repeat;
-  background-size: 768px 768px;
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(255, 238, 244, 0.75), transparent 60%),
+    url('/assets/visual/pink-paper.webp');
+  background-repeat: no-repeat, repeat;
+  background-size: 100% 800px, 768px 768px;
 }
 
 .site[data-theme="champagne"] {
-  background-image: url('/assets/visual/champagne-paper.webp');
+  background-color: var(--bg, #fdfbf7);
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(255, 248, 225, 0.8), transparent 60%),
+    radial-gradient(circle at 85% 25%, rgba(254, 242, 205, 0.5), transparent 45%),
+    url('/assets/visual/champagne-paper.webp');
+  background-repeat: no-repeat, no-repeat, repeat;
+  background-size: 100% 800px, 100% 1200px, 768px 768px;
 }
 
 .site[data-theme="champagne"] .floral {
@@ -107,7 +115,7 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: var(--accent, #c97f8d);
+  background: linear-gradient(135deg, #e86588, #d44c72);
   color: white !important;
   border-radius: 30px;
   padding: 13px 28px;
@@ -116,13 +124,25 @@
   text-decoration: none;
   transition: transform 0.25s, background 0.25s, box-shadow 0.25s;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(201, 127, 141, 0.25);
+  box-shadow: 0 4px 16px rgba(226, 92, 128, 0.32);
 }
 
 .btn:hover, .small-cta:hover {
   transform: translateY(-2px);
-  background: var(--deep, #8e4556);
-  box-shadow: 0 6px 20px rgba(142, 69, 86, 0.35);
+  background: linear-gradient(135deg, #d44c72, #ba365b);
+  box-shadow: 0 6px 22px rgba(212, 76, 114, 0.45);
+}
+
+.site[data-theme="champagne"] .btn,
+.site[data-theme="champagne"] .small-cta {
+  background: linear-gradient(135deg, #d8a548, #be8b32);
+  box-shadow: 0 4px 16px rgba(190, 139, 50, 0.32);
+}
+
+.site[data-theme="champagne"] .btn:hover,
+.site[data-theme="champagne"] .small-cta:hover {
+  background: linear-gradient(135deg, #be8b32, #a47524);
+  box-shadow: 0 6px 22px rgba(190, 139, 50, 0.45);
 }
 
 .small-cta {

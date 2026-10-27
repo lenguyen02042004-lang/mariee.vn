@@ -33,25 +33,25 @@ const WEDDING_AUDIO_URL = "https://cdn.pixabay.com/download/audio/2022/05/16/aud
 export const themes = {
   pink: {
     label: "Blush Pink Romance",
-    bg: "#fff8f4",
-    paper: "#fffdf9",
-    soft: "#f9e5e7",
-    ink: "#683c42",
-    muted: "#987a7c",
-    accent: "#c97f8d",
-    deep: "#8e4556",
-    line: "#efd7d8",
+    bg: "#fff7f8",       // Luminous fresh rosewater white
+    paper: "#ffffff",    // Pure clean white
+    soft: "#fdebf0",     // Fresh cherry blossom / sweet blush
+    ink: "#3b1d25",      // Crisp readable berry dark (high clarity)
+    muted: "#9e596d",    // Fresh rose petal
+    accent: "#e25c80",   // Radiant blooming rose pink (vibrant, tươi tắn)
+    deep: "#c43d63",     // Rich vibrant rose
+    line: "#fcd4df",     // Soft fresh rose hairline
   },
   champagne: {
     label: "Champagne Luxury",
-    bg: "#f9f4ed",
-    paper: "#fffdf8",
-    soft: "#eee3d4",
-    ink: "#573e32",
-    muted: "#90786c",
-    accent: "#a77b5e",
-    deep: "#79513d",
-    line: "#e4d5c5",
+    bg: "#fdfbf7",       // Luminous warm ivory silk (fresh & bright)
+    paper: "#ffffff",    // Pure clean white
+    soft: "#fbf3e4",     // Warm golden cream glow
+    ink: "#382a1d",      // Sharp deep espresso bronze (high contrast)
+    muted: "#8f755a",    // Refined warm gold-taupe
+    accent: "#c9983e",   // Sparkling warm radiant gold (vàng gold tươi sáng)
+    deep: "#a67728",     // Rich polished royal gold
+    line: "#ede0c8",     // Delicate warm gold hairline
   },
 };
 

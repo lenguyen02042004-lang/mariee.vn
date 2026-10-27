@@ -49,8 +49,8 @@ export default function SectionDivider({
             height: "1px",
             background:
               t === "champagne"
-                ? "linear-gradient(90deg, transparent, rgba(185, 152, 104, 0.45) 70%, rgba(185, 152, 104, 0.7))"
-                : "linear-gradient(90deg, transparent, rgba(214, 154, 166, 0.45) 70%, rgba(214, 154, 166, 0.7))",
+                ? "linear-gradient(90deg, transparent, rgba(218, 165, 32, 0.45) 70%, rgba(201, 152, 62, 0.85))"
+                : "linear-gradient(90deg, transparent, rgba(240, 110, 145, 0.45) 70%, rgba(226, 92, 128, 0.85))",
           }}
         />
 
@@ -58,10 +58,11 @@ export default function SectionDivider({
           <span
             style={{
               fontFamily: "'Charm', cursive",
-              fontSize: "18px",
-              color: t === "champagne" ? "var(--wh-accent, #a78362)" : "var(--wh-accent, #c77d90)",
+              fontSize: "19px",
+              color: t === "champagne" ? "#c9983e" : "#e25c80",
               letterSpacing: "0.1em",
               padding: "0 8px",
+              fontWeight: 600,
             }}
           >
             {monogram} ♡
@@ -69,8 +70,8 @@ export default function SectionDivider({
         ) : (
           <span
             style={{
-              fontSize: "15px",
-              color: t === "champagne" ? "var(--wh-accent, #a78362)" : "var(--wh-accent, #c77d90)",
+              fontSize: "16px",
+              color: t === "champagne" ? "#c9983e" : "#e25c80",
             }}
           >
             ♡
@@ -83,8 +84,8 @@ export default function SectionDivider({
             height: "1px",
             background:
               t === "champagne"
-                ? "linear-gradient(90deg, rgba(185, 152, 104, 0.7), rgba(185, 152, 104, 0.45) 30%, transparent)"
-                : "linear-gradient(90deg, rgba(214, 154, 166, 0.7), rgba(214, 154, 166, 0.45) 30%, transparent)",
+                ? "linear-gradient(90deg, rgba(201, 152, 62, 0.85), rgba(218, 165, 32, 0.45) 30%, transparent)"
+                : "linear-gradient(90deg, rgba(226, 92, 128, 0.85), rgba(240, 110, 145, 0.45) 30%, transparent)",
           }}
         />
       </div>
