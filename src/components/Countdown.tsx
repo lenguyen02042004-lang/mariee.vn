@@ -18,32 +18,44 @@ export function Countdown({ target }: { target: string }) {
   const s = Math.floor((diff % 60000) / 1000);
 
   const cells: ReadonlyArray<readonly [string, string]> = [
-    ["Ngày", mounted ? String(d).padStart(2, "0") : "00"],
-    ["Giờ",  mounted ? String(h).padStart(2, "0") : "00"],
-    ["Phút", mounted ? String(m).padStart(2, "0") : "00"],
-    ["Giây", mounted ? String(s).padStart(2, "0") : "00"],
+    ["NGÀY", mounted ? String(d).padStart(2, "0") : "00"],
+    ["GIỜ",  mounted ? String(h).padStart(2, "0") : "00"],
+    ["PHÚT", mounted ? String(m).padStart(2, "0") : "00"],
+    ["GIÂY", mounted ? String(s).padStart(2, "0") : "00"],
   ];
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-card/90 backdrop-blur-md border border-gold/30 p-6 sm:p-10 shadow-elegant text-center">
-      {/* Decorative floral or corner accent */}
-      <div className="absolute top-2 left-4 text-xs font-serif text-gold/60 uppercase tracking-[0.3em]">
-        Counting Down
-      </div>
-      <div className="font-script text-3xl sm:text-4xl text-primary mb-6">
-        Cùng đếm ngược ngày chung đôi
+    <div className="relative overflow-hidden rounded-2xl bg-card/95 backdrop-blur-md border border-gold/35 p-7 sm:p-10 shadow-elegant text-center max-w-2xl mx-auto">
+      {/* Delicate antique gold inner framing */}
+      <div className="absolute inset-2 sm:inset-3 border border-gold/20 rounded-xl pointer-events-none" />
+
+      {/* Royal Crest / Header */}
+      <div className="relative z-10 flex items-center justify-center gap-3 mb-2">
+        <span className="h-px w-10 bg-gold/50" />
+        <span className="text-[11px] font-serif uppercase tracking-[0.35em] text-gold/90 font-medium">
+          COUNTDOWN TO OUR FOREVER
+        </span>
+        <span className="h-px w-10 bg-gold/50" />
       </div>
 
-      <div className="grid grid-cols-4 gap-2.5 sm:gap-6 max-w-xl mx-auto">
-        {cells.map(([label, val]) => (
-          <div
-            key={label}
-            className="group relative rounded-2xl bg-gradient-to-b from-secondary/40 via-card to-secondary/20 p-3 sm:p-5 border border-border/60 shadow-soft transition-all duration-300 hover:border-gold/50 hover:shadow-elegant"
-          >
-            <div className="font-display text-3xl sm:text-5xl text-primary font-semibold tabular-nums tracking-tight">
+      <h3 className="relative z-10 font-script text-3xl sm:text-4xl text-foreground font-normal mb-8">
+        Cùng đếm ngược ngày chung đôi
+      </h3>
+
+      {/* Chronometer Grid */}
+      <div className="relative z-10 grid grid-cols-4 gap-2 sm:gap-6 items-center">
+        {cells.map(([label, val], idx) => (
+          <div key={label} className="relative flex flex-col items-center">
+            {/* Divider point between units */}
+            {idx > 0 && (
+              <span className="absolute -left-1 sm:-left-3 top-1/2 -translate-y-1/2 text-gold/40 text-xs sm:text-sm select-none">
+                ✦
+              </span>
+            )}
+            <div className="font-display text-4xl sm:text-6xl text-foreground font-light tabular-nums tracking-tight">
               {val}
             </div>
-            <div className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted-foreground mt-1.5 font-medium">
+            <div className="text-[10px] sm:text-xs uppercase tracking-[0.25em] text-muted-foreground mt-2 font-serif font-medium">
               {label}
             </div>
           </div>

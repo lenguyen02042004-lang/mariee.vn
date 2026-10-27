@@ -62,10 +62,12 @@ export function RsvpForm({ coupleId }: { coupleId: string }) {
           <option value="both">Khách chung</option>
         </select>
       </div>
-      <textarea name="message" rows={4} maxLength={500} placeholder="Lời chúc gửi tới cô dâu chú rể..." className="w-full px-5 py-3 bg-card border border-border rounded-md focus:ring-2 focus:ring-primary outline-none resize-none" />
-      <button disabled={loading} className="w-full md:w-auto px-12 py-4 bg-primary text-primary-foreground rounded-md uppercase tracking-[0.2em] text-sm font-medium hover:bg-rose-deep transition shadow-elegant disabled:opacity-60">
-        {loading ? "Đang gửi..." : "Gửi xác nhận"}
-      </button>
+      <textarea name="message" rows={4} maxLength={500} placeholder="Lời nhắn hoặc chúc mừng gửi tới cô dâu & chú rể..." className="w-full px-5 py-3.5 bg-secondary/30 border border-border/80 rounded-xl focus:ring-2 focus:ring-gold/50 focus:border-gold/60 outline-none resize-none font-serif text-sm transition" />
+      <div className="text-center pt-2">
+        <button disabled={loading} type="submit" className="w-full sm:w-auto px-12 py-4 rounded-full bg-[#54121B] hover:bg-[#6E1A24] border border-gold/40 text-white uppercase tracking-[0.25em] text-xs font-serif font-medium hover:scale-105 transition-all shadow-soft hover:shadow-elegant disabled:opacity-60 cursor-pointer">
+          {loading ? "Đang gửi xác nhận..." : "Gửi xác nhận tham dự"}
+        </button>
+      </div>
     </form>
   );
 }

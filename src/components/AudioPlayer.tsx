@@ -67,19 +67,19 @@ export function AudioPlayer() {
             playing ? "animate-pulse" : "opacity-0"
           }`}
         />
-        <div className={`relative text-primary transition-transform duration-700 ${playing ? "rotate-180" : ""}`}>
+        <div className={`relative transition-transform duration-700 ${playing ? "rotate-180" : ""}`}>
           {playing ? (
-            <Volume2 size={20} className="text-primary group-hover:scale-110 transition-transform" />
+            <Volume2 size={20} className="text-gold group-hover:scale-110 transition-transform" />
           ) : (
-            <VolumeX size={20} className="text-muted-foreground group-hover:text-primary transition-colors" />
+            <VolumeX size={20} className="text-muted-foreground group-hover:text-gold transition-colors" />
           )}
         </div>
       </button>
 
       {/* Music label tooltip */}
-      <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-md border border-border/60 text-xs text-muted-foreground shadow-sm pointer-events-none animate-fade-in">
-        <Music size={12} className={playing ? "text-primary animate-bounce" : "text-muted-foreground"} />
-        <span className="font-serif italic tracking-wide">{playing ? "Giai điệu tình yêu" : "Bật nhạc nền"}</span>
+      <div className="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-card/90 backdrop-blur-md border border-gold/30 text-xs text-foreground shadow-sm pointer-events-none animate-fade-in">
+        <Music size={12} className={playing ? "text-gold animate-bounce" : "text-muted-foreground"} />
+        <span className="font-serif italic tracking-wider">{playing ? "Giai điệu tình yêu" : "Bật nhạc nền"}</span>
       </div>
     </div>
   );

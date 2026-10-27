@@ -33,3 +33,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Temporary and local scratch files
+*.zip
+wedding-studio-*
+check_cols.mjs
+check_couple.js
+inspect_and_fix.mjs
+scripts/process_floral.py
+*.png.bak
+*.png
+!public/**
+!src/**
