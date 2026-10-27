@@ -24,6 +24,8 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
 import WeddingHero from "@/components/WeddingHero";
+import FallingPetals from "@/components/FallingPetals";
+import SectionDivider from "@/components/SectionDivider";
 import "../wedding-studio.css";
 
 const WEDDING_AUDIO_URL = "https://cdn.pixabay.com/download/audio/2022/05/16/audio_db6591201e.mp3?filename=wedding-piano-112191.mp3";
@@ -126,9 +128,9 @@ function Floral({ position = "", theme = "blush" }: { position?: string; theme?:
   return <img className={"floral " + position} src={`/assets/wedding-florals/${t}/${t}-corner-top-left.webp`} alt="" aria-hidden="true" style={{ pointerEvents: "none" }} />;
 }
 
-function Heading({ eyebrow, children }: { eyebrow: string; children: React.ReactNode }) {
+function Heading({ eyebrow, children, className = "" }: { eyebrow: string; children: React.ReactNode; className?: string }) {
   return (
-    <div className="section-heading">
+    <div className={`section-heading ${className}`}>
       <span className="eyebrow">{eyebrow}</span>
       <h2>{children}</h2>
       <div className="heading-ornament">──── ♡ ────</div>
@@ -162,6 +164,26 @@ function CouplePage() {
       }
     }
   }, []);
+
+  // Luxury Scroll Reveal Observer
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-revealed");
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+
+    const elements = document.querySelectorAll(".reveal-on-scroll");
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [theme]);
 
   // Audio player state
   const [isPlaying, setIsPlaying] = useState(false);
@@ -393,6 +415,31 @@ function CouplePage() {
 
   return (
     <div className="site" data-theme={theme} style={cssVars}>
+      {/* FLOATING WATERCOLOR FALLING PETALS OVERLAY */}
+      <FallingPetals theme={theme === "champagne" ? "champagne" : "blush"} />
+
+      {/* BOTANICAL SIDE FRAMING FOR DESKTOP */}
+      <img
+        src={
+          theme === "champagne"
+            ? "/assets/wedding-florals/champagne/champagne-vertical-branch.webp"
+            : "/assets/wedding-florals/blush/blush-vertical-branch.webp"
+        }
+        className="side-branch side-branch--left"
+        alt=""
+        aria-hidden="true"
+      />
+      <img
+        src={
+          theme === "champagne"
+            ? "/assets/wedding-florals/champagne/champagne-vertical-branch.webp"
+            : "/assets/wedding-florals/blush/blush-vertical-branch.webp"
+        }
+        className="side-branch side-branch--right"
+        alt=""
+        aria-hidden="true"
+      />
+
       {/* STICKY HEADER */}
       <header className="header">
         <a href="#home" className="monogram">
@@ -464,17 +511,23 @@ function CouplePage() {
           }}
         />
 
+        {/* SECTION DIVIDER: HERO -> STORY */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="garland"
+        />
+
         {/* OUR JOURNEY STORY */}
         <section id="story" className="section story">
           <Floral position="left-floral" theme={theme} />
-          <div className="story-images">
+          <div className="story-images reveal-on-scroll">
             <SafeImage
               src={couple.hero_image_2 || "/assets/story.jpg"}
               alt="Kỷ niệm tình yêu"
             />
             <div className="photo-sticker">Our love story ♡</div>
           </div>
-          <div className="story-copy">
+          <div className="story-copy reveal-on-scroll">
             <span className="eyebrow">OUR JOURNEY</span>
             <h2>Câu chuyện của chúng mình</h2>
             {storyParagraphs.map((p: string, i: number) => (
@@ -483,10 +536,17 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: STORY -> CELEBRATION */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="monogram"
+          monogram={initials}
+        />
+
         {/* CELEBRATION VENUE */}
         <section id="celebration" className="section venue-section">
-          <Heading eyebrow="CELEBRATION">Thông tin tiệc cưới</Heading>
-          <div className="venue-layout">
+          <Heading eyebrow="CELEBRATION" className="reveal-on-scroll">Thông tin tiệc cưới</Heading>
+          <div className="venue-layout reveal-on-scroll">
             <div className="venue-copy">
               <h3>{couple.venue_name || "GEM Center — Grand Ballroom"}</h3>
               {couple.venue_address && (
@@ -530,12 +590,18 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: CELEBRATION -> FAMILIES */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="garland"
+        />
+
         {/* RECEPTION: TWO FAMILIES */}
         <section className="section families">
-          <Heading eyebrow="RECEPTION">Lễ gia tiên hai họ</Heading>
-          <div className="two-cols">
+          <Heading eyebrow="RECEPTION" className="reveal-on-scroll">Lễ gia tiên hai họ</Heading>
+          <div className="two-cols stagger-grid">
             {families.map((f) => (
-              <article className="soft-card" key={f.side}>
+              <article className="soft-card reveal-on-scroll" key={f.side}>
                 <span className="eyebrow">{f.side}</span>
                 <h3>{f.title}</h3>
                 <strong>{f.time}</strong>
@@ -545,12 +611,18 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: FAMILIES -> PROGRAM */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="clean"
+        />
+
         {/* PROGRAM TIMELINE */}
         <section className="section program">
-          <Heading eyebrow="PROGRAM">Chương trình ngày cưới</Heading>
+          <Heading eyebrow="PROGRAM" className="reveal-on-scroll">Chương trình ngày cưới</Heading>
           <div className="timeline">
             {program.map((p: any, i: number) => (
-              <div className="timeline-item" key={p.time || i}>
+              <div className="timeline-item reveal-on-scroll" key={p.time || i}>
                 <div className="timeline-dot">{["♡", "✧", "✿", "♫"][i % 4]}</div>
                 <strong>{p.time}</strong>
                 <h3>{p.title}</h3>
@@ -560,10 +632,17 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: PROGRAM -> DRESS */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="monogram"
+          monogram={initials}
+        />
+
         {/* DRESS CODE */}
         <section className="section dress">
-          <Heading eyebrow="DRESS CODE">Gợi ý trang phục</Heading>
-          <div className="dress-layout">
+          <Heading eyebrow="DRESS CODE" className="reveal-on-scroll">Gợi ý trang phục</Heading>
+          <div className="dress-layout reveal-on-scroll">
             <div>
               <p>
                 Để cùng nhau tạo nên những khung hình kỷ niệm hài hòa và trọn vẹn nhất, quý khách có thể ưu tiên lựa chọn trang phục theo bảng màu gợi ý dưới đây:
@@ -583,11 +662,17 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: DRESS -> GALLERY */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="garland"
+        />
+
         {/* MOMENTS & OUR GALLERY SIDE-BY-SIDE */}
         <section id="gallery" className="section">
           <div className="media-showcase-section">
             {/* LEFT: MOMENTS */}
-            <div className="moments-col">
+            <div className="moments-col reveal-on-scroll">
               <div className="section-heading" style={{ textAlign: "left" }}>
                 <span className="eyebrow">MOMENTS</span>
                 <h2 style={{ fontSize: "32px", margin: "8px 0" }}>Thước phim kỷ niệm</h2>
@@ -632,13 +717,13 @@ function CouplePage() {
             </div>
 
             {/* RIGHT: GALLERY */}
-            <div className="gallery-col">
+            <div className="gallery-col reveal-on-scroll">
               <div className="section-heading" style={{ textAlign: "left" }}>
                 <span className="eyebrow">OUR GALLERY</span>
                 <h2 style={{ fontSize: "32px", margin: "8px 0" }}>Bộ sưu tập khoảnh khắc</h2>
                 <div className="heading-ornament" style={{ textAlign: "left" }}>──── ♡ ────</div>
               </div>
-              <div className="gallery-grid-6">
+              <div className="gallery-grid-6 stagger-grid">
                 {[
                   "/assets/gallery-1.jpg",
                   "/assets/gallery-2.jpg",
@@ -650,6 +735,7 @@ function CouplePage() {
                   <button
                     type="button"
                     key={i}
+                    className="reveal-on-scroll"
                     onClick={() => setLightbox(resolveImg(img))}
                     aria-label={`Xem ảnh cưới ${i + 1}`}
                   >
@@ -668,13 +754,20 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: GALLERY -> INVITATIONS */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="monogram"
+          monogram={initials}
+        />
+
         {/* INVITATION CARDS (4 IN A ROW) */}
         <section className="section invitations">
-          <Heading eyebrow="INVITATION">Thiệp mời trân trọng</Heading>
-          <div className="invitations-grid-4">
+          <Heading eyebrow="INVITATION" className="reveal-on-scroll">Thiệp mời trân trọng</Heading>
+          <div className="invitations-grid-4 stagger-grid">
             {invitationCards.map((c, i) => (
               <div
-                className="invitation-card-item"
+                className="invitation-card-item reveal-on-scroll"
                 key={i}
                 onClick={() => setLightbox(resolveImg(c.img))}
               >
@@ -688,15 +781,21 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: INVITATIONS -> GIFTS */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="garland"
+        />
+
         {/* WEDDING GIFTS: HỘP MỪNG DUYÊN */}
         <section className="section gifts">
-          <Heading eyebrow="WEDDING GIFT">Hộp mừng duyên</Heading>
-          <p>
+          <Heading eyebrow="WEDDING GIFT" className="reveal-on-scroll">Hộp mừng duyên</Heading>
+          <p className="reveal-on-scroll">
             Sự hiện diện và lời chúc của bạn là món quà ý nghĩa nhất. Nếu muốn gửi mừng cưới, bạn có thể nhấn vào hộp quà bên dưới để xem thông tin chuyển khoản.
           </p>
-          <div className="two-cols">
+          <div className="two-cols stagger-grid">
             {gifts.map((g, i) => (
-              <article className="soft-card gift-card" key={i}>
+              <article className="soft-card gift-card reveal-on-scroll" key={i}>
                 <div className="inline-block p-4 rounded-full bg-soft mb-3 border border-line">
                   <Gift size={32} className="text-accent" />
                 </div>
@@ -734,11 +833,18 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: GIFTS -> RSVP */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="monogram"
+          monogram={initials}
+        />
+
         {/* BLESSINGS & RSVP SIDE-BY-SIDE */}
         <section id="rsvp" className="section">
           <div className="wishes-rsvp-row">
             {/* LEFT: BLESSINGS */}
-            <div id="wishes" className="wishes-card-wrapper">
+            <div id="wishes" className="wishes-card-wrapper reveal-on-scroll">
               <div className="section-heading" style={{ textAlign: "left", marginBottom: "20px" }}>
                 <span className="eyebrow">BLESSINGS</span>
                 <h2 style={{ fontSize: "28px", margin: "6px 0" }}>Sổ lưu bút chúc phúc</h2>
@@ -813,7 +919,7 @@ function CouplePage() {
             </div>
 
             {/* RIGHT: RSVP */}
-            <div className="rsvp-card-wrapper">
+            <div className="rsvp-card-wrapper reveal-on-scroll">
               <div className="section-heading" style={{ textAlign: "left", marginBottom: "15px" }}>
                 <span className="eyebrow">R.S.V.P</span>
                 <h2 style={{ fontSize: "28px", margin: "6px 0" }}>Xác nhận tham dự</h2>
@@ -943,11 +1049,17 @@ function CouplePage() {
           </div>
         </section>
 
+        {/* SECTION DIVIDER: RSVP -> CLOSING TICKET */}
+        <SectionDivider
+          theme={theme === "champagne" ? "champagne" : "blush"}
+          variant="garland"
+        />
+
         {/* CLOSING INVITATION TICKET & SHARE */}
         <section className="section">
           <div className="closing-ticket-layout">
             {/* LEFT: SHARE THE LOVE */}
-            <div className="share-column">
+            <div className="share-column reveal-on-scroll">
               <span className="eyebrow">SHARE THE LOVE</span>
               <h2>Mời thêm bạn bè</h2>
               <div className="social-circle-buttons">
@@ -1000,7 +1112,7 @@ function CouplePage() {
             </div>
 
             {/* RIGHT: VIRTUAL PHYSICAL INVITATION TICKET */}
-            <div className="invitation-ticket-card">
+            <div className="invitation-ticket-card reveal-on-scroll">
               <Floral position="ticket-corner top-left" />
               <Floral position="ticket-corner top-right" />
               <Floral position="ticket-corner bottom-left" />
