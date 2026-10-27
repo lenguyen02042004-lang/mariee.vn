@@ -66,9 +66,11 @@ export default function MarieeFooter({ theme = "blush", coupleName = "Cô dâu &
         width: "100%",
         maxWidth: "1080px",
         margin: "60px auto 30px",
-        padding: "0 20px",
+        padding: "0 16px",
         position: "relative",
         zIndex: 5,
+        boxSizing: "border-box",
+        overflow: "hidden",
       }}
     >
       {/* BRAND & CONTACT CARD */}
@@ -77,15 +79,18 @@ export default function MarieeFooter({ theme = "blush", coupleName = "Cô dâu &
         style={{
           background: "#ffffff",
           borderRadius: "28px",
-          padding: "clamp(28px, 4vw, 44px)",
+          padding: "clamp(20px, 4vw, 44px)",
           border: isChampagne ? "1px solid #ede0c8" : "1px solid #fcd4df",
           boxShadow: isChampagne
             ? "0 18px 48px -10px rgba(190, 139, 50, 0.12)"
             : "0 18px 48px -10px rgba(212, 76, 114, 0.12)",
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-          gap: "36px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
+          gap: "28px",
           alignItems: "start",
+          boxSizing: "border-box",
+          maxWidth: "100%",
+          overflow: "hidden",
         }}
       >
         {/* LEFT COLUMN: MARIEE NAVIGATION */}

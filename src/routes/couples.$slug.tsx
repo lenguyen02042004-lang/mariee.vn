@@ -104,9 +104,24 @@ export const Route = createFileRoute("/couples/$slug")({
 });
 
 function SafeImage({ src, alt = "", className = "" }: { src?: string | null; alt?: string; className?: string }) {
+  const [imgSrc, setImgSrc] = useState<string>(() => resolveImg(src));
   const [failed, setFailed] = useState(false);
-  const resolved = resolveImg(src);
-  if (!resolved || failed) {
+
+  useEffect(() => {
+    setImgSrc(resolveImg(src));
+    setFailed(false);
+  }, [src]);
+
+  const handleError = () => {
+    const fname = (src || "").split("/").pop();
+    if (fname && imgSrc !== `/assets/${fname}`) {
+      setImgSrc(`/assets/${fname}`);
+    } else {
+      setFailed(true);
+    }
+  };
+
+  if (!imgSrc || failed) {
     return (
       <div className={"image-placeholder " + className}>
         <span>✿</span>
@@ -117,10 +132,10 @@ function SafeImage({ src, alt = "", className = "" }: { src?: string | null; alt
   return (
     <img
       className={className}
-      src={resolved}
+      src={imgSrc}
       alt={alt}
       loading="lazy"
-      onError={() => setFailed(true)}
+      onError={handleError}
     />
   );
 }

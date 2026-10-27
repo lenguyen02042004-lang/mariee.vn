@@ -5,7 +5,7 @@ interface BackToTopProps {
   theme?: "blush" | "champagne" | string;
 }
 
-export default function BackToTop({ theme = "blush" }: BackToTopProps) {
+export function BackToTop({ theme = "blush" }: BackToTopProps) {
   const [visible, setVisible] = useState(false);
   const isChampagne = theme === "champagne";
 
@@ -77,3 +77,5 @@ export default function BackToTop({ theme = "blush" }: BackToTopProps) {
     </button>
   );
 }
+
+export default BackToTop;

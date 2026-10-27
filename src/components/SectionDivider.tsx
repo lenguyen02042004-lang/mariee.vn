@@ -25,13 +25,15 @@ export default function SectionDivider({
         width: "100%",
         maxWidth: "920px",
         margin: "60px auto 40px",
-        padding: "0 20px",
+        padding: "0 16px",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
         pointerEvents: "none",
         zIndex: 2,
+        boxSizing: "border-box",
+        overflow: "hidden",
       }}
     >
       {/* Soft Ombre Blend Line */}
@@ -97,7 +99,8 @@ export default function SectionDivider({
           alt=""
           loading="lazy"
           style={{
-            width: "clamp(240px, 32vw, 360px)",
+            width: "clamp(180px, 70vw, 360px)",
+            maxWidth: "100%",
             height: "auto",
             marginTop: "12px",
             filter: "drop-shadow(0 4px 12px rgba(0, 0, 0, 0.04))",

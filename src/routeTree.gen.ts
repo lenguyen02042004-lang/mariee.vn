@@ -19,6 +19,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ForVendorsRouteImport } from './routes/for-vendors'
 import { Route as ForCouplesRouteImport } from './routes/for-couples'
+import { Route as DemoRouteImport } from './routes/demo'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
@@ -112,6 +113,11 @@ const ForVendorsRoute = ForVendorsRouteImport.update({
 const ForCouplesRoute = ForCouplesRouteImport.update({
   id: '/for-couples',
   path: '/for-couples',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -359,6 +365,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
+  '/demo': typeof DemoRoute
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -414,6 +421,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
+  '/demo': typeof DemoRoute
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -469,6 +477,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
   '/blog': typeof BlogRoute
+  '/demo': typeof DemoRoute
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
@@ -526,6 +535,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/blog'
+    | '/demo'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -581,6 +591,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/blog'
+    | '/demo'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -635,6 +646,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/blog'
+    | '/demo'
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
@@ -692,6 +704,7 @@ export interface RootRouteChildren {
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRoute
+  DemoRoute: typeof DemoRoute
   ForCouplesRoute: typeof ForCouplesRoute
   ForVendorsRoute: typeof ForVendorsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
@@ -784,6 +797,13 @@ declare module '@tanstack/react-router' {
       path: '/for-couples'
       fullPath: '/for-couples'
       preLoaderRoute: typeof ForCouplesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -1190,6 +1210,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
   BlogRoute: BlogRoute,
+  DemoRoute: DemoRoute,
   ForCouplesRoute: ForCouplesRoute,
   ForVendorsRoute: ForVendorsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,

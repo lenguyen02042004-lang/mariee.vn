@@ -1,8 +1,10 @@
-const imgs = import.meta.glob('/src/assets/*.{jpg,jpeg,png,webp}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+const imgs = import.meta.glob('/src/assets/*.{jpg,jpeg,png,webp,svg}', { eager: true, query: '?url', import: 'default' }) as Record<string, string>;
+
 export function resolveImg(path?: string | null): string {
   if (!path) return '';
-  if (path.startsWith('http')) return path;
+  if (path.startsWith('http') || path.startsWith('data:')) return path;
   const fname = path.split('/').pop()!;
   const key = Object.keys(imgs).find(k => k.endsWith('/' + fname));
-  return key ? imgs[key] : path;
+  if (key && imgs[key]) return imgs[key];
+  return `/assets/${fname}`;
 }
