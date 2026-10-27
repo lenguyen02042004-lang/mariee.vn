@@ -601,7 +601,7 @@ function CouplePage() {
 
             <div className="venue-image-wrapper">
               <SafeImage
-                src={couple.hero_image_3 || "/assets/venue.jpg"}
+                src={(couple as any).venue_image || "/assets/venue.jpg"}
                 alt="Địa điểm tổ chức tiệc cưới"
                 className="venue-image"
               />
