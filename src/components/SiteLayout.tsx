@@ -37,6 +37,9 @@ export function Header() {
           <Link to="/" className="hover:text-primary transition hidden md:inline">Trang chủ</Link>
           <Link to="/vendors" className="hover:text-primary transition">Nhà cung cấp</Link>
           <Link to="/blog" className="hover:text-primary transition hidden md:inline">Blog</Link>
+          <Link to="/couples/$slug" params={{ slug: "demo" }} className="hover:text-primary transition font-medium text-primary flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold animate-ping inline-block" /> Demo Cưới
+          </Link>
           <Link to="/for-couples" className="hover:text-primary transition hidden lg:inline">Cặp đôi</Link>
           <Link to="/for-vendors" className="hover:text-primary transition hidden lg:inline">Vendor</Link>
           <Link to="/about" className="hover:text-primary transition hidden lg:inline">Giới thiệu</Link>

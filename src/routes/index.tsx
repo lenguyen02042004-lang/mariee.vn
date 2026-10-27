@@ -65,10 +65,19 @@ function Home() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 text-white">
-                  <p className="font-script text-2xl text-blush">the wedding of</p>
-                  <h3 className="font-display text-3xl sm:text-4xl mt-1">{c.bride_name} <span className="text-gold">&</span> {c.groom_name}</h3>
-                  {c.wedding_date && <p className="mt-2 text-sm uppercase tracking-[0.3em] text-white/80">{new Date(c.wedding_date).toLocaleDateString("vi-VN", { day: "2-digit", month: "long", year: "numeric" })}</p>}
-                  {c.venue_name && <p className="text-sm text-white/70 mt-1">{c.venue_name}</p>}
+                  <p className="font-script text-2xl text-gold/90">the wedding of</p>
+                  <h3 className="font-script text-4xl sm:text-5xl mt-1 leading-tight text-white group-hover:text-gold transition-colors duration-300">
+                    {c.bride_name} <span className="font-script text-gold mx-1">&amp;</span> {c.groom_name}
+                  </h3>
+                  {c.wedding_date && (
+                    <p className="mt-2 text-xs sm:text-sm font-serif uppercase tracking-[0.3em] text-white/85">
+                      {new Date(c.wedding_date).toLocaleDateString("vi-VN", { day: "2-digit", month: "long", year: "numeric" })}
+                    </p>
+                  )}
+                  {c.venue_name && <p className="text-xs sm:text-sm text-white/75 mt-1 font-serif italic">{c.venue_name}</p>}
+                  <div className="mt-4 inline-flex items-center gap-1.5 text-xs text-gold uppercase tracking-widest border-b border-gold/40 pb-0.5 group-hover:border-gold transition-colors">
+                    Khám phá trang cưới <span>→</span>
+                  </div>
                 </div>
               </div>
             </Link>
