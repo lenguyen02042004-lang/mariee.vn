@@ -9,9 +9,9 @@ export const Route = createFileRoute("/for-couples")({
   head: () => ({
     meta: [
       { title: "Dành cho cặp đôi — Mariée" },
-      { name: "description", content: "Tạo landing page cưới sang trọng, nhận RSVP và lưu giữ kỷ niệm với Mariée." },
+      { name: "description", content: "Tạo thiệp cưới online và website cưới sang trọng, nhận RSVP và lưu giữ kỷ niệm với Mariée." },
       { property: "og:title", content: "Dành cho cặp đôi — Mariée" },
-      { property: "og:description", content: "Tạo landing page cưới sang trọng, nhận RSVP và lưu giữ kỷ niệm với Mariée." },
+      { property: "og:description", content: "Tạo thiệp cưới online và website cưới sang trọng, nhận RSVP và lưu giữ kỷ niệm với Mariée." },
       { property: "og:url", content: canonical("/for-couples") },
     ],
     links: [{ rel: "canonical", href: canonical("/for-couples") }],

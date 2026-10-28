@@ -8,9 +8,9 @@ export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
       { title: "Giới thiệu — Mariée" },
-      { name: "description", content: "Mariée là nền tảng landing page cưới sang trọng kết nối cặp đôi với những vendor cưới hàng đầu Việt Nam." },
+      { name: "description", content: "Mariée là nền tảng thiệp cưới online sang trọng kết nối cặp đôi với những vendor cưới hàng đầu Việt Nam." },
       { property: "og:title", content: "Giới thiệu — Mariée" },
-      { property: "og:description", content: "Mariée là nền tảng landing page cưới sang trọng kết nối cặp đôi với những vendor cưới hàng đầu Việt Nam." },
+      { property: "og:description", content: "Mariée là nền tảng thiệp cưới online sang trọng kết nối cặp đôi với những vendor cưới hàng đầu Việt Nam." },
       { property: "og:url", content: canonical("/about") },
       { property: "og:type", content: "website" },
     ],

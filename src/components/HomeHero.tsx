@@ -25,7 +25,7 @@ const DEFAULT_SLIDES: HeroSlide[] = [
     eyebrow: "la vie est belle",
     title: "Lưu giữ ngày trọng đại bằng một câu chuyện riêng",
     subtitle:
-      "Mariée tạo trang landing page cưới sang trọng, đẳng cấp dành riêng cho mỗi cặp đôi — và kết nối bạn với những nhà cung cấp dịch vụ tinh tế nhất.",
+      "Mariée tạo thiệp cưới online và website cưới sang trọng, đẳng cấp dành riêng cho mỗi cặp đôi — và kết nối bạn với những nhà cung cấp dịch vụ tinh tế nhất.",
     cta_label: "Tạo trang cưới của bạn",
     cta_href: "/register",
   },

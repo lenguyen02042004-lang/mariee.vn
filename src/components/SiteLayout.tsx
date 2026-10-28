@@ -63,7 +63,7 @@ export function Footer() {
   const site = useSite();
   const brand = site.site_name?.trim() || "Mariée";
   const year = new Date().getFullYear();
-  const tagline = site.footer_text?.trim() || "Nền tảng landing page cưới sang trọng và đẳng cấp cho mọi cặp đôi Việt.";
+  const tagline = site.footer_text?.trim() || "Nền tảng thiệp cưới online sang trọng và đẳng cấp cho mọi cặp đôi Việt.";
   const email = site.contact_email?.trim();
   const phone = site.contact_phone?.trim();
   return (

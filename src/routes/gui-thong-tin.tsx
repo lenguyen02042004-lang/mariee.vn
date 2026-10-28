@@ -29,7 +29,7 @@ export const Route = createFileRoute("/gui-thong-tin")({
       { title: "Gửi Thông Tin Thiết Kế Thiệp Cưới — Mariée.vn" },
       {
         name: "description",
-        content: "Gửi ảnh thiệp cưới và link album ảnh cưới để Mariée thiết kế trọn gói landing page cưới và bảng Google Sheets theo dõi khách mời riêng cho bạn.",
+        content: "Gửi ảnh thiệp cưới và link album ảnh cưới để Mariée thiết kế trọn gói website cưới sang trọng và bảng Google Sheets theo dõi khách mời riêng cho bạn.",
       },
       { property: "og:title", content: "Gửi Thông Tin Thiết Kế Thiệp Cưới — Mariée.vn" },
       {

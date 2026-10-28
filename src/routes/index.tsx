@@ -31,9 +31,9 @@ export const Route = createFileRoute("/")({
   pendingMinMs: 200,
   pendingComponent: HomePageSkeleton,
   head: () => ({ meta: [
-    { title: "Mariée — Landing page cưới sang trọng cho mọi cặp đôi" },
+    { title: "Mariée — Thiệp cưới online sang trọng cho mọi cặp đôi" },
     { name: "description", content: "Tạo trang cưới sang trọng riêng cho cặp đôi của bạn. Khám phá những nhà cung cấp dịch vụ cưới hàng đầu." },
-    { property: "og:title", content: "Mariée — Landing page cưới sang trọng cho mọi cặp đôi" },
+    { property: "og:title", content: "Mariée — Thiệp cưới online sang trọng cho mọi cặp đôi" },
     { property: "og:description", content: "Tạo trang cưới sang trọng riêng cho cặp đôi của bạn. Khám phá những nhà cung cấp dịch vụ cưới hàng đầu." },
     { property: "og:url", content: canonical("/") },
   ], links: [{ rel: "canonical", href: canonical("/") }] }),
