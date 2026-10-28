@@ -13,12 +13,25 @@ async function assertAdmin(supabase: any, userId: string) {
   if (!(data ?? []).some((r: any) => r.role === "admin")) throw new Error("Forbidden: cần quyền quản trị");
 }
 
+const CATEGORY_NAMES: Record<string, string> = {
+  news: "Tin tức",
+  tips: "Mẹo cưới",
+  real_stories: "Câu chuyện thật",
+  trends: "Xu hướng",
+  venues: "Địa điểm",
+  other: "Khác",
+};
+
 export const listBlogCategories = createServerFn({ method: "GET" })
   .handler(async () => {
     const { data, error } = await supabaseAdmin
       .from("blog_categories" as any).select("*").order("sort_order").order("name");
     if (error) throw new Error(error.message);
-    return (data ?? []) as unknown as BlogCategory[];
+    const rows = (data ?? []) as unknown as BlogCategory[];
+    return rows.map((c) => ({
+      ...c,
+      name: CATEGORY_NAMES[c.slug] || c.name,
+    }));
   });
 
 const categorySchema = z.object({

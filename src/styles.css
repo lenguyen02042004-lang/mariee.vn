@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-display: "Cormorant Garamond", "Cinzel", serif;
+  --font-display: "Playfair Display", "Cormorant Garamond", serif;
   --font-script: "Charm", cursive;
   --font-body: "Be Vietnam Pro", sans-serif;
 
