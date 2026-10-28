@@ -203,23 +203,26 @@ function CouplePage() {
   // Audio player state
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const userMutedRef = useRef(false);
 
   useEffect(() => {
     const audio = new Audio(WEDDING_AUDIO_URL);
     audio.loop = true;
     audioRef.current = audio;
 
-    const handleFirstClick = () => {
+    const handleFirstInteraction = () => {
+      if (userMutedRef.current) return;
       if (audioRef.current && !isPlaying) {
         audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
       }
-      window.removeEventListener("click", handleFirstClick);
     };
-    window.addEventListener("click", handleFirstClick, { once: true });
+    window.addEventListener("click", handleFirstInteraction, { once: true });
+    window.addEventListener("touchstart", handleFirstInteraction, { once: true, passive: true });
 
     return () => {
       audio.pause();
-      window.removeEventListener("click", handleFirstClick);
+      window.removeEventListener("click", handleFirstInteraction);
+      window.removeEventListener("touchstart", handleFirstInteraction);
     };
   }, []);
 
@@ -229,7 +232,9 @@ function CouplePage() {
     if (isPlaying) {
       audioRef.current.pause();
       setIsPlaying(false);
+      userMutedRef.current = true;
     } else {
+      userMutedRef.current = false;
       audioRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
     }
   };
@@ -437,6 +442,27 @@ function CouplePage() {
       {/* FLOATING BACK TO TOP BUTTON */}
       <BackToTop theme={theme === "champagne" ? "champagne" : "blush"} />
 
+      {/* FLOATING AUDIO CONTROLLER (ALWAYS ACCESSIBLE ON MOBILE & DESKTOP) */}
+      <button
+        type="button"
+        onClick={toggleAudio}
+        aria-label={isPlaying ? "Tắt nhạc nền" : "Bật nhạc nền"}
+        title={isPlaying ? "Tắt nhạc nền" : "Bật nhạc nền"}
+        className={`floating-audio-btn ${isPlaying ? "playing" : "muted"}`}
+      >
+        <span className={`disc-spin-icon ${isPlaying ? "spin" : ""}`}>
+          {isPlaying ? <Volume2 size={15} /> : <VolumeX size={15} />}
+        </span>
+        <span className="floating-audio-text">{isPlaying ? "Tắt nhạc" : "Bật nhạc ♫"}</span>
+        {isPlaying && (
+          <span className="audio-equalizer-bars" aria-hidden="true">
+            <span className="bar bar-1" />
+            <span className="bar bar-2" />
+            <span className="bar bar-3" />
+          </span>
+        )}
+      </button>
+
       {/* BOTANICAL SIDE FRAMING FOR DESKTOP */}
       <img
         src={
@@ -497,15 +523,16 @@ function CouplePage() {
             <option value="champagne">Champagne</option>
           </select>
 
-          {/* AUDIO TOGGLE BUTTON */}
+          {/* AUDIO TOGGLE BUTTON (ALWAYS ACCESSIBLE IN HEADER ON MOBILE & DESKTOP) */}
           <button
             type="button"
             onClick={toggleAudio}
-            className="small-cta"
+            className={`header-audio-btn ${isPlaying ? "playing" : "muted"}`}
             title={isPlaying ? "Tắt nhạc nền" : "Bật nhạc nền"}
+            aria-label={isPlaying ? "Tắt nhạc nền" : "Bật nhạc nền"}
           >
             {isPlaying ? <Volume2 size={14} /> : <VolumeX size={14} />}
-            <span>{isPlaying ? "Tắt nhạc" : "Bật nhạc ♫"}</span>
+            <span className="audio-label">{isPlaying ? "Tắt nhạc" : "Bật nhạc ♫"}</span>
           </button>
 
           <a className="small-cta hidden sm:inline-flex" href="#rsvp">

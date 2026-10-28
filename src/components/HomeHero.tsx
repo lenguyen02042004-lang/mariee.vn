@@ -75,7 +75,7 @@ export function HomeHero({
           allow="autoplay; encrypted-media; picture-in-picture"
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[177.78vh] h-[56.25vw] min-w-full min-h-full pointer-events-none"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-black/75" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/50" />
         <HeroOverlay slide={list[0]} />
       </section>
     );
@@ -103,7 +103,7 @@ export function HomeHero({
               />
             );
           })()}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-black/75" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-black/50" />
         </div>
       ))}
       <div className="relative z-10 h-full flex flex-col items-center justify-end pb-20 md:pb-28">
@@ -130,14 +130,20 @@ export function HomeHero({
 function HeroOverlay({ slide }: { slide: HeroSlide }) {
   return (
     <div className="relative z-10 text-center text-white px-6 max-w-5xl mx-auto">
-      {slide.eyebrow && <p className="font-script text-3xl md:text-5xl text-blush">{slide.eyebrow}</p>}
+      {slide.eyebrow && (
+        <p className="font-script text-3xl md:text-5xl text-blush drop-shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
+          {slide.eyebrow}
+        </p>
+      )}
       {slide.title && (
-        <h1 className="mt-4 font-display text-4xl md:text-6xl lg:text-7xl text-balance leading-[1.05]">
+        <h1 className="mt-4 font-display text-4xl md:text-6xl lg:text-7xl text-balance leading-[1.05] drop-shadow-[0_3px_16px_rgba(0,0,0,0.6)]">
           {slide.title}
         </h1>
       )}
       {slide.subtitle && (
-        <p className="mt-6 text-base md:text-lg text-white/85 max-w-2xl mx-auto">{slide.subtitle}</p>
+        <p className="mt-6 text-base md:text-lg text-white/95 max-w-2xl mx-auto leading-relaxed drop-shadow-[0_2px_10px_rgba(0,0,0,0.55)]">
+          {slide.subtitle}
+        </p>
       )}
       <div className="mt-10 flex flex-wrap gap-4 justify-center">
         {slide.cta_label && slide.cta_href ? (

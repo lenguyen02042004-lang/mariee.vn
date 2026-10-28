@@ -1818,8 +1818,172 @@ input:focus, textarea:focus, select:focus {
   padding: 85px max(4vw, 24px);
 }
 
-.section:nth-of-type(even) {
-  background: color-mix(in srgb, var(--paper, #fffdf9) 70%, transparent);
+/* Header Audio Button (Mobile & Desktop) */
+.header-audio-btn {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper, #fffdf9);
+  color: var(--deep, #8e4556);
+  border: 1px solid var(--line, #efd7d8);
+  border-radius: 20px;
+  padding: 7px 13px;
+  font-size: 11px;
+  font-family: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.header-audio-btn:hover {
+  background: var(--soft, #fdebf0);
+  border-color: var(--accent, #e25c80);
+  transform: translateY(-1px);
+}
+
+.header-audio-btn.playing {
+  border-color: var(--accent, #e25c80);
+  color: var(--deep, #8e4556);
+  background: color-mix(in srgb, var(--accent, #e25c80) 12%, var(--paper, #fffdf9));
+}
+
+.site[data-theme="champagne"] .header-audio-btn.playing {
+  border-color: var(--accent, #c9983e);
+  color: var(--deep, #a67728);
+  background: color-mix(in srgb, var(--accent, #c9983e) 15%, var(--paper, #fffdf9));
+}
+
+@media (max-width: 480px) {
+  .header-audio-btn {
+    padding: 6px 9px;
+    font-size: 11px;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header-audio-btn .audio-label {
+    display: none;
+  }
+  .header-audio-btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    justify-content: center;
+    border-radius: 50%;
+  }
+}
+
+/* Floating Audio Controller (Mobile & Desktop) */
+.floating-audio-btn {
+  position: fixed;
+  bottom: 22px;
+  left: 22px;
+  z-index: 45;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 15px;
+  border-radius: 999px;
+  border: 1px solid var(--line, #efd7d8);
+  background: rgba(255, 253, 250, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--deep, #8e4556);
+  font-size: 11px;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s, box-shadow 0.25s, border-color 0.25s;
+}
+
+.floating-audio-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.12);
+}
+
+.floating-audio-btn:active {
+  transform: scale(0.96);
+}
+
+.floating-audio-btn.playing {
+  border-color: var(--accent, #e25c80);
+  background: rgba(255, 250, 252, 0.95);
+  box-shadow: 0 4px 20px rgba(226, 92, 128, 0.18);
+}
+
+.site[data-theme="champagne"] .floating-audio-btn.playing {
+  border-color: var(--accent, #c9983e);
+  background: rgba(255, 253, 246, 0.95);
+  box-shadow: 0 4px 20px rgba(201, 152, 62, 0.18);
+}
+
+.disc-spin-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.disc-spin-icon.spin {
+  animation: audioDiscRotate 4s linear infinite;
+}
+
+@keyframes audioDiscRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.audio-equalizer-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 11px;
+  margin-left: 2px;
+}
+
+.audio-equalizer-bars .bar {
+  width: 2px;
+  background: var(--accent, #e25c80);
+  border-radius: 1px;
+  animation: audioBarPulse 0.8s ease-in-out infinite alternate;
+}
+
+.site[data-theme="champagne"] .audio-equalizer-bars .bar {
+  background: var(--accent, #c9983e);
+}
+
+.audio-equalizer-bars .bar-1 {
+  height: 4px;
+  animation-delay: 0s;
+}
+
+.audio-equalizer-bars .bar-2 {
+  height: 10px;
+  animation-delay: 0.25s;
+}
+
+.audio-equalizer-bars .bar-3 {
+  height: 6px;
+  animation-delay: 0.5s;
+}
+
+@keyframes audioBarPulse {
+  0% { height: 3px; }
+  100% { height: 11px; }
+}
+
+@media (max-width: 600px) {
+  .floating-audio-btn {
+    bottom: 16px;
+    left: 14px;
+    padding: 8px 12px;
+    font-size: 11px;
+    gap: 6px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

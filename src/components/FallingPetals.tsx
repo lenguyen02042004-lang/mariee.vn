@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface FallingPetalsProps {
   theme?: "blush" | "champagne" | string;
@@ -20,11 +20,9 @@ interface Petal {
 
 export default function FallingPetals({ theme = "blush" }: FallingPetalsProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const [enabled, setEnabled] = useState(true);
   const isChampagne = theme === "champagne";
 
   useEffect(() => {
-    if (!enabled) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
@@ -138,64 +136,21 @@ export default function FallingPetals({ theme = "blush" }: FallingPetalsProps) {
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
     };
-  }, [enabled, isChampagne]);
+  }, [isChampagne]);
 
   return (
-    <>
-      {enabled && (
-        <canvas
-          ref={canvasRef}
-          aria-hidden="true"
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100vw",
-            height: "100vh",
-            pointerEvents: "none",
-            zIndex: 35,
-          }}
-        />
-      )}
-      {/* Floating Petal Effect Control Pill */}
-      <button
-        type="button"
-        onClick={() => setEnabled(!enabled)}
-        aria-label={enabled ? "Tắt hiệu ứng cánh hoa bay" : "Bật hiệu ứng cánh hoa bay"}
-        title={enabled ? "Tắt cánh hoa bay" : "Bật cánh hoa bay"}
-        style={{
-          position: "fixed",
-          bottom: "22px",
-          left: "22px",
-          zIndex: 45,
-          display: "inline-flex",
-          alignItems: "center",
-          gap: "7px",
-          padding: "8px 14px",
-          borderRadius: "999px",
-          border: "1px solid var(--line, #e8d3b6)",
-          background: "rgba(255, 253, 250, 0.85)",
-          backdropFilter: "blur(8px)",
-          color: "var(--deep, #86654c)",
-          fontSize: "11px",
-          fontFamily: "'Montserrat', sans-serif",
-          letterSpacing: "0.06em",
-          cursor: "pointer",
-          boxShadow: "0 4px 18px rgba(0, 0, 0, 0.08)",
-          transition: "transform 0.2s, background 0.2s, box-shadow 0.2s",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-2px)";
-          e.currentTarget.style.boxShadow = "0 6px 22px rgba(0, 0, 0, 0.12)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = "0 4px 18px rgba(0, 0, 0, 0.08)";
-        }}
-      >
-        <span style={{ fontSize: "14px", lineHeight: 1 }}>{enabled ? "🌸" : "🍂"}</span>
-        <span>{enabled ? "Cánh hoa: Bật" : "Cánh hoa: Tắt"}</span>
-      </button>
-    </>
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100vw",
+        height: "100vh",
+        pointerEvents: "none",
+        zIndex: 35,
+      }}
+    />
   );
 }
