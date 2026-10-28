@@ -144,7 +144,7 @@ export default function MarieeFooter({
             onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
           >
             <Sparkles size={12} color={accentColor} />
-            <span>Tạo thiệp cưới tương tự</span>
+            <span>Tạo thiệp cưới</span>
           </a>
 
           <a
@@ -171,7 +171,7 @@ export default function MarieeFooter({
             onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
           >
             <MessageSquare size={12} />
-            <span>Liên hệ Mariée</span>
+            <span>Liên hệ</span>
           </a>
         </div>
       </div>

@@ -85,7 +85,6 @@ export function Footer() {
             <li><Link to="/vendors" className="hover:text-primary">Nhà cung cấp</Link></li>
             <li><Link to="/blog" className="hover:text-primary">Blog</Link></li>
             <li><Link to="/about" className="hover:text-primary">Giới thiệu</Link></li>
-            <li><Link to="/contact" className="hover:text-primary">Liên hệ</Link></li>
           </ul>
         </div>
         <div>
@@ -99,15 +98,9 @@ export function Footer() {
         </div>
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider mb-3">Liên hệ</h4>
-          <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
-            Mọi câu hỏi hoặc mong muốn tư vấn thiệp cưới, bạn có thể gửi lời nhắn trực tiếp cho Mariée.
-          </p>
-          <Link
-            to="/contact"
-            className="inline-flex items-center text-sm font-medium text-primary hover:underline gap-1"
-          >
-            Gửi lời nhắn cho Mariée ↗
-          </Link>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            <li><Link to="/contact" className="hover:text-primary">Liên hệ</Link></li>
+          </ul>
         </div>
       </div>
       <div className="text-center text-xs text-muted-foreground py-4 border-t border-border/40">© {year} {brand}. All rights reserved.</div>
