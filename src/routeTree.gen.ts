@@ -10,12 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
+import { Route as TaoThiepRouteImport } from './routes/tao-thiep'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as GuiThongTinRouteImport } from './routes/gui-thong-tin'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as ForVendorsRouteImport } from './routes/for-vendors'
 import { Route as ForCouplesRouteImport } from './routes/for-couples'
@@ -70,6 +72,11 @@ const UnsubscribeRoute = UnsubscribeRouteImport.update({
   path: '/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TaoThiepRoute = TaoThiepRouteImport.update({
+  id: '/tao-thiep',
+  path: '/tao-thiep',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -98,6 +105,11 @@ const PricingRoute = PricingRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuiThongTinRoute = GuiThongTinRouteImport.update({
+  id: '/gui-thong-tin',
+  path: '/gui-thong-tin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
@@ -369,12 +381,14 @@ export interface FileRoutesByFullPath {
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gui-thong-tin': typeof GuiThongTinRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tao-thiep': typeof TaoThiepRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/couple': typeof AuthenticatedCoupleRoute
@@ -425,12 +439,14 @@ export interface FileRoutesByTo {
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gui-thong-tin': typeof GuiThongTinRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tao-thiep': typeof TaoThiepRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/couple': typeof AuthenticatedCoupleRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -481,12 +497,14 @@ export interface FileRoutesById {
   '/for-couples': typeof ForCouplesRoute
   '/for-vendors': typeof ForVendorsRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/gui-thong-tin': typeof GuiThongTinRoute
   '/login': typeof LoginRoute
   '/pricing': typeof PricingRoute
   '/register': typeof RegisterRoute
   '/reset-password': typeof ResetPasswordRoute
   '/robots.txt': typeof RobotsDottxtRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/tao-thiep': typeof TaoThiepRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/couple': typeof AuthenticatedCoupleRoute
@@ -539,12 +557,14 @@ export interface FileRouteTypes {
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
+    | '/gui-thong-tin'
     | '/login'
     | '/pricing'
     | '/register'
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/tao-thiep'
     | '/unsubscribe'
     | '/admin'
     | '/couple'
@@ -595,12 +615,14 @@ export interface FileRouteTypes {
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
+    | '/gui-thong-tin'
     | '/login'
     | '/pricing'
     | '/register'
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/tao-thiep'
     | '/unsubscribe'
     | '/couple'
     | '/blog/$slug'
@@ -650,12 +672,14 @@ export interface FileRouteTypes {
     | '/for-couples'
     | '/for-vendors'
     | '/forgot-password'
+    | '/gui-thong-tin'
     | '/login'
     | '/pricing'
     | '/register'
     | '/reset-password'
     | '/robots.txt'
     | '/sitemap.xml'
+    | '/tao-thiep'
     | '/unsubscribe'
     | '/_authenticated/admin'
     | '/_authenticated/couple'
@@ -708,12 +732,14 @@ export interface RootRouteChildren {
   ForCouplesRoute: typeof ForCouplesRoute
   ForVendorsRoute: typeof ForVendorsRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  GuiThongTinRoute: typeof GuiThongTinRoute
   LoginRoute: typeof LoginRoute
   PricingRoute: typeof PricingRoute
   RegisterRoute: typeof RegisterRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  TaoThiepRoute: typeof TaoThiepRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   BlogSlugRoute: typeof BlogSlugRoute
   CouplesSlugRoute: typeof CouplesSlugRoute
@@ -734,6 +760,13 @@ declare module '@tanstack/react-router' {
       path: '/unsubscribe'
       fullPath: '/unsubscribe'
       preLoaderRoute: typeof UnsubscribeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tao-thiep': {
+      id: '/tao-thiep'
+      path: '/tao-thiep'
+      fullPath: '/tao-thiep'
+      preLoaderRoute: typeof TaoThiepRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sitemap.xml': {
@@ -776,6 +809,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gui-thong-tin': {
+      id: '/gui-thong-tin'
+      path: '/gui-thong-tin'
+      fullPath: '/gui-thong-tin'
+      preLoaderRoute: typeof GuiThongTinRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/forgot-password': {
@@ -1214,12 +1254,14 @@ const rootRouteChildren: RootRouteChildren = {
   ForCouplesRoute: ForCouplesRoute,
   ForVendorsRoute: ForVendorsRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  GuiThongTinRoute: GuiThongTinRoute,
   LoginRoute: LoginRoute,
   PricingRoute: PricingRoute,
   RegisterRoute: RegisterRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  TaoThiepRoute: TaoThiepRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   BlogSlugRoute: BlogSlugRoute,
   CouplesSlugRoute: CouplesSlugRoute,

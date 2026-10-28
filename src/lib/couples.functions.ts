@@ -3,6 +3,8 @@ import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import { z } from "zod";
 import { fireEmail, getUserEmailById } from "@/lib/email/send.server";
 import { guardPublicSubmit } from "@/lib/anti-spam.server";
+import { notifyTelegramNewRsvp } from "@/lib/telegram-bot.server";
+import { syncRsvpToGoogleSheet } from "@/lib/google-sheets.server";
 
 async function notifyCoupleOwner(coupleId: string, template: string, data: Record<string, any>) {
   const { data: couple } = await supabaseAdmin
@@ -167,6 +169,45 @@ export const submitRsvp = createServerFn({ method: "POST" })
       side: data.side,
       message: data.message || undefined,
     }).catch(() => {});
+
+    // RSVP is saved to DB and synced to Google Sheet, no spamming admin Telegram
+    let coupleSlug = "";
+    let coupleName = "";
+    let coupleSheetUrl = "";
+    try {
+      const { data: c } = await supabaseAdmin
+        .from("couples")
+        .select("slug, bride_name, groom_name")
+        .eq("id", data.couple_id)
+        .maybeSingle();
+      if (c) {
+        coupleSlug = c.slug;
+        coupleName = `${c.bride_name} & ${c.groom_name}`;
+      }
+      if (coupleSlug) {
+        const fs = await import("fs");
+        if (fs.existsSync("src/data/couple_sheets.json")) {
+          const map = JSON.parse(fs.readFileSync("src/data/couple_sheets.json", "utf-8"));
+          coupleSheetUrl = map[coupleSlug] || "";
+        }
+      }
+    } catch {}
+
+    syncRsvpToGoogleSheet({
+      couple_id: data.couple_id,
+      slug: coupleSlug,
+      couple_name: coupleName,
+      spreadsheet_url: coupleSheetUrl,
+      guest_name: data.guest_name,
+      guest_phone: data.guest_phone || "",
+      guest_email: data.guest_email || "",
+      attending: data.attending ? "Có" : "Không",
+      num_guests: data.num_guests,
+      side: data.side === "bride" ? "Nhà cô dâu" : data.side === "groom" ? "Nhà chú rể" : "Khách chung",
+      message: data.message || "",
+      created_at: new Date().toLocaleString("vi-VN", { timeZone: "Asia/Ho_Chi_Minh" }),
+    }).catch(() => {});
+
     return { ok: true };
   });
 

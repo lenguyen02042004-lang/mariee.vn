@@ -253,6 +253,7 @@ function CouplePage() {
   });
   const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
   const [rsvpDone, setRsvpDone] = useState(false);
+  const formStartedAt = useRef(Date.now());
 
   const t = themes[theme];
   const cssVars = Object.fromEntries(
@@ -359,7 +360,7 @@ function CouplePage() {
           guest_name: wishName.trim(),
           message: wishText.trim(),
           _hp: "",
-          _ts: Date.now(),
+          _ts: formStartedAt.current,
         },
       });
       const newWish = {
@@ -372,8 +373,8 @@ function CouplePage() {
       setWishName("");
       setWishText("");
       toast.success("Đã gửi lời chúc phúc thành công!");
-    } catch (err) {
-      toast.error("Không gửi được lời chúc, vui lòng thử lại.");
+    } catch (err: any) {
+      toast.error(err?.message || "Không gửi được lời chúc, vui lòng thử lại.");
     } finally {
       setWishSubmitting(false);
     }
@@ -395,13 +396,13 @@ function CouplePage() {
           side: (rsvp.group === "Nhà cô dâu" ? "bride" : rsvp.group === "Nhà chú rể" ? "groom" : "both"),
           message: rsvp.note.trim(),
           _hp: "",
-          _ts: Date.now(),
+          _ts: formStartedAt.current,
         },
       });
       setRsvpDone(true);
       toast.success("Đã gửi xác nhận tham dự thành công!");
-    } catch (err) {
-      toast.error("Có lỗi khi gửi xác nhận, vui lòng thử lại.");
+    } catch (err: any) {
+      toast.error(err?.message || "Có lỗi khi gửi xác nhận, vui lòng thử lại.");
     } finally {
       setRsvpSubmitting(false);
     }

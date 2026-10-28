@@ -21,7 +21,9 @@ export function verifyHoneypot(input: { _hp?: string; _ts?: number } | undefined
   }
   if (typeof input._ts === "number" && input._ts > 0) {
     const elapsed = Date.now() - input._ts;
-    if (elapsed < 1500) {
+    // Protect against bot submissions that occur inhumanly fast (< 800ms)
+    // while tolerating minor client-server clock skew (elapsed < 0)
+    if (elapsed >= 0 && elapsed < 800) {
       throw new Error("Vui lòng thử lại sau giây lát.");
     }
   }
