@@ -43,6 +43,7 @@ export function Header() {
           <Link to="/for-couples" className="hover:text-primary transition hidden lg:inline">Cặp đôi</Link>
           <Link to="/for-vendors" className="hover:text-primary transition hidden lg:inline">Vendor</Link>
           <Link to="/about" className="hover:text-primary transition hidden lg:inline">Giới thiệu</Link>
+          <Link to="/contact" className="hover:text-primary transition hidden lg:inline">Liên hệ</Link>
           {user ? (
             <>
               <Link to="/couple" className="hover:text-primary transition hidden md:inline">Trang của tôi</Link>
@@ -84,6 +85,7 @@ export function Footer() {
             <li><Link to="/vendors" className="hover:text-primary">Nhà cung cấp</Link></li>
             <li><Link to="/blog" className="hover:text-primary">Blog</Link></li>
             <li><Link to="/about" className="hover:text-primary">Giới thiệu</Link></li>
+            <li><Link to="/contact" className="hover:text-primary">Liên hệ</Link></li>
           </ul>
         </div>
         <div>
@@ -97,11 +99,15 @@ export function Footer() {
         </div>
         <div>
           <h4 className="text-sm font-semibold uppercase tracking-wider mb-3">Liên hệ</h4>
-          <p className="text-sm text-muted-foreground">
-            {email ? <a href={`mailto:${email}`} className="hover:text-primary">{email}</a> : "—"}
-            <br />
-            {phone ? <a href={`tel:${phone.replace(/\s/g, "")}`} className="hover:text-primary">{phone}</a> : null}
+          <p className="text-sm text-muted-foreground mb-3 leading-relaxed">
+            Mọi câu hỏi hoặc mong muốn tư vấn thiệp cưới, bạn có thể gửi lời nhắn trực tiếp cho Mariée.
           </p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center text-sm font-medium text-primary hover:underline gap-1"
+          >
+            Gửi lời nhắn cho Mariée ↗
+          </Link>
         </div>
       </div>
       <div className="text-center text-xs text-muted-foreground py-4 border-t border-border/40">© {year} {brand}. All rights reserved.</div>

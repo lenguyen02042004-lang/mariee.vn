@@ -40,10 +40,13 @@ function About() {
           ].map(b => <div key={b.t} className="border border-border/60 rounded-lg p-6 bg-card"><h3 className="font-display text-xl">{b.t}</h3><p className="text-sm text-muted-foreground mt-2">{b.d}</p></div>)}
         </div>
         <div className="bg-secondary/40 rounded-lg p-8 text-center">
-          <h2 className="font-display text-3xl">Liên hệ</h2>
-          <p className="mt-2 text-muted-foreground">Email: hello@mariee.vn — Hotline: 1900 0000</p>
+          <h2 className="font-display text-3xl">Liên hệ &amp; Góp ý</h2>
+          <p className="mt-2 text-muted-foreground max-w-lg mx-auto">
+            Nếu bạn có bất kỳ câu hỏi, mong muốn tư vấn thiệp cưới theo yêu cầu riêng hoặc chia sẻ cùng Mariée, vui lòng gửi lời nhắn để chúng tôi hỗ trợ bạn chu đáo nhất.
+          </p>
           <div className="mt-6 flex flex-wrap gap-3 justify-center">
-            <Link to="/for-couples" className="px-6 py-3 bg-primary text-primary-foreground rounded-md text-sm uppercase tracking-[0.2em]">Dành cho cặp đôi</Link>
+            <Link to="/contact" className="px-6 py-3 bg-primary text-primary-foreground rounded-md text-sm uppercase tracking-[0.2em]">Gửi lời nhắn cho Mariée</Link>
+            <Link to="/for-couples" className="px-6 py-3 border border-input rounded-md text-sm uppercase tracking-[0.2em]">Dành cho cặp đôi</Link>
             <Link to="/for-vendors" className="px-6 py-3 border border-input rounded-md text-sm uppercase tracking-[0.2em]">Dành cho vendor</Link>
           </div>
         </div>

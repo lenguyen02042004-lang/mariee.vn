@@ -1,332 +1,195 @@
-import React, { useState } from "react";
-import { useServerFn } from "@tanstack/react-start";
-import { sendTelegramContact } from "@/lib/telegram.functions";
-import { toast } from "sonner";
-import { Send, Home, Sparkles, MessageSquare, ExternalLink, CheckCircle2 } from "lucide-react";
+import React from "react";
+import { MessageSquare, Heart, Sparkles, ExternalLink } from "lucide-react";
 
 interface MarieeFooterProps {
   theme?: "blush" | "champagne" | string;
   coupleName?: string;
 }
 
-export default function MarieeFooter({ theme = "blush", coupleName = "Cô dâu & Chú rể" }: MarieeFooterProps) {
+export default function MarieeFooter({
+  theme = "blush",
+  coupleName = "Cô dâu & Chú rể",
+}: MarieeFooterProps) {
   const isChampagne = theme === "champagne";
-  const sendTelegramFn = useServerFn(sendTelegramContact);
-
-  const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [sentSuccess, setSentSuccess] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!name.trim() || !contact.trim() || !message.trim() || submitting) return;
-
-    setSubmitting(true);
-    try {
-      const pageUrl = typeof window !== "undefined" ? window.location.href : "";
-      const res = await sendTelegramFn({
-        data: {
-          name: name.trim(),
-          contact: contact.trim(),
-          message: message.trim(),
-          pageUrl,
-        },
-      });
-
-      if (res.success) {
-        toast.success(res.message);
-        setSentSuccess(true);
-        setName("");
-        setContact("");
-        setMessage("");
-      } else {
-        if (res.missingConfig) {
-          toast.info(res.message);
-        } else {
-          toast.error(res.message);
-        }
-      }
-    } catch (err: any) {
-      toast.error("Có lỗi xảy ra, vui lòng thử lại sau.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const accentColor = isChampagne ? "#c9983e" : "#e25c80";
-  const btnGradient = isChampagne
-    ? "linear-gradient(135deg, #d8a548, #be8b32)"
-    : "linear-gradient(135deg, #e86588, #d44c72)";
+  const accentColor = isChampagne ? "#b8832a" : "#d44c72";
+  const lightBg = isChampagne ? "rgba(251, 243, 228, 0.6)" : "rgba(253, 235, 240, 0.6)";
+  const borderColor = isChampagne ? "#ede0c8" : "#fcd4df";
 
   return (
     <footer
       style={{
         width: "100%",
-        maxWidth: "1080px",
-        margin: "60px auto 30px",
+        maxWidth: "920px",
+        margin: "50px auto 24px",
         padding: "0 16px",
         position: "relative",
         zIndex: 5,
         boxSizing: "border-box",
-        overflow: "hidden",
       }}
     >
-      {/* BRAND & CONTACT CARD */}
+      {/* DELICATE DIVIDER */}
       <div
-        className="soft-card reveal-on-scroll"
         style={{
-          background: "#ffffff",
-          borderRadius: "28px",
-          padding: "clamp(20px, 4vw, 44px)",
-          border: isChampagne ? "1px solid #ede0c8" : "1px solid #fcd4df",
-          boxShadow: isChampagne
-            ? "0 18px 48px -10px rgba(190, 139, 50, 0.12)"
-            : "0 18px 48px -10px rgba(212, 76, 114, 0.12)",
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
-          gap: "28px",
-          alignItems: "start",
-          boxSizing: "border-box",
-          maxWidth: "100%",
-          overflow: "hidden",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "14px",
+          marginBottom: "20px",
+          opacity: 0.65,
         }}
       >
-        {/* LEFT COLUMN: MARIEE NAVIGATION */}
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "14px" }}>
-            <span
-              style={{
-                fontFamily: "'Charm', cursive",
-                fontSize: "32px",
-                fontWeight: 700,
-                color: isChampagne ? "#9e6f24" : "#c43d63",
-                letterSpacing: "0.02em",
-              }}
-            >
-              Mariée.vn
-            </span>
-            <span
-              style={{
-                fontSize: "11px",
-                padding: "3px 9px",
-                borderRadius: "99px",
-                background: isChampagne ? "#fbf3e4" : "#fdebf0",
-                color: accentColor,
-                fontWeight: 600,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-              }}
-            >
-              Nền tảng thiệp cưới
-            </span>
-          </div>
+        <span
+          style={{
+            height: "1px",
+            flex: 1,
+            maxWidth: "140px",
+            background: `linear-gradient(to right, transparent, ${borderColor})`,
+          }}
+        />
+        <Heart size={14} color={accentColor} fill={accentColor} style={{ opacity: 0.8 }} />
+        <span
+          style={{
+            height: "1px",
+            flex: 1,
+            maxWidth: "140px",
+            background: `linear-gradient(to left, transparent, ${borderColor})`,
+          }}
+        />
+      </div>
 
-          <p style={{ fontSize: "14px", lineHeight: "1.65", color: "var(--muted)", margin: "0 0 20px" }}>
-            Trang thiệp cưới của <strong>{coupleName}</strong> được tạo và cá nhân hóa trên nền tảng <strong>Mariée.vn</strong> — Giải pháp thiệp cưới trực tuyến tinh tế, hiện đại và lưu trữ kỷ niệm trọn đời.
-          </p>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-            <a
-              href="/"
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "9px",
-                padding: "13px 24px",
-                borderRadius: "99px",
-                background: btnGradient,
-                color: "#ffffff",
-                textDecoration: "none",
-                fontSize: "13px",
-                fontWeight: 600,
-                letterSpacing: "0.04em",
-                boxShadow: isChampagne
-                  ? "0 6px 18px rgba(190, 139, 50, 0.28)"
-                  : "0 6px 18px rgba(212, 76, 114, 0.28)",
-                transition: "transform 0.2s, box-shadow 0.2s",
-                width: "fit-content",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
-              onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
-            >
-              <Home size={16} />
-              <span>Trở về Trang Chủ Mariée.vn ↗</span>
-            </a>
-
-            <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", marginTop: "10px", fontSize: "12px" }}>
-              <a href="/" style={{ color: "var(--deep)", textDecoration: "none", fontWeight: 500 }}>
-                • Trang chủ
-              </a>
-              <a href="/#templates" style={{ color: "var(--deep)", textDecoration: "none", fontWeight: 500 }}>
-                • Mẫu thiệp cưới cao cấp
-              </a>
-              <a href="/#pricing" style={{ color: "var(--deep)", textDecoration: "none", fontWeight: 500 }}>
-                • Bảng giá dịch vụ
-              </a>
-            </div>
-          </div>
+      {/* SUBTLE BRAND & ATTRIBUTION BAR */}
+      <div
+        style={{
+          background: lightBg,
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          borderRadius: "20px",
+          border: `1px solid ${borderColor}`,
+          padding: "16px 22px",
+          display: "flex",
+          flexWrap: "wrap",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "14px",
+          boxShadow: "0 4px 16px rgba(0, 0, 0, 0.03)",
+        }}
+      >
+        {/* LEFT: TASTEFUL MARIEE BRANDING */}
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+          <a
+            href="/"
+            style={{
+              fontFamily: "'Charm', cursive",
+              fontSize: "24px",
+              fontWeight: 700,
+              color: accentColor,
+              textDecoration: "none",
+              letterSpacing: "0.02em",
+              lineHeight: 1,
+            }}
+          >
+            Mariée.vn
+          </a>
+          <span
+            style={{
+              fontSize: "11px",
+              padding: "2px 8px",
+              borderRadius: "99px",
+              background: "#ffffff",
+              color: accentColor,
+              fontWeight: 600,
+              letterSpacing: "0.05em",
+              border: `1px solid ${borderColor}`,
+            }}
+          >
+            Thiệp cưới online
+          </span>
+          <span
+            style={{
+              fontSize: "12px",
+              color: "var(--muted, #666)",
+              display: "inline-block",
+            }}
+          >
+            Trang thiệp cưới của <strong>{coupleName}</strong>
+          </span>
         </div>
 
-        {/* RIGHT COLUMN: TELEGRAM CONTACT FORM */}
+        {/* RIGHT: COMPACT ACTIONS */}
         <div
           style={{
-            background: isChampagne ? "#fffdfa" : "#fffbfc",
-            padding: "24px",
-            borderRadius: "20px",
-            border: isChampagne ? "1px solid #f2e7d5" : "1px solid #fde5ec",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            flexWrap: "wrap",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <MessageSquare size={18} color={accentColor} />
-            <h3 style={{ margin: 0, fontSize: "17px", color: "var(--deep)" }}>
-              Liên hệ &amp; Góp ý (Telegram)
-            </h3>
-          </div>
-          <p style={{ fontSize: "12px", color: "var(--muted)", margin: "0 0 16px" }}>
-            Gửi phản hồi, yêu cầu đặt thiệp hoặc hỗ trợ kỹ thuật trực tiếp tới ban quản trị.
-          </p>
+          <a
+            href="/gui-thong-tin"
+            style={{
+              fontSize: "12px",
+              color: accentColor,
+              textDecoration: "none",
+              fontWeight: 500,
+              padding: "5px 12px",
+              borderRadius: "99px",
+              background: "#ffffff",
+              border: `1px solid ${borderColor}`,
+              transition: "all 0.2s ease",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "4px",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-1px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+          >
+            <Sparkles size={12} color={accentColor} />
+            <span>Tạo thiệp cưới tương tự</span>
+          </a>
 
-          {sentSuccess ? (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "24px 12px",
-                background: isChampagne ? "#fbf3e4" : "#fdebf0",
-                borderRadius: "14px",
-              }}
-            >
-              <CheckCircle2 size={36} color={accentColor} style={{ margin: "0 auto 10px" }} />
-              <p style={{ margin: 0, fontSize: "14px", fontWeight: 600, color: "var(--deep)" }}>
-                Cảm ơn bạn đã gửi liên hệ!
-              </p>
-              <small style={{ color: "var(--muted)", fontSize: "12px", display: "block", marginTop: "4px" }}>
-                Tin nhắn đã được chuyển tiếp thành công đến Telegram của ban quản trị.
-              </small>
-              <button
-                type="button"
-                onClick={() => setSentSuccess(false)}
-                style={{
-                  marginTop: "14px",
-                  fontSize: "11px",
-                  background: "transparent",
-                  border: `1px solid ${accentColor}`,
-                  color: accentColor,
-                  padding: "5px 12px",
-                  borderRadius: "20px",
-                  cursor: "pointer",
-                }}
-              >
-                Gửi tin nhắn khác
-              </button>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              <input
-                required
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Họ và tên của bạn *"
-                style={{
-                  width: "100%",
-                  padding: "10px 14px",
-                  borderRadius: "12px",
-                  border: isChampagne ? "1px solid #ede0c8" : "1px solid #fcd4df",
-                  background: "#ffffff",
-                  fontSize: "12px",
-                  fontFamily: "inherit",
-                  color: "var(--ink)",
-                  outline: "none",
-                }}
-              />
-              <input
-                required
-                type="text"
-                value={contact}
-                onChange={(e) => setContact(e.target.value)}
-                placeholder="Số điện thoại hoặc Email *"
-                style={{
-                  width: "100%",
-                  padding: "10px 14px",
-                  borderRadius: "12px",
-                  border: isChampagne ? "1px solid #ede0c8" : "1px solid #fcd4df",
-                  background: "#ffffff",
-                  fontSize: "12px",
-                  fontFamily: "inherit",
-                  color: "var(--ink)",
-                  outline: "none",
-                }}
-              />
-              <textarea
-                required
-                rows={3}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                placeholder="Nội dung lời nhắn hoặc yêu cầu hỗ trợ... *"
-                style={{
-                  width: "100%",
-                  padding: "10px 14px",
-                  borderRadius: "12px",
-                  border: isChampagne ? "1px solid #ede0c8" : "1px solid #fcd4df",
-                  background: "#ffffff",
-                  fontSize: "12px",
-                  fontFamily: "inherit",
-                  color: "var(--ink)",
-                  outline: "none",
-                  resize: "vertical",
-                }}
-              />
-              <button
-                type="submit"
-                disabled={submitting}
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: "8px",
-                  padding: "11px 18px",
-                  borderRadius: "99px",
-                  background: btnGradient,
-                  color: "#ffffff",
-                  border: 0,
-                  fontSize: "12px",
-                  fontWeight: 600,
-                  cursor: submitting ? "not-allowed" : "pointer",
-                  boxShadow: isChampagne
-                    ? "0 4px 14px rgba(190, 139, 50, 0.22)"
-                    : "0 4px 14px rgba(212, 76, 114, 0.22)",
-                }}
-              >
-                <Send size={13} />
-                <span>{submitting ? "Đang gửi Telegram..." : "Gửi tới Telegram ban quản trị →"}</span>
-              </button>
-            </form>
-          )}
+          <a
+            href="/contact"
+            style={{
+              fontSize: "12px",
+              color: "#ffffff",
+              textDecoration: "none",
+              fontWeight: 600,
+              padding: "5px 14px",
+              borderRadius: "99px",
+              background: isChampagne
+                ? "linear-gradient(135deg, #d8a548, #be8b32)"
+                : "linear-gradient(135deg, #e86588, #d44c72)",
+              boxShadow: isChampagne
+                ? "0 3px 10px rgba(190, 139, 50, 0.25)"
+                : "0 3px 10px rgba(212, 76, 114, 0.25)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "5px",
+              transition: "all 0.2s ease",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-1px)")}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "translateY(0)")}
+          >
+            <MessageSquare size={12} />
+            <span>Liên hệ Mariée</span>
+          </a>
         </div>
       </div>
 
-      {/* BOTTOM COPYRIGHT */}
+      {/* MINIMAL BOTTOM COPYRIGHT */}
       <div
         style={{
-          marginTop: "24px",
+          marginTop: "12px",
           textAlign: "center",
-          fontSize: "12px",
-          color: "var(--muted)",
-          display: "flex",
-          flexDirection: "column",
-          gap: "6px",
+          fontSize: "11px",
+          color: "var(--muted, #888)",
+          opacity: 0.85,
         }}
       >
-        <p style={{ margin: 0 }}>
-          © 2026 <strong>{coupleName}</strong>. Trang thiệp cưới cá nhân hóa bởi{" "}
-          <a href="/" style={{ color: accentColor, textDecoration: "none", fontWeight: 600 }}>
-            Mariée.vn
-          </a>
-        </p>
-        <small style={{ opacity: 0.85 }}>Cảm ơn bạn đã đồng hành trong ngày trọng đại của chúng mình! ♡</small>
+        © {new Date().getFullYear()} <strong>{coupleName}</strong>. Trang thiệp cưới cá nhân hóa bởi{" "}
+        <a href="/" style={{ color: accentColor, textDecoration: "none", fontWeight: 600 }}>
+          Mariée.vn
+        </a>
       </div>
     </footer>
   );

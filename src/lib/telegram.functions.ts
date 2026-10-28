@@ -55,16 +55,16 @@ export const sendTelegramContact = createServerFn({ method: "POST" })
         console.error("Telegram API Error:", json);
         return {
           success: false,
-          message: json.description || "Gửi tin nhắn Telegram không thành công.",
+          message: "Không thể gửi tin nhắn lúc này, vui lòng thử lại sau.",
         };
       }
 
-      return { success: true, message: "Đã gửi thông tin liên hệ thành công tới Telegram!" };
+      return { success: true, message: "Đã gửi lời nhắn thành công! Mariée sẽ liên hệ lại với bạn sớm nhất." };
     } catch (err: any) {
       console.error("Failed to send telegram message:", err);
       return {
         success: false,
-        message: err.message || "Lỗi kết nối máy chủ khi gửi Telegram.",
+        message: "Có lỗi kết nối, vui lòng thử lại sau.",
       };
     }
   });
