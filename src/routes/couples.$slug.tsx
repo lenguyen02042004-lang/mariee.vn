@@ -17,9 +17,7 @@ import {
   X,
   Check,
   Play,
-  MessageCircle,
-  Link as LinkIcon,
-  Send
+  Link as LinkIcon
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { toast } from "sonner";
@@ -1135,18 +1133,6 @@ function CouplePage() {
                 >
                   Zalo
                 </button>
-                {/* Facebook */}
-                <button
-                  type="button"
-                  className="social-btn facebook"
-                  title="Chia sẻ lên Facebook"
-                  onClick={() => {
-                    const url = typeof window !== "undefined" ? window.location.href : "";
-                    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, "_blank");
-                  }}
-                >
-                  <Send size={18} />
-                </button>
                 {/* Copy Link */}
                 <button
                   type="button"
@@ -1155,18 +1141,6 @@ function CouplePage() {
                   onClick={handleShare}
                 >
                   <LinkIcon size={18} />
-                </button>
-                {/* Messenger */}
-                <button
-                  type="button"
-                  className="social-btn messenger"
-                  title="Chia sẻ qua Messenger"
-                  onClick={() => {
-                    const url = typeof window !== "undefined" ? window.location.href : "";
-                    window.open(`fb-messenger://share/?link=${encodeURIComponent(url)}`, "_blank");
-                  }}
-                >
-                  <MessageCircle size={18} />
                 </button>
               </div>
             </div>
