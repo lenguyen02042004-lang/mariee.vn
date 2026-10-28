@@ -21,13 +21,31 @@ function youtubeId(url?: string | null): string | null {
 
 const DEFAULT_SLIDES: HeroSlide[] = [
   {
-    image_url: null,
+    image_url: "/assets/hero-luxury-couple.jpg",
     eyebrow: "la vie est belle",
     title: "Lưu giữ ngày trọng đại bằng một câu chuyện riêng",
     subtitle:
       "Mariée tạo thiệp cưới online và website cưới sang trọng, đẳng cấp dành riêng cho mỗi cặp đôi — và kết nối bạn với những nhà cung cấp dịch vụ tinh tế nhất.",
-    cta_label: "Tạo trang cưới của bạn",
-    cta_href: "/register",
+    cta_label: "Tạo thiệp cưới của bạn",
+    cta_href: "/gui-thong-tin",
+  },
+  {
+    image_url: "/assets/hero-wedding-1.jpg",
+    eyebrow: "timeless romance",
+    title: "Thiết kế thiệp cưới tinh tế & cá nhân hóa trọn vẹn",
+    subtitle:
+      "Giao diện chuẩn editorial với bản đồ lễ cưới, bộ sưu tập ảnh cưới chất lượng cao và hộp mừng cưới tiện lợi cho khách mời.",
+    cta_label: "Xem mẫu thiệp cưới",
+    cta_href: "/couples/demo",
+  },
+  {
+    image_url: "/assets/hero-wedding-2.jpg",
+    eyebrow: "celebrate your love",
+    title: "Quản lý khách mời & xác nhận tham dự thông minh",
+    subtitle:
+      "Đồng bộ danh sách khách tham dự tự động vào Google Sheets, nhận thông báo tức thời và gửi lời cảm ơn trân trọng.",
+    cta_label: "Khám phá ngay",
+    cta_href: "/for-couples",
   },
 ];
 

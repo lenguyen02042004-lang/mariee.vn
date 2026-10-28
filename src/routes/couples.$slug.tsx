@@ -522,15 +522,54 @@ function CouplePage() {
 
       <main>
         {/* HERO / SAVE OUR DATE & COUNTDOWN */}
-        <WeddingHero
-          theme={theme === "champagne" ? "champagne" : "blush"}
-          image={resolveImg(couple.hero_image_1 || couple.cover_image || "/assets/hero.jpg")}
-          bride={couple.bride_name || "Thảo My"}
-          groom={couple.groom_name || "Hoàng Nam"}
-          onRSVP={() => {
-            document.getElementById("rsvp")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        />
+        {(() => {
+          const heroImages = [
+            couple.hero_image_1,
+            couple.hero_image_2,
+            couple.hero_image_3,
+          ]
+            .filter(Boolean)
+            .map((img) => resolveImg(img));
+
+          if (heroImages.length === 0) {
+            if (couple.cover_image) heroImages.push(resolveImg(couple.cover_image));
+            heroImages.push(resolveImg("/assets/hero-wedding-1.jpg"));
+            heroImages.push(resolveImg("/assets/hero-wedding-2.jpg"));
+          } else if (heroImages.length === 1) {
+            heroImages.push(resolveImg("/assets/hero-wedding-1.jpg"));
+            heroImages.push(resolveImg("/assets/hero-wedding-2.jpg"));
+          } else if (heroImages.length === 2) {
+            heroImages.push(resolveImg("/assets/hero-wedding-2.jpg"));
+          }
+
+          const dateStr = couple.wedding_date
+            ? new Date(couple.wedding_date).toLocaleDateString("vi-VN", {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })
+            : "Thứ Bảy, 28 tháng 11, 2026";
+
+          const locStr =
+            [couple.venue_name, couple.venue_address].filter(Boolean).join(" · ") ||
+            "GEM Center · TP. Hồ Chí Minh";
+
+          return (
+            <WeddingHero
+              theme={theme === "champagne" ? "champagne" : "blush"}
+              images={heroImages}
+              image={heroImages[0]}
+              bride={couple.bride_name || "Thảo My"}
+              groom={couple.groom_name || "Hoàng Nam"}
+              dateText={dateStr}
+              locationText={locStr}
+              onRSVP={() => {
+                document.getElementById("rsvp")?.scrollIntoView({ behavior: "smooth" });
+              }}
+            />
+          );
+        })()}
 
         {/* SECTION DIVIDER: HERO -> STORY */}
         <SectionDivider
