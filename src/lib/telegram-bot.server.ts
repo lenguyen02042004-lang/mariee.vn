@@ -1,7 +1,5 @@
 import { supabaseAdmin } from "@/integrations/supabase/client.server";
-
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || "";
-const ADMIN_CHAT_ID = process.env.TELEGRAM_CHAT_ID || "";
+import { getTelegramCredentials } from "./telegram-config.server";
 
 interface TelegramUpdate {
   update_id: number;
@@ -20,13 +18,14 @@ interface TelegramUpdate {
  * Gửi tin nhắn Telegram phản hồi tới Admin
  */
 export async function sendTelegramMessage(text: string, parseMode: "HTML" | "Markdown" = "HTML") {
-  if (!TELEGRAM_BOT_TOKEN || !ADMIN_CHAT_ID) return;
+  const { token, chatId } = await getTelegramCredentials();
+  if (!token || !chatId) return;
   try {
-    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        chat_id: ADMIN_CHAT_ID,
+        chat_id: chatId,
         text,
         parse_mode: parseMode,
       }),
@@ -49,8 +48,6 @@ export async function notifyTelegramNewRsvp(opts: {
   side?: string | null;
   message?: string | null;
 }) {
-  if (!TELEGRAM_BOT_TOKEN || !ADMIN_CHAT_ID) return;
-
   const { data: couple } = await supabaseAdmin
     .from("couples")
     .select("slug, bride_name, groom_name")

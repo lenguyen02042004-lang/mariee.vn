@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { getTelegramCredentials } from "./telegram-config.server";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, "Vui lòng nhập họ tên").max(120),
@@ -11,14 +12,13 @@ const contactSchema = z.object({
 export const sendTelegramContact = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => contactSchema.parse(d))
   .handler(async ({ data }) => {
-    const token = process.env.TELEGRAM_BOT_TOKEN;
-    const chatId = process.env.TELEGRAM_CHAT_ID;
+    const { token, chatId } = await getTelegramCredentials();
 
     if (!token || !chatId) {
       console.warn("TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID is missing in environment variables.");
       return {
         success: false,
-        message: "Chưa cấu hình TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID trong file .env.",
+        message: "Chưa cấu hình TELEGRAM_BOT_TOKEN hoặc TELEGRAM_CHAT_ID trên hệ thống.",
         missingConfig: true,
       };
     }
