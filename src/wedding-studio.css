@@ -82,7 +82,7 @@ html, body {
 .monogram {
   font-family: 'Charm', 'Great Vibes', cursive;
   font-size: 32px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   font-weight: 600;
   letter-spacing: 0.05em;
   text-decoration: none;
@@ -117,7 +117,7 @@ html, body {
   border: 1px solid var(--line, #efd7d8);
   border-radius: 22px;
   padding: 8px 12px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   background: var(--paper, #fffdf9);
   font-size: 11px;
   font-family: inherit;
@@ -229,7 +229,7 @@ html, body {
 .eyebrow {
   font-size: 11px;
   letter-spacing: 0.28em;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   font-weight: 600;
   text-transform: uppercase;
   display: inline-block;
@@ -241,7 +241,7 @@ html, body {
   font-size: clamp(65px, 7vw, 110px);
   line-height: 1.05;
   margin: 30px 0 20px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .hero h1 span {
@@ -292,7 +292,7 @@ html, body {
   margin: 8px 0 16px;
   font-family: 'Playfair Display', serif;
   font-size: 18px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .count-grid {
@@ -312,7 +312,7 @@ html, body {
 
 .count-grid strong {
   font: 400 42px 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .count-grid small {
@@ -330,7 +330,7 @@ html, body {
 
 .quote p {
   font: italic 21px 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   max-width: 800px;
   margin: 0 auto 12px;
   line-height: 1.6;
@@ -358,7 +358,7 @@ html, body {
 
 .section h2, .share-section h2 {
   font: 400 clamp(32px, 3.2vw, 48px) 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   margin: 12px 0;
 }
 
@@ -370,7 +370,7 @@ html, body {
 
 .section h3 {
   font: 500 23px 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .section p {
@@ -475,7 +475,7 @@ html, body {
 
 .venue-times strong {
   font: 30px 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .venue-image-wrapper {
@@ -584,7 +584,7 @@ html, body {
 
 .timeline-item > strong {
   font: 25px 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .timeline-item h3 {
@@ -634,7 +634,7 @@ html, body {
 
 .swatches small {
   font-size: 13px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   font-weight: 500;
 }
 
@@ -669,7 +669,7 @@ html, body {
   text-align: center;
   background: rgba(255, 253, 249, 0.9);
   font-size: 13px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .gallery-grid {
@@ -767,7 +767,7 @@ html, body {
   display: block;
   font-size: 22px;
   font-family: 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   letter-spacing: 0.05em;
   margin: 6px 0 12px;
 }
@@ -775,7 +775,7 @@ html, body {
 .text-btn {
   border: 0;
   background: none;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -816,7 +816,7 @@ html, body {
 
 .wish-entry h4 {
   margin: 0;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   font-size: 16px;
 }
 
@@ -838,7 +838,7 @@ label {
   gap: 8px;
   font-size: 12px;
   margin: 0 0 18px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   font-weight: 500;
 }
 
@@ -967,7 +967,7 @@ input:focus, textarea:focus, select:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   cursor: pointer;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
   transition: transform 0.2s, background 0.2s;
@@ -1038,7 +1038,24 @@ input:focus, textarea:focus, select:focus {
   margin-top: 16px;
 }
 
-/* INVITATION CARDS 4 IN A ROW */
+/* INVITATION CARDS 2 IN A ROW */
+.invitations-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(280px, 380px));
+  justify-content: center;
+  gap: 36px;
+  max-width: 860px;
+  margin: auto;
+}
+
+@media (max-width: 700px) {
+  .invitations-grid-2 {
+    grid-template-columns: 1fr;
+    max-width: 360px;
+    gap: 20px;
+  }
+}
+
 .invitations-grid-4 {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -1088,7 +1105,7 @@ input:focus, textarea:focus, select:focus {
 .invitation-card-item h3 {
   font-size: 14px;
   margin: 12px 0 2px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
 }
 
 .invitation-card-item small {
@@ -1119,7 +1136,7 @@ input:focus, textarea:focus, select:focus {
   height: 36px;
   border-radius: 50%;
   background: var(--soft, #f9e5e7);
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1272,7 +1289,7 @@ input:focus, textarea:focus, select:focus {
 .ticket-content .ticket-names {
   font-family: 'Charm', 'Great Vibes', cursive;
   font-size: 42px;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   margin: 10px 0;
 }
 
@@ -1291,7 +1308,7 @@ input:focus, textarea:focus, select:focus {
 
 .ticket-content blockquote {
   font: italic 13px 'Playfair Display', serif;
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   margin: 10px auto;
   max-width: 480px;
   line-height: 1.5;
@@ -1824,7 +1841,7 @@ input:focus, textarea:focus, select:focus {
   align-items: center;
   gap: 6px;
   background: var(--paper, #fffdf9);
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   border: 1px solid var(--line, #efd7d8);
   border-radius: 20px;
   padding: 7px 13px;
@@ -1845,7 +1862,7 @@ input:focus, textarea:focus, select:focus {
 
 .header-audio-btn.playing {
   border-color: var(--accent, #e25c80);
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   background: color-mix(in srgb, var(--accent, #e25c80) 12%, var(--paper, #fffdf9));
 }
 
@@ -1891,7 +1908,7 @@ input:focus, textarea:focus, select:focus {
   background: rgba(255, 253, 250, 0.92);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  color: var(--deep, #8e4556);
+  color: var(--deep, #d44c72);
   font-size: 11px;
   font-family: 'Montserrat', sans-serif;
   letter-spacing: 0.04em;

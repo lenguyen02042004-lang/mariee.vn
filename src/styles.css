@@ -45,42 +45,42 @@
 :root {
   --radius: 0.75rem;
 
-  /* Haute Couture Royal Palette — Alabaster, Warm Champagne Gold & Velvet Burgundy */
-  --background: oklch(0.985 0.005 85);          /* warm alabaster ivory #FAF8F5 */
-  --foreground: oklch(0.20 0.015 45);           /* noble charcoal espresso #1C1917 */
+  /* Luminous Blush Pink Luxury Palette — Fresh Rosewater, Radiant Petal Pink & Sweet Champagne */
+  --background: oklch(0.99 0.005 15);           /* luminous fresh rosewater white #FFF9FA */
+  --foreground: oklch(0.24 0.02 20);            /* refined deep espresso charcoal #231C1E */
 
-  --card: oklch(0.995 0.003 85);                /* fine cotton paper #FDFDFB */
-  --card-foreground: oklch(0.20 0.015 45);
-  --popover: oklch(0.995 0.003 85);
-  --popover-foreground: oklch(0.20 0.015 45);
+  --card: oklch(0.998 0.002 15);                /* pure luminous cotton white #FFFFFF */
+  --card-foreground: oklch(0.24 0.02 20);
+  --popover: oklch(0.998 0.002 15);
+  --popover-foreground: oklch(0.24 0.02 20);
 
-  --primary: oklch(0.38 0.13 18);               /* noble velvet wine / bordeaux #5A1621 */
-  --primary-foreground: oklch(0.98 0.01 80);    /* warm ivory text */
-  --secondary: oklch(0.955 0.015 75);           /* antique champagne cream #F3EFE6 */
-  --secondary-foreground: oklch(0.28 0.03 40);
-  --muted: oklch(0.94 0.01 75);
-  --muted-foreground: oklch(0.48 0.02 45);
-  --accent: oklch(0.92 0.025 80);
-  --accent-foreground: oklch(0.25 0.04 35);
+  --primary: oklch(0.63 0.19 15);               /* radiant blooming rose pink #E25C80 (tươi tắn, sang trọng) */
+  --primary-foreground: oklch(0.99 0 0);        /* crisp pure white text */
+  --secondary: oklch(0.97 0.02 15);             /* sweet cherry blossom cream #FDEBF0 */
+  --secondary-foreground: oklch(0.35 0.08 15);
+  --muted: oklch(0.95 0.015 15);
+  --muted-foreground: oklch(0.50 0.03 20);
+  --accent: oklch(0.93 0.035 15);               /* soft glowing rose accent */
+  --accent-foreground: oklch(0.32 0.09 15);
 
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.88 0.025 78);              /* fine champagne gold hairline */
-  --input: oklch(0.90 0.02 78);
-  --ring: oklch(0.72 0.12 75);                  /* gold focus ring */
+  --border: oklch(0.91 0.025 15);               /* delicate fresh rose hairline */
+  --input: oklch(0.92 0.02 15);
+  --ring: oklch(0.70 0.16 15);                  /* luminous rose glow ring */
 
-  --blush: oklch(0.95 0.02 65);
-  --blush-foreground: oklch(0.30 0.05 30);
-  --gold: oklch(0.73 0.12 76);                  /* burnished 24k gold #C5A880 */
+  --blush: oklch(0.95 0.04 15);                 /* radiant fresh petal blush #FDEBF0 */
+  --blush-foreground: oklch(0.42 0.16 15);      /* elegant raspberry rose text */
+  --gold: oklch(0.74 0.12 76);                  /* warm sparkling gold #C9983E */
   --gold-foreground: oklch(0.18 0.02 45);
-  --rose-deep: oklch(0.32 0.12 18);             /* deep imperial wine #450C15 */
-  --cream: oklch(0.975 0.008 85);
+  --rose-deep: oklch(0.53 0.20 15);             /* rich vibrant blooming rose #C43D63 */
+  --cream: oklch(0.985 0.008 15);
 
-  --gradient-romance: linear-gradient(135deg, #FAF6EE 0%, #F2EBDC 50%, #E8DFC8 100%);
-  --gradient-soft: linear-gradient(180deg, #FDFBF8 0%, #F6F2E9 100%);
-  --gradient-gold: linear-gradient(135deg, #D4AF37 0%, #C5A880 50%, #B89758 100%);
-  --shadow-elegant: 0 20px 50px -20px rgba(35, 25, 20, 0.12);
-  --shadow-soft: 0 10px 30px -15px rgba(35, 25, 20, 0.08);
+  --gradient-romance: linear-gradient(135deg, #FFF7F8 0%, #FDEBF0 50%, #FCD4DF 100%);
+  --gradient-soft: linear-gradient(180deg, #FFFAFB 0%, #FFF3F6 100%);
+  --gradient-gold: linear-gradient(135deg, #E25C80 0%, #D44C72 50%, #C43D63 100%);
+  --shadow-elegant: 0 20px 50px -20px rgba(226, 92, 128, 0.18);
+  --shadow-soft: 0 10px 30px -15px rgba(226, 92, 128, 0.12);
 }
 
 .dark {

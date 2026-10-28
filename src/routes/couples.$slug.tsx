@@ -33,13 +33,13 @@ const WEDDING_AUDIO_URL = "https://cdn.pixabay.com/download/audio/2022/05/16/aud
 export const themes = {
   pink: {
     label: "Blush Pink Romance",
-    bg: "#fff7f8",       // Luminous fresh rosewater white
+    bg: "#fff8f9",       // Luminous fresh rosewater white
     paper: "#ffffff",    // Pure clean white
     soft: "#fdebf0",     // Fresh cherry blossom / sweet blush
     ink: "#3b1d25",      // Crisp readable berry dark (high clarity)
-    muted: "#9e596d",    // Fresh rose petal
+    muted: "#b35b75",    // Fresh radiant rose petal
     accent: "#e25c80",   // Radiant blooming rose pink (vibrant, tươi tắn)
-    deep: "#c43d63",     // Rich vibrant rose
+    deep: "#d44c72",     // Radiant luxury rose
     line: "#fcd4df",     // Soft fresh rose hairline
   },
   champagne: {
@@ -416,16 +416,6 @@ function CouplePage() {
       label: "Thiệp nhà cô dâu",
       subtitle: "Lễ Vu Quy",
       img: couple.invitation_bride_url || `/assets/visual/${theme}-invitation-bride.svg`,
-    },
-    {
-      label: "Thiệp nhà cô dâu",
-      subtitle: "Lễ Thành Hôn",
-      img: `/assets/visual/${theme}-invitation-ceremony.svg`,
-    },
-    {
-      label: "Thiệp nhà cô dâu",
-      subtitle: "Tiệc Chiêu Đãi",
-      img: `/assets/visual/${theme}-invitation-reception.svg`,
     },
     {
       label: "Thiệp nhà chú rể",
@@ -846,10 +836,10 @@ function CouplePage() {
           monogram={initials}
         />
 
-        {/* INVITATION CARDS (4 IN A ROW) */}
+        {/* INVITATION CARDS (BRIDE & GROOM) */}
         <section className="section invitations">
           <Heading eyebrow="INVITATION" className="reveal-on-scroll">Thiệp mời trân trọng</Heading>
-          <div className="invitations-grid-4 stagger-grid">
+          <div className="invitations-grid-2 stagger-grid">
             {invitationCards.map((c, i) => (
               <div
                 className="invitation-card-item reveal-on-scroll"
